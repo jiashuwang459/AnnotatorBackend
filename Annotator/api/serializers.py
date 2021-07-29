@@ -1,4 +1,3 @@
-import re
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import JSONField
@@ -107,7 +106,7 @@ class MemoryCreateSerializer(serializers.ModelSerializer):
 
 
 class AnnotationSerializer(serializers.Serializer):
-    text = serializers.CharField()
+    text = serializers.CharField(allow_blank=True, trim_whitespace=False)
 
 
 # class ChineseEntryField(serializers.Field):

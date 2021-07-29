@@ -181,44 +181,62 @@ export default class ManualPage extends Component {
   //     });
   // }
 
-  handleAnnotate(text) {
-    const requestOptions = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        text: text,
-      }),
-    };
-
+  handleAnnotate = async (text) => {
     this.setState(
       {
         loading: true,
         text: text,
         show: false,
       },
-      () => {
-        fetch("/api/annotate", requestOptions)
-          .then((response) => {
-            console.log(response.status);
-            if (!response.ok) {
-              throw new Error("HTTP status " + response.status);
+      async () => {
+        this.display.resetDisplay();
+
+        var paragraphs = text.split("\n");
+        for (var i = 0; i < paragraphs.length - 1; i++) {
+          paragraphs[i] += "\n";
+        }
+
+        try {
+          for (var paragraph of paragraphs) {
+            console.log(paragraph);
+            if (paragraph == "") {
+              this.display.updateDisplay([]);
+              continue;
             }
-            return response.json();
-          })
-          .then((data) => {
-            console.log(data); //TODO： validation for all data
-            this.display.updateDisplay(data);
-          })
-          .finally(() => {
-            this.setState({
-              loading: false,
-            });
+            const requestOptions = {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                text: paragraph,
+              }),
+            };
+
+            const response = await fetch("/api/annotate", requestOptions);
+            const json = await response.json();
+            console.log(json);
+            await this.display.updateDisplay(json);
+            // .then((response) => {
+            //   console.log(response.status);
+            //   if (!response.ok) {
+            //     throw new Error("HTTP status " + response.status);
+            //   }
+            //   return response.json();
+            // })
+            // .then((data) => {
+            //   console.log(data); //TODO： validation for all data
+            //   this.display.updateDisplay(data);
+            // });
+          }
+        } finally {
+          this.setState({
+            loading: false,
           });
+        }
       }
     );
-  }
+  };
 
   handleFetchMemoryButtonClick() {
     console.log("fetch button clicked");
@@ -584,7 +602,7 @@ export default class ManualPage extends Component {
             </InputGroup>
           </ButtonToolbar>
         </Grid>
-        <Grid container style={{ height: "auto", overflowY: "hidden" }}>
+        <Grid container style={{ height: "100%", overflowY: "hidden" }}>
           <Grid item xs align="center" style={{ height: "100%" }}>
             <DisplayArea
               ref={(d) => (this.display = d)}
