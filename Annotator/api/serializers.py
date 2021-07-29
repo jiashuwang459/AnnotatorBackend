@@ -1,3 +1,4 @@
+from django.db.models.fields import IntegerField
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import JSONField

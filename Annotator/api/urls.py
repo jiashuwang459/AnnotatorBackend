@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import AnnotationView, BlacklistEntryView, CountEntryView, CreateMemoryView, ReloadBlacklistEntryView, UpdateEntryView, EntryView, CreateEntryView, FragmentView, MemoryView, ReloadEntryView, FetchMemoryView
+from .views import AnnotationView, BlacklistEntryView, CleanMemoryView, CountEntryView, CreateMemoryView, DestroyMemoryView, ReloadBlacklistEntryView, UpdateEntryView, EntryView, CreateEntryView, FragmentView, MemoryView, ReloadEntryView, FetchMemoryView
 
 urlpatterns = [
     path('home', EntryView.as_view()),
@@ -10,6 +10,8 @@ urlpatterns = [
     path('memory', MemoryView.as_view()),
     path('memory/fetch', FetchMemoryView.as_view()),
     path('memory/save', CreateMemoryView.as_view()),
+    path('memory/clean', CleanMemoryView.as_view()),
+    path('memory/<code>', DestroyMemoryView.as_view()),
     path('fragments', FragmentView.as_view()),
     path('update/<pk>', UpdateEntryView.as_view()),
     path('blacklist', BlacklistEntryView.as_view()),

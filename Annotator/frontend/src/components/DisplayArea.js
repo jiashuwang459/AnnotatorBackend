@@ -17,6 +17,8 @@ const Container = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
+  border: green;
+  border-style: double;
 `;
 
 const ButtonContainer = styled.div`
@@ -40,8 +42,6 @@ const Display = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   overflow-y: auto;
-  border: green;
-  border-style: double;
 `;
 
 const Text = styled.div`
@@ -60,10 +60,6 @@ const PhraseContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  border: blue;
-  border-style: dashed;
-  border-width: thin;
-  margin: 5px;
 `;
 
 const CharacterContainer = styled.div`
@@ -271,22 +267,24 @@ export class DisplayArea extends React.Component {
     const paragraphs = this.state.paragraphs;
     if (!paragraphs?.length) {
       return (
-        <Display>
-          <p>
-            Welcome! Click on the book in the top right corner and enter in what
-            you want to annotate to get started!
-          </p>
-          <br />
-          <br />
-          <p>
-            A Memory Code is something you can use to keep track of your
-            'Knowledge' and the words that you know. Once you've sent in some
-            text to be annotated, you will be able to click on each of the
-            characters. When you click on a character, I will add it to your
-            memory bank. Remember to save your memory bank before you leave!
-            Your code will change everytime you save!
-          </p>
-        </Display>
+        <Container>
+          <Display>
+            <p>
+              Welcome! Click on the book in the top right corner and enter in
+              what you want to annotate to get started!
+            </p>
+            <br />
+            <br />
+            <p>
+              A Memory Code is something you can use to keep track of your
+              'Knowledge' and the words that you know. Once you've sent in some
+              text to be annotated, you will be able to click on each of the
+              characters. When you click on a character, I will add it to your
+              memory bank. Remember to save your memory bank before you leave!
+              Your code will change everytime you save!
+            </p>
+          </Display>
+        </Container>
       );
     }
 
@@ -338,6 +336,11 @@ export class DisplayArea extends React.Component {
                         overlay={(props) => this.getPopover(props, phrase)}
                       >
                         <PhraseContainer
+                          className={
+                            this.state.dictMode
+                              ? "jiashu_outline"
+                              : "jiashu_no_outline"
+                          }
                           key={index}
                           // onClick={(e) => this.handleCharacterClick(item, e)}
                         >

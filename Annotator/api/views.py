@@ -646,7 +646,7 @@ class FetchMemoryView(APIView):
 
         return Response(MemorySerializer(memory).data, status=status.HTTP_200_OK)
 
-        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+        # return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CreateMemoryView(APIView):
@@ -693,3 +693,43 @@ class CreateMemoryView(APIView):
             return Response(MemorySerializer(memory).data, status=status.HTTP_201_CREATED)
 
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DestroyMemoryView(generics.RetrieveDestroyAPIView):
+    queryset = Memory.objects.all()
+    serializer_class = MemorySerializer
+    lookup_field = "code"
+
+
+class CleanMemoryView(APIView):
+    # queryset = Memory.objects.all()
+
+    def post(self, request, format=None):
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+        print(request.data)
+        # codes = [17, 18, 19, 20, 21, 22, 23, 24, 25,
+        #          26, 27, 28, 29, 30, 31, 32, 33, 34, 35]
+
+        # memory = Memory.objects.filter(fragments=None).exclude(code=0)
+        memory = Memory.objects.values_list("code", flat=True)
+        # memory = Memory.objects.filter(code__in=codes)
+        count = memory.count()
+        # memory.delete()
+        # return Response({"OK": "cleaned up empty memories", "count": count, "data": MemorySerializer(memory, many=True).data}, status=status.HTTP_200_OK)
+        return Response({"OK": "preview clean up empty memories", "count": count, "data": memory}, status=status.HTTP_200_OK)
+
+
+    # NOTE: this isn't proper convention... but it's here just to help debug
+    def delete(self, request, format=None):
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+        codes = []
+        if codes:
+            memory = Memory.objects.filter(code__in=codes)
+            memory.delete()
+            return Response({"OK": "cleaned up empty memories", "data": MemorySerializer(memory, many=True).data}, status=status.HTTP_200_OK)
+
+        memory = Memory.objects.filter(fragments=None).exclude(code=0)
+        memory.delete()
+        return Response({"OK": "cleaned up empty memories", "data": MemorySerializer(memory, many=True).data}, status=status.HTTP_200_OK)

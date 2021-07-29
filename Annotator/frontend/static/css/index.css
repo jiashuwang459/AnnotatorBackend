@@ -19,3 +19,14 @@ body {
   height: 100%;
   display: flex;
 }
+
+.jiashu_no_outline {
+  margin: 5px;
+}
+
+.jiashu_outline {
+  border: blue;
+  border-style: dashed;
+  border-width: thin;
+  margin: 4px;
+}
