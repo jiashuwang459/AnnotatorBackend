@@ -1,0 +1,374 @@
+[
+  {
+    "id": 31880,
+    "owner": "default",
+    "traditional": "富裕",
+    "simplified": "富裕",
+    "pinyin": "fu4 yu4",
+    "english": "prosperous"
+  },
+  {
+    "id": 51973,
+    "owner": "default",
+    "traditional": "更",
+    "simplified": "更",
+    "pinyin": "geng4",
+    "english": "more"
+  },
+  {
+    "id": 94904,
+    "owner": "default",
+    "traditional": "要",
+    "simplified": "要",
+    "pinyin": "yao4",
+    "english": "important"
+  },
+  {
+    "id": 104348,
+    "owner": "default",
+    "traditional": "那",
+    "simplified": "那",
+    "pinyin": "na4",
+    "english": "that"
+  },
+  {
+    "id": 58857,
+    "owner": "default",
+    "traditional": "比",
+    "simplified": "比",
+    "pinyin": "bi1",
+    "english": "euphemistic variant of 屄[bi1]"
+  },
+  {
+    "id": 27137,
+    "owner": "default",
+    "traditional": "大眾",
+    "simplified": "大众",
+    "pinyin": "da4 zhong4",
+    "english": "the masses"
+  },
+  {
+    "id": 3102,
+    "owner": "default",
+    "traditional": "中",
+    "simplified": "中",
+    "pinyin": "zhong1",
+    "english": "within"
+  },
+  {
+    "id": 76920,
+    "owner": "default",
+    "traditional": "神",
+    "simplified": "神",
+    "pinyin": "shen2",
+    "english": "deity"
+  },
+  {
+    "id": 43046,
+    "owner": "default",
+    "traditional": "扛",
+    "simplified": "扛",
+    "pinyin": "kang2",
+    "english": "to carry on one's shoulder"
+  },
+  {
+    "id": 46712,
+    "owner": "default",
+    "traditional": "摃",
+    "simplified": "扛",
+    "pinyin": "gang1",
+    "english": "old variant of 扛[gang1]"
+  },
+  {
+    "id": 90691,
+    "owner": "default",
+    "traditional": "著",
+    "simplified": "着",
+    "pinyin": "zhe5",
+    "english": "aspect particle indicating action in progress"
+  },
+  {
+    "id": 43843,
+    "owner": "default",
+    "traditional": "抹",
+    "simplified": "抹",
+    "pinyin": "mo3",
+    "english": "to smear"
+  },
+  {
+    "id": 85558,
+    "owner": "default",
+    "traditional": "聽",
+    "simplified": "听",
+    "pinyin": "ting1",
+    "english": "to listen"
+  },
+  {
+    "id": 105460,
+    "owner": "default",
+    "traditional": "重",
+    "simplified": "重",
+    "pinyin": "zhong4",
+    "english": "heavy"
+  },
+  {
+    "id": 105672,
+    "owner": "default",
+    "traditional": "重重",
+    "simplified": "重重",
+    "pinyin": "zhong4 zhong4",
+    "english": "heavily",
+    "priority": 999
+  },
+  {
+    "id": 110933,
+    "owner": "default",
+    "traditional": "離",
+    "simplified": "离",
+    "pinyin": "li2",
+    "english": "to leave"
+  },
+  {
+    "id": 3057,
+    "owner": "default",
+    "traditional": "並",
+    "simplified": "并",
+    "pinyin": "bing4",
+    "english": "and"
+  },
+  {
+    "id": 62993,
+    "owner": "default",
+    "traditional": "涼",
+    "simplified": "凉",
+    "pinyin": "liang2",
+    "english": "cool"
+  },
+  {
+    "id": 70374,
+    "owner": "default",
+    "traditional": "琢磨",
+    "simplified": "琢磨",
+    "pinyin": "zuo2 mo5",
+    "english": "to ponder"
+  },
+  {
+    "id": 81401,
+    "owner": "default",
+    "traditional": "累",
+    "simplified": "累",
+    "pinyin": "lei4",
+    "english": "tired"
+  },
+  {
+    "id": 93426,
+    "owner": "default",
+    "traditional": "行",
+    "simplified": "行",
+    "pinyin": "xing2",
+    "english": "to walk"
+  },
+  {
+    "id": 67610,
+    "owner": "default",
+    "traditional": "熬",
+    "simplified": "熬",
+    "pinyin": "ao2",
+    "english": "to cook on a slow fire"
+  },
+  {
+    "id": 101407,
+    "owner": "default",
+    "traditional": "轉",
+    "simplified": "转",
+    "pinyin": "zhuan3",
+    "english": "to turn"
+  },
+  {
+    "id": 41884,
+    "owner": "default",
+    "traditional": "成功",
+    "simplified": "成功",
+    "pinyin": "cheng2 gong1",
+    "english": "success"
+  },
+  {
+    "id": 96633,
+    "owner": "default",
+    "traditional": "說",
+    "simplified": "说",
+    "pinyin": "shuo1",
+    "english": "to speak"
+  },
+  {
+    "id": 102733,
+    "owner": "default",
+    "traditional": "通道",
+    "simplified": "通道",
+    "pinyin": "tong1 dao4",
+    "english": "(communications) channel"
+  },
+  {
+    "id": 85802,
+    "owner": "default",
+    "traditional": "肚",
+    "simplified": "肚",
+    "pinyin": "du4",
+    "english": "belly"
+  },
+  {
+    "id": 50616,
+    "owner": "default",
+    "traditional": "明",
+    "simplified": "明",
+    "pinyin": "ming2",
+    "english": "bright"
+  },
+  {
+    "id": 57775,
+    "owner": "default",
+    "traditional": "正",
+    "simplified": "正",
+    "pinyin": "zheng4",
+    "english": "straight"
+  },
+  {
+    "id": 85371,
+    "owner": "default",
+    "traditional": "聯想",
+    "simplified": "联想",
+    "pinyin": "lian2 xiang3",
+    "english": "to associate (cognitively)"
+  },
+  {
+    "id": 37325,
+    "owner": "default",
+    "traditional": "弄",
+    "simplified": "弄",
+    "pinyin": "nong4",
+    "english": "to do"
+  },
+  {
+    "id": 19523,
+    "owner": "default",
+    "traditional": "吐",
+    "simplified": "吐",
+    "pinyin": "tu4",
+    "english": "to vomit"
+  },
+  {
+    "id": 25119,
+    "owner": "default",
+    "traditional": "場",
+    "simplified": "场",
+    "pinyin": "chang3",
+    "english": "large place used for a specific purpose"
+  },
+  {
+    "id": 42680,
+    "owner": "default",
+    "traditional": "打",
+    "simplified": "打",
+    "pinyin": "da3",
+    "english": "to beat"
+  },
+  {
+    "id": 37730,
+    "owner": "default",
+    "traditional": "強",
+    "simplified": "强",
+    "pinyin": "qiang3",
+    "english": "to force"
+  },
+  {
+    "id": 98778,
+    "owner": "default",
+    "traditional": "資源",
+    "simplified": "资源",
+    "pinyin": "zi1 yuan2",
+    "english": "natural resource (such as water or minerals)"
+  },
+  {
+    "id": 2002,
+    "owner": "default",
+    "traditional": "不了",
+    "simplified": "不了",
+    "pinyin": "bu4 liao3",
+    "english": "unable to",
+    "note": "temporarily prioritized, but if we can't, maybe add 做不了 as custom"
+  },
+  {
+    "id": 18210,
+    "owner": "default",
+    "traditional": "句",
+    "simplified": "句",
+    "pinyin": "ju4",
+    "english": "sentence"
+  },
+  {
+    "id": 22572,
+    "owner": "default",
+    "traditional": "嚇",
+    "simplified": "吓",
+    "pinyin": "xia4",
+    "english": "to frighten"
+  },
+  {
+    "id": 63535,
+    "owner": "default",
+    "traditional": "清",
+    "simplified": "清",
+    "pinyin": "qing1",
+    "english": "clear",
+    "note": "consider adding 清清楚楚 as a pharse"
+  },
+  {
+    "id": 90367,
+    "owner": "default",
+    "traditional": "萬",
+    "simplified": "万",
+    "pinyin": "wan4",
+    "english": "ten thousand"
+  },
+  {
+    "id": 69661,
+    "owner": "default",
+    "traditional": "率",
+    "simplified": "率",
+    "pinyin": "shuai4",
+    "english": "to lead",
+    "note": "for following your gender 率性"
+  },
+  {
+    "id": 40786,
+    "owner": "default",
+    "traditional": "意",
+    "simplified": "意",
+    "pinyin": "yi4",
+    "english": "idea"
+  },
+  {
+    "id": 14874,
+    "owner": "default",
+    "traditional": "勒",
+    "simplified": "勒",
+    "pinyin": "lei1",
+    "english": "to strap tightly"
+  },
+  {
+    "id": 92382,
+    "owner": "default",
+    "traditional": "號",
+    "simplified": "号",
+    "pinyin": "hao4",
+    "english": "ordinal number"
+  },
+  {
+    "id": 81669,
+    "owner": "default",
+    "traditional": "結果",
+    "simplified": "结果",
+    "pinyin": "jie2 guo3",
+    "english": "outcome"
+  }
+]

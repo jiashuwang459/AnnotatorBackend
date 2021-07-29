@@ -1,4 +1,4 @@
-# ChineseAnnotatorBackend
+# AnnotatorBackend
 
 
 I recommend creating a python venv to work on this project.

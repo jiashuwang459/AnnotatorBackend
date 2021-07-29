@@ -1,0 +1,57 @@
+[
+  {
+    "owner": "custom",
+    "traditional": "少夫人",
+    "simplified": "少夫人",
+    "pinyin": "shao4 fu1 ren5",
+    "english": "young boss's wife"
+  },
+  {
+    "simplified": "凌秦",
+    "pinyin": "Ling2 Qin2",
+    "english": "Ling Butler in 'It's not easy being a man after traveling to the future'"
+  },
+  {
+    "simplified": "凌兰",
+    "pinyin": "Ling2 Lan2",
+    "english": "Ling Lan is the main character in 'It's not easy being a man after traveling to the future'"
+  },
+  {
+    "simplified": "清清楚楚",
+    "pinyin": "qing1 qing1 chu3 chu3",
+    "english": "clearly"
+  },
+  {
+    "traditional": "倒落",
+    "simplified": "倒落",
+    "pinyin": "dao4 luo4",
+    "english": "fall"
+  },
+  {
+    "traditional": "不知道",
+    "simplified": "不知道",
+    "pinyin": "bu4 zhi1 dao4",
+    "english": "don't know"
+  },
+  {
+    "traditional": "大不大",
+    "simplified": "大不大",
+    "pinyin": "da4 bu4 da4",
+    "english": "is it big?"
+  },
+  {
+    "owner": "default",
+    "traditional": "寒颤",
+    "simplified": "寒颤",
+    "pinyin": "han2 zhan4",
+    "english": "shiver, variant of 寒战",
+    "priority": 999
+  },
+  {
+    "traditional": "顫",
+    "simplified": "颤",
+    "pinyin": "zhan4",
+    "english": "shiver/tremble/shudder, used in 寒颤",
+    "priority": 999
+  }
+]
