@@ -43,5 +43,50 @@
     "pinyin": "Wan4 nian2",
     "english": "Wannian county in Shangrao 上饒|上饶, Jiangxi",
     "reason": "We don't really care about the county"
-  }
+  },
+  {
+    "id": 90436,
+    "owner": "default",
+    "traditional": "到了",
+    "simplified": "到了",
+    "pinyin": "dao4 liao3",
+    "english": "at last/finally/in the end",
+    "reason": "We really don't need this..."
+  },
+  {
+    "id": 358001,
+    "owner": "default",
+    "traditional": "麵的",
+    "simplified": "面的",
+    "pinyin": "mian4 di1",
+    "english": "abbr. of 麵包車的士|面包车的士[mian4 bao1 che1 di1 shi4]/minivan taxi",
+    "reason": "we probably won't see this at all"
+  },
+  {
+    "id": 300258,
+    "owner": "default",
+    "traditional": "沒了",
+    "simplified": "没了",
+    "pinyin": "mei2 le5",
+    "english": "to be dead/not to be, or cease to exist",
+    "reason": "we don't need this to be a term... we want the phrase: 没了解 -> mei2 liao2 jie3"
+  },
+  {
+    "id": 273235,
+    "owner": "default",
+    "traditional": "就正",
+    "simplified": "就正",
+    "pinyin": "jiu4 zheng4",
+    "english": "(literary and deferential) to solicit comments (on one's writing)",
+    "reason": "we want it separate"
+  },
+  {
+    "id": 247377,
+    "owner": "default",
+    "traditional": "保護國",
+    "simplified": "保护国",
+    "pinyin": "bao3 hu4 guo2",
+    "english": "protectorate",
+    "reason": "who cares about protectorates... 保护国家 is where it's at!"
+}
 ]

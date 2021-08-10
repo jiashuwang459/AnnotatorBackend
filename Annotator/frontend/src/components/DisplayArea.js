@@ -7,6 +7,7 @@ import { MemoryRouter } from "react-router-dom";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { Virtuoso } from "react-virtuoso";
+import { RiQuillPenFill } from "react-icons/ri";
 
 const Container = styled.div`
   display: flex;
@@ -48,12 +49,14 @@ const Text = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
+  font-size: x-large;
 `;
 
 const Annotation = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
+  font-size: small;
 `;
 
 const PhraseContainer = styled.div`
@@ -268,10 +271,10 @@ export class DisplayArea extends React.Component {
     if (!paragraphs?.length) {
       return (
         <Container>
-          <Display>
+          <Display style={{ textAlign: "initial" }}>
             <p>
-              Welcome! Click on the book in the top right corner and enter in
-              what you want to annotate to get started!
+              Welcome! Click on the <RiQuillPenFill></RiQuillPenFill> in the top
+              right to get started!
             </p>
             <br />
             <br />
@@ -318,7 +321,7 @@ export class DisplayArea extends React.Component {
           itemContent={(idx, paragraph) => {
             // const paragraph = paragraphs[idx];
             return (
-              <Display class="jiashu" key={idx}>
+              <Display key={idx}>
                 {paragraph.map((entry, index) => {
                   if (entry["cchars"]) {
                     // This means it's is a phrase.

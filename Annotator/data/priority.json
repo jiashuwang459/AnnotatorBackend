@@ -370,5 +370,189 @@
     "simplified": "结果",
     "pinyin": "jie2 guo3",
     "english": "outcome"
+  },
+  {
+    "id": 100017,
+    "owner": "default",
+    "traditional": "跑",
+    "simplified": "跑",
+    "pinyin": "pao3",
+    "english": "to run"
+  },
+  {
+    "id": 90549,
+    "owner": "default",
+    "traditional": "落",
+    "simplified": "落",
+    "pinyin": "luo4",
+    "english": "to fall or drop"
+  },
+  {
+    "id": 107605,
+    "owner": "default",
+    "traditional": "長",
+    "simplified": "长",
+    "pinyin": "zhang3",
+    "english": "chief"
+  },
+  {
+    "id": 83871,
+    "owner": "default",
+    "traditional": "美",
+    "simplified": "美",
+    "pinyin": "mei3",
+    "english": "beautiful"
+  },
+  {
+    "id": 27665,
+    "owner": "default",
+    "traditional": "天柱",
+    "simplified": "天柱",
+    "pinyin": "tian1 zhu4",
+    "english": "pillars supporting heaven"
+  },
+  {
+    "id": 33726,
+    "owner": "default",
+    "traditional": "尼瑪",
+    "simplified": "尼玛",
+    "pinyin": "ni2 ma3",
+    "english": "(Internet slang) alternative for 你媽|你妈[ni3 ma1]"
+  },
+  {
+    "id": 9743,
+    "owner": "default",
+    "traditional": "儀",
+    "simplified": "仪",
+    "pinyin": "yi2",
+    "english": "apparatus"
+  },
+  {
+    "id": 198643,
+    "owner": "default",
+    "traditional": "章",
+    "simplified": "章",
+    "pinyin": "zhang1",
+    "english": "chapter/section/clause/movement (of symphony)/seal/badge/regulation/order"
+  },
+  {
+    "id": 123439,
+    "owner": "default",
+    "traditional": "也",
+    "simplified": "也",
+    "pinyin": "ye3",
+    "english": "also/too/(in Classical Chinese) final particle implying affirmation"
+  },
+  {
+    "id": 223332,
+    "owner": "default",
+    "traditional": "過",
+    "simplified": "过",
+    "pinyin": "guo4",
+    "english": "to cross/to go over/to pass (time)/to celebrate (a holiday)/to live/to get along/excessively/too-"
+  },
+  {
+    "id": 211997,
+    "owner": "default",
+    "traditional": "蘭",
+    "simplified": "兰",
+    "pinyin": "lan2",
+    "english": "orchid (蘭花|兰花 Cymbidium goeringii)/fragrant thoroughwort (蘭草|兰草 Eupatorium fortunei)/lily magnolia (木蘭|木兰)"
+  },
+  {
+    "id": 131644,
+    "owner": "default",
+    "traditional": "凌",
+    "simplified": "凌",
+    "pinyin": "ling2",
+    "english": "to approach/to rise high/thick ice/to insult or maltreat"
+  },
+  {
+    "id": 192794,
+    "owner": "default",
+    "traditional": "白",
+    "simplified": "白",
+    "pinyin": "bai2",
+    "english": "white/snowy/pure/bright/empty/blank/plain/clear/to make clear/in vain/gratuitous/free of charge/reactionary/anti-communist/funeral/to stare coldly/to write wrong character/to state/to explain/vernacular/spoken lines in opera"
+  },
+  {
+    "id": 176513,
+    "owner": "default",
+    "traditional": "機",
+    "simplified": "机",
+    "pinyin": "ji1",
+    "english": "machine/engine/opportunity/intention/aircraft/pivot/crucial point/flexible (quick-witted)/organic/CL:臺|台[tai2]"
+  },
+  {
+    "id": 150900,
+    "owner": "default",
+    "traditional": "家伙",
+    "simplified": "家伙",
+    "pinyin": "jia1 huo5",
+    "english": "household dish, implement or furniture/domestic animal/(coll.) guy/chap/weapon"
+  },
+  {
+    "id": 161375,
+    "owner": "default",
+    "traditional": "成",
+    "simplified": "成",
+    "pinyin": "cheng2",
+    "english": "to succeed/to finish/to complete/to accomplish/to become/to turn into/to be all right/OK!/one tenth"
+  },
+  {
+    "id": 159049,
+    "owner": "default",
+    "traditional": "念",
+    "simplified": "念",
+    "pinyin": "nian4",
+    "english": "to read/to study (a subject)/to attend (a school)/to read aloud/to give (sb) a tongue-lashing (CL:頓|顿[dun4])/to miss (sb)/idea/remembrance/twenty (banker's anti-fraud numeral corresponding to 廿[nian4])"
+  },
+  {
+    "id": 331389,
+    "owner": "default",
+    "traditional": "蕩",
+    "simplified": "荡",
+    "pinyin": "dang4",
+    "english": "to wash/to squander/to sweep away/to move/to shake/dissolute/pond"
+  },
+  {
+    "id": 317993,
+    "owner": "default",
+    "traditional": "稱",
+    "simplified": "称",
+    "pinyin": "cheng1",
+    "english": "to weigh/to state/to name/name/appellation/to praise"
+  },
+  {
+    "id": 290799,
+    "owner": "default",
+    "traditional": "時代",
+    "simplified": "时代",
+    "pinyin": "shi2 dai4",
+    "english": "age/era/epoch/period (in one's life)/CL:個|个[ge4]"
+  },
+  {
+    "id": 317993,
+    "owner": "default",
+    "traditional": "稱",
+    "simplified": "称",
+    "pinyin": "cheng1",
+    "english": "to weigh/to state/to name/name/appellation/to praise"
+  },
+  {
+    "id": 258403,
+    "owner": "default",
+    "traditional": "合",
+    "simplified": "合",
+    "pinyin": "he2",
+    "english": "to close/to join/to fit/to be equal to/whole/together/round (in battle)/conjunction (astronomy)/1st note of pentatonic scale/old variant of 盒[he2]"
+  },
+  {
+    "id": 262750,
+    "owner": "default",
+    "traditional": "圈",
+    "simplified": "圈",
+    "pinyin": "quan1",
+    "english": "circle/ring/loop/classifier for loops, orbits, laps of race etc/CL:個|个[ge4]/to surround/to circle"
   }
 ]

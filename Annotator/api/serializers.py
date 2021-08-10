@@ -1,4 +1,4 @@
-from django.db.models.fields import IntegerField
+from django.db.models.fields import CharField, IntegerField
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import JSONField
@@ -74,6 +74,13 @@ class MemorySerializer(serializers.ModelSerializer):
         model = Memory
         fields = ('code', 'fragments',)
         depth = 2
+
+
+class CleanMemorySerializer(serializers.Serializer):
+    codes = serializers.ListField(
+        child=serializers.IntegerField(min_value=1),
+        allow_empty=True
+    )
 
 
 class MemoryCreateSerializer(serializers.ModelSerializer):

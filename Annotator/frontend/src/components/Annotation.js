@@ -44,18 +44,17 @@ import Offcanvas from "react-bootstrap/Offcanvas";
 //   width: "100%",
 // });
 
-
 const Display = styled.div`
   display: flex;
   width: 100%;
   padding: 10px;
   flex-direction: row;
   flex-wrap: wrap;
-  overflow-y: auto;
   border: crimson;
-  border-style: double;
+  border-style: dashed;
+  border-width: thin;
+  text-align: left;
 `;
-
 
 const TextArea = styled.textarea`
   resize: vertical;
@@ -84,7 +83,7 @@ export class Annotation extends Component {
     this.setState(
       {
         text: e.target.value,
-      },
+      }
       // () => {
       //   console.log(this.state);
       // }
@@ -102,7 +101,7 @@ export class Annotation extends Component {
     this.setState(
       {
         loading: true,
-      },
+      }
       // () => {
       //   console.log(this.state);
       // }
@@ -121,12 +120,18 @@ export class Annotation extends Component {
   render() {
     return (
       <Grid container direction="column" style={{ height: "auto" }}>
-        <Grid item align="center" style={{ maxHeight: "200px" }}>
+        <Grid item align="center" style={{ margin: "5px" }}>
           <Display>
-            <p> TODO: Add instructions on how to use this page here.</p>
+            <p> TODO: Add instructions on how to use this page here.</p>{" "}
+            <p>
+              This is the manual entry page, where you can paste in a section of
+              chinese text and we will annotate pinyin onto them! Simply paste
+              your text into the Textbox below and press annotate to get
+              started!
+            </p>
           </Display>
         </Grid>
-        <Grid container style={{ height: "auto" }}>
+        <Grid container style={{ height: "auto", margin: "5px" }}>
           <Grid item xs={9} align="center" style={{ maxHeight: "200px" }}>
             <FormControl
               component="fieldset"

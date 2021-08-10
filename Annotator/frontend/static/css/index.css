@@ -25,8 +25,9 @@ body {
 }
 
 .jiashu_outline {
-  border: blue;
+  border: darkslateblue;
   border-style: dashed;
   border-width: thin;
   margin: 4px;
+  background: aliceblue;
 }

@@ -1,22 +1,30 @@
 [
   {
-    "owner": "custom",
     "traditional": "少夫人",
     "simplified": "少夫人",
     "pinyin": "shao4 fu1 ren5",
-    "english": "young boss's wife"
+    "english": "young madam/young lady/young mrs./ polite address of the lady of the house"
   },
   {
+    "traditional": "凌秦",
     "simplified": "凌秦",
     "pinyin": "Ling2 Qin2",
-    "english": "Ling Butler in 'It's not easy being a man after traveling to the future'"
+    "english": "凌 family butler in '穿越未来之男人不好当'"
   },
   {
+    "traditional": "凌蘭",
     "simplified": "凌兰",
     "pinyin": "Ling2 Lan2",
-    "english": "Ling Lan is the main character in 'It's not easy being a man after traveling to the future'"
+    "english": "Protagonist in '穿越未来之男人不好当'"
   },
   {
+    "traditional": "小四",
+    "simplified": "小四",
+    "pinyin": "xiao3 si4",
+    "english": "Ling Lan's mecha learning machine in '穿越未来之男人不好当'"
+  },
+  {
+    "traditional": "清清楚楚",
     "simplified": "清清楚楚",
     "pinyin": "qing1 qing1 chu3 chu3",
     "english": "clearly"
@@ -25,13 +33,13 @@
     "traditional": "倒落",
     "simplified": "倒落",
     "pinyin": "dao4 luo4",
-    "english": "fall"
+    "english": "fall down"
   },
   {
     "traditional": "不知道",
     "simplified": "不知道",
     "pinyin": "bu4 zhi1 dao4",
-    "english": "don't know"
+    "english": "don't know/have no idea"
   },
   {
     "traditional": "大不大",
@@ -44,14 +52,114 @@
     "traditional": "寒颤",
     "simplified": "寒颤",
     "pinyin": "han2 zhan4",
-    "english": "shiver, variant of 寒战",
-    "priority": 999
+    "english": "shiver, variant of 寒战"
   },
   {
     "traditional": "顫",
     "simplified": "颤",
     "pinyin": "zhan4",
-    "english": "shiver/tremble/shudder, used in 寒颤",
-    "priority": 999
-  }
+    "english": "shiver/tremble/shudder, used in 寒颤"
+  },
+  {
+    "traditional": "泄露",
+    "simplified": "泄露",
+    "pinyin": "xie4 lou4",
+    "english": "to leak (information)/to divulge/give away (information)"
+  },
+  {
+    "traditional": "過长",
+    "simplified": "过长",
+    "pinyin": "guo4 chang2",
+    "english": "too long"
+  },
+  {
+    "traditional": "飯點",
+    "simplified": "饭点",
+    "pinyin": "fan4 dian3",
+    "english": "meal time"
+  },
+  {
+    "traditional": "白老鼠",
+    "simplified": "白老鼠",
+    "pinyin": "bai2 lao3 shu3",
+    "english": "(experimental) lab rat/while mouse (literal)"
+  },
+  {
+    "traditional": "一隻",
+    "simplified": "一只",
+    "pinyin": "yi1 zhi1",
+    "english": "a/a single thing, specificly for birds and certain animals, one of a pair, some utensils, vessels etc"
+  },
+  {
+    "traditional": "意識",
+    "simplified": "意识",
+    "pinyin": "yi4 shi5",
+    "english": "consciousness/awareness"
+  },
+  {
+    "traditional": "見過",
+    "simplified": "见过",
+    "pinyin": "jian4",
+    "english": "have met before"
+  },
+  {
+    "traditional": "小家伙",
+    "simplified": "小家伙",
+    "pinyin": "xiao3 jia1 huo5",
+    "english": "little guy/small chap"
+  },
+  {
+    "traditional": "軍功",
+    "simplified": "军功",
+    "pinyin": "jun1 gong1",
+    "english": "military exploits (literary, military); military achievements; meritorious war service"
+  },
+  {
+    "traditional": "為上",
+    "simplified": "为上",
+    "pinyin": "wei2 shang4",
+    "english": "to take as priority"
+  },
+  {
+    "traditional": "安全為上",
+    "simplified": "安全为上",
+    "pinyin": "an1 quan2 wei2 shang4",
+    "english": "prioritize safety/safety first (see also 安全第一[an1 quan2 di4 yi1])"
+  },
+  {
+    "traditional": "安全第一",
+    "simplified": "安全第一",
+    "pinyin": "an1 quan2 wei2 shang4",
+    "english": "safety first"
+  },
+  {
+    "traditional": "安全第一",
+    "simplified": "安全第一",
+    "pinyin": "an1 quan2 wei2 shang4",
+    "english": "safety first"
+  },
+  {
+    "traditional": "藍洛鳳",
+    "simplified": "蓝洛凤",
+    "pinyin": "Lan2 Luo4 Feng4",
+    "english": "凌兰[Ling2 Lan2]'s mother in '穿越未来之男人不好当'"
+  },
+  {
+    "traditional": "凌霄",
+    "simplified": "凌霄",
+    "pinyin": "Ling2 Xiao1",
+    "english": "凌兰[Ling2 Lan2]'s father in '穿越未来之男人不好当'"
+  },
+  {
+    "traditional": "凌肅仁",
+    "simplified": "凌肃仁",
+    "pinyin": "Ling2 Su4 Ren2",
+    "english": "凌 branch family head in '穿越未来之男人不好当'"
+  },
+  {
+    "traditional": "拉拉",
+    "simplified": "拉拉",
+    "pinyin": "la1 la5",
+    "english": "pulls (verb)"
+  } 
 ]

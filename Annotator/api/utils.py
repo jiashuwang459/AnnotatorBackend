@@ -12,34 +12,101 @@ NBSP = '\u00a0'
 SESSIONS = False
 
 
+# TODO: find a better term for priority... cause 'low priority' should be bad ^_^"
+# Priority is lower the better, anything over MAX_PRIORITY will be skipped and has been blacklisted
+MAIN_PRIORITY = 100
+CUSTOM_PRIORITY = 200
+USER_PRIORITY = 300
+DEFAULT_PRIORITY = 500
+SURNAME_PRIORITY = 800
+VARIANT_PRIORITY = 900
+MAX_PRIORITY = 1000
+INVALID_PRIORITY = MAX_PRIORITY + 100
+
+
+DEFAULT_OWNER = "default"
+
+
 @transaction.atomic
 def loadDefaultDictionary():
     # f = open('./data/data.json', 'r')
-    f = open(os.path.join(DATA_DIR, 'data.json'))
+    with open(os.path.join(DATA_DIR, 'data2.json')) as f:
+        data = json.load(f)
+        # print(data)
+        for item in data:
+            priority = DEFAULT_PRIORITY
+            if("surname" in item['english']):
+                priority = SURNAME_PRIORITY
 
-    data = json.load(f)
-    # print(data)
+            if("variant of" in item['english']):
+                priority = VARIANT_PRIORITY
+
+            entry = Entry(owner=DEFAULT_OWNER, traditional=item['traditional'],
+                          simplified=item['simplified'], pinyin=item['pinyin'], english=item['english'], priority=priority)
+            entry.save()
+
+
+@transaction.atomic
+def loadCustomEntries():
+    # f = open('./data/data.json', 'r')
+    with open(os.path.join(DATA_DIR, 'custom.json')) as f:
+        data = json.load(f)
+        # print(data)
+        for item in data:
+            entry = Entry(owner="custom", traditional=item['traditional'],
+                          simplified=item['simplified'], pinyin=item['pinyin'], english=item['english'], priority=CUSTOM_PRIORITY)
+            entry.save()
+
+
+@transaction.atomic
+def updatePriorities(data, priority):
     for item in data:
-        entry = Entry(owner="default", traditional=item['traditional'],
-                      simplified=item['simplified'], pinyin=item['pinyin'], english=item['english'])
+        queryset = Entry.objects.filter(traditional=item['traditional'],
+                                        simplified=item['simplified'], pinyin=item['pinyin'])
+        if not queryset.exists():
+            return (False, "Unable to find matching item", item)
+
+        if not queryset.count() == 1:
+            return (False, "multiple matching items for", item)
+
+        entry = queryset.first()
+        entry.priority = priority
         entry.save()
+    return (True, "All Priorities loaded", None)
+
+
+def updateDefaultPriorities():
+    with open(os.path.join(DATA_DIR, 'priority.json')) as f:
+        data = json.load(f)
+        return updatePriorities(data, MAIN_PRIORITY)
+
+
+def updateBlacklistPriorities():
+    with open(os.path.join(DATA_DIR, 'blacklist.json')) as f:
+        data = json.load(f)
+        return updatePriorities(data, INVALID_PRIORITY)
+
+
+def updateCustomPriorities():
+    with open(os.path.join(DATA_DIR, 'priority.json')) as f:
+        data = json.load(f)
+        return updatePriorities(data, CUSTOM_PRIORITY)
 
 
 @transaction.atomic
 def loadDefaultBlacklist():
     # f = open('./data/data.json', 'r')
-    f = open(os.path.join(DATA_DIR, 'blacklist.json'))
-
-    data = json.load(f)
-    # print(data)
-    for item in data:
-        entry = BlacklistEntry(owner="default", traditional=item['traditional'],
-                               simplified=item['simplified'], pinyin=item['pinyin'], english=item['english'], reason=item['reason'])
-        entry.save()
+    with open(os.path.join(DATA_DIR, 'blacklist.json')) as f:
+        data = json.load(f)
+        # print(data)
+        for item in data:
+            entry = BlacklistEntry(owner=DEFAULT_OWNER, traditional=item['traditional'],
+                                   simplified=item['simplified'], pinyin=item['pinyin'], english=item['english'], reason=item['reason'])
+            entry.save()
 
 
 def OwnerOrDefault(owner):
-    return Q(owner="default") | Q(owner=owner)
+    return Q(owner=DEFAULT_OWNER) | Q(owner="custom") | Q(owner=owner)
 
 
 def isChinese(char):
@@ -185,3 +252,63 @@ def parsePinyin(pinyin):
         return word.replace(char, vowels[char][accent], 1).replace('u:', 'ü', 1)
 
     return word
+
+
+def reloadCEDict():
+
+    entries = []
+    with open(os.path.join(DATA_DIR, 'cedict_ts.u8')) as f:
+        text = f.read()
+        lines = text.split('\n')
+        # make each line into a dictionary
+        print("Parsing dictionary...")
+        for line in lines:
+            if line == '' or line.startswith("#") or line.startswith("%"):
+                continue
+            # traditional simplified [pinyin] /english.../
+            split = line.split(' ', 2)
+
+            traditional = split[0]
+            simplified = split[1]
+            rest = split[2].split(']', 1)
+            pinyin = rest[0].lstrip('[')
+            english = rest[1].strip().strip('/')
+            entries.append({
+                'traditional': traditional,
+                'simplified': simplified,
+                'pinyin': pinyin,
+                'english': english
+            })
+
+        print('Done!')
+        with open(os.path.join(DATA_DIR, 'data2.json'), 'w') as out_file:
+            json.dump(entries, out_file, ensure_ascii=False, indent=2)
+        print('Done!Done!')
+
+    return len(entries)
+    # remove entries for surnames from the data (optional):
+
+    # print("Removing Surnames . . .")
+    # remove_surnames()
+
+    # return list_of_dicts
+
+    # If you want to save to a database as JSON objects, create a class Word in the Models file of your Django project:
+
+    # print("Saving to database (this may take a few minutes) . . .")
+    # for one_dict in list_of_dicts:
+    #     new_word = Word(traditional = one_dict["traditional"], simplified = one_dict["simplified"], english = one_dict["english"], pinyin = one_dict["pinyin"], hsk = one_dict["hsk"])
+    #     new_word.save()
+
+    # define functions
+
+    # def remove_surnames():
+    #     for x in range(len(list_of_dicts)-1, -1, -1):
+    #         if "surname " in list_of_dicts[x]['english']:
+    #             if list_of_dicts[x]['traditional'] == list_of_dicts[x+1]['traditional']:
+    #                 list_of_dicts.pop(x)
+
+    # def main():
+
+    # list_of_dicts = []
+    # parsed_dict = main()

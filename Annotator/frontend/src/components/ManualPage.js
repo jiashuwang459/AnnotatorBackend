@@ -1,8 +1,9 @@
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 // import styled from "styled-components";
 import { InputForm } from "./InputForm";
 import { DisplayArea } from "./DisplayArea";
 import { Annotation } from "./Annotation";
+import { Memory } from "./Memory";
 import {
   MdEdit,
   MdFileDownload,
@@ -13,7 +14,8 @@ import {
 import { FiBookOpen, FiDownload } from "react-icons/fi";
 import { TiFolderOpen } from "react-icons/ti";
 import { BsArrowBarRight } from "react-icons/bs";
-import { GiArchiveResearch } from "react-icons/gi";
+import { GiArchiveResearch, GiSpellBook, GiSecretBook } from "react-icons/gi";
+import { RiQuillPenFill } from "react-icons/ri";
 
 import {
   BrowserRouter as Router,
@@ -26,20 +28,9 @@ import {
 // import Grid from "@material-ui/core/Grid";
 // import Typography from "@material-ui/core/Typography";
 // import TextField from "@material-ui/core/TextField";
-import {
-  TextareaAutosize,
-  // FormControl,
-  FormHelperText,
-  TextField,
-  Typography,
-  FormControlLabel,
-  Grid,
-  FormLabel,
-  Input,
-} from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 // import { TextArea } from "semantic-ui-react";
 import styled from "styled-components";
-import { makeStyles, responsiveFontSizes } from "@material-ui/core/styles";
 import Spinner from "react-bootstrap/Spinner";
 import Button from "react-bootstrap/Button";
 import Offcanvas from "react-bootstrap/Offcanvas";
@@ -55,23 +46,6 @@ import ToggleButton from "react-bootstrap/ToggleButton";
 import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 
-// const Container = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   justify-content: center;
-//   padding: 20px;
-//   position: relative;
-//   width: 100%;
-//   height: 100%;
-// `;
-
-// const TextArea = styled(TextareaAutosize)({
-//   resize: "vertical",
-//   flex: "auto",
-//   width: "100%",
-// });
-
 const TextArea = styled.textarea`
   resize: vertical;
   flex: auto;
@@ -83,103 +57,65 @@ const MemoryInput = styled.input``;
 
 const NBSP = "\u00a0";
 
+// This somehow works...?
+// const UpdatingTooltop = React.forwardRef(
+//   ({ popover, children, show: _, ...props }, ref) => {
+//     useEffect(() => {
+//       console.log("updating");
+//       popover.scheduleUpdate();
+//     }, [children, popover]);
+
+//     return (
+//       // <Popover ref={ref} body {...props}>
+//       //   {children}
+//       // </Popover>
+//       <Tooltip ref={ref} {...props}>
+//         {children}
+//       </Tooltip>
+//     );
+//   }
+// );
+
+const UpdatingTooltip = React.forwardRef(
+  ({ popper, children, show: _, ...props }, ref) => {
+    useEffect(() => {
+      console.log("updating!");
+      popper.scheduleUpdate();
+    }, [children, popper]);
+
+    return (
+      <Tooltip ref={ref} {...props}>
+        {children}
+      </Tooltip>
+    );
+  }
+);
+
 export default class ManualPage extends Component {
   constructor(props) {
     super(props);
     this.display = {};
     this.annotation = {};
+    this.memory = {};
     this.fetchOverlay = {};
-    // this.annotateButton = {};
+
     this.state = {
       text: "",
-      code: 0,
-      fetchCode: 0,
       loading: false,
-      open: true,
       dictionaryMode: false,
+      dictEdit: false,
     };
 
-    // this.handleAnnotateButtonClick = this.handleAnnotateButtonClick.bind(this);
-    // this.handleTextChange = this.handleTextChange.bind(this);
-    this.handleMemoryCodeChange = this.handleMemoryCodeChange.bind(this);
-    this.handleFetchMemoryButtonClick =
-      this.handleFetchMemoryButtonClick.bind(this);
-    this.handleSaveMemoryButtonClick =
-      this.handleSaveMemoryButtonClick.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.handleShow = this.handleShow.bind(this);
     this.handleAnnotate = this.handleAnnotate.bind(this);
+    this.handleFetchMemory = this.handleFetchMemory.bind(this);
+    this.handleGetMemoryFragments = this.handleGetMemoryFragments.bind(this);
     this.handleCloseAnnotation = this.handleCloseAnnotation.bind(this);
-    this.handleHideFetchOverlay = this.handleHideFetchOverlay.bind(this);
-    this.handleMemoryInfoButtonClick =
-      this.handleMemoryInfoButtonClick.bind(this);
-    // this.handleModeToggle = this.handleModeToggle.bind(this);
+    this.handleDictEditToggle = this.handleDictEditToggle.bind(this);
     this.handleDictionaryModeToggle =
       this.handleDictionaryModeToggle.bind(this);
   }
-
-  // handleTextChange(e) {
-  //   this.setState(
-  //     {
-  //       text: e.target.value,
-  //     },
-  //     () => {
-  //       console.log(this.state);
-  //     }
-  //   );
-  // }
-
-  handleMemoryCodeChange(e) {
-    this.setState(
-      {
-        fetchCode: e.target.value,
-      }
-      // () => {
-      //   console.log(this.state);
-      // }
-    );
-  }
-
-  // handleAnnotateButtonClick(e) {
-  //   console.log("annotate button clicked");
-  //   console.log(e);
-  //   console.log(this.state);
-  //   if (this.state.loading) {
-  //     console.log("Already loading.");
-  //     return;
-  //   }
-  //   this.setState({
-  //     loading: true,
-  //   });
-
-  //   const requestOptions = {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       text: this.state.text,
-  //     }),
-  //   };
-
-  //   fetch("/api/annotate", requestOptions)
-  //     .then((response) => {
-  //       console.log(response.status); // Will show you the status
-  //       if (!response.ok) {
-  //         throw new Error("HTTP status " + response.status);
-  //       }
-  //       return response.json();
-  //     })
-  //     .then((data) => {
-  //       console.log(data); //TODO： validation for all data
-  //       this.display.updateDisplay(data);
-  //     })
-  //     .finally(() => {
-  //       this.setState({
-  //         loading: false,
-  //       });
-  //     });
-  // }
 
   handleAnnotate = async (text) => {
     this.setState(
@@ -189,14 +125,14 @@ export default class ManualPage extends Component {
         show: false,
       },
       async () => {
-        this.display.resetDisplay();
-
-        var paragraphs = text.split("\n");
-        for (var i = 0; i < paragraphs.length - 1; i++) {
-          paragraphs[i] += "\n";
-        }
-
         try {
+          this.display.resetDisplay();
+
+          var paragraphs = text.split("\n");
+          for (var i = 0; i < paragraphs.length - 1; i++) {
+            paragraphs[i] += "\n";
+          }
+
           for (var paragraph of paragraphs) {
             console.log(paragraph);
             if (paragraph == "") {
@@ -238,111 +174,33 @@ export default class ManualPage extends Component {
     );
   };
 
-  handleFetchMemoryButtonClick() {
-    console.log("fetch button clicked");
-    // console.log(this.state);
-    // this.hideFetchPopover();
-    this.handleHideFetchOverlay();
-
-    const requestOptions = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    var params = new URLSearchParams({
-      code: this.state.fetchCode,
-    });
-    fetch("/api/memory/fetch?" + params.toString(), requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        this.setState(
-          {
-            code: data["code"],
-          },
-          () => {
-            console.log(this.state);
-          }
-        );
-        this.display.updateMemory(data["fragments"]);
-      });
+  handleGetMemoryFragments(){
+    return this.display.getMemory()
   }
 
-  handleSaveMemoryButtonClick() {
-    console.log("save button clicked");
-    // console.log(this.state);
-
-    const requestOptions = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        fragments: this.display.getMemory(),
-      }),
-    };
-    console.log(requestOptions);
-
-    fetch("/api/memory/save", requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        this.setState(
-          {
-            code: data["code"],
-          },
-          () => {
-            console.log(this.state);
-          }
-        );
-      });
+  handleFetchMemory(fragments) {
+    this.display.updateMemory(fragments);
   }
 
   handleShow() {
     console.log("show");
-    this.setState(
-      {
-        show: true,
-      }
-      // () => console.log(this.state)
-    );
+    this.setState({
+      show: true,
+    });
   }
 
   handleClose() {
     console.log("close");
-    this.setState(
-      {
-        show: false,
-      }
-      // () => console.log(this.state)
-    );
+    this.setState({
+      show: false,
+    });
   }
 
   handleCloseAnnotation(text) {
     console.log("closeAnnotation");
-    this.setState(
-      {
-        text: text,
-      }
-      // () => console.log(this.state)
-    );
-  }
-
-  handleHideFetchOverlay() {
-    console.log("hideFetchOverlay");
-
-    this.setState(
-      {
-        fetchOverlayShow: false,
-      }
-      // () => console.log(this.state)
-    );
-  }
-
-  handleMemoryInfoButtonClick() {
-    console.log("memoryInfo");
+    this.setState({
+      text: text,
+    });
   }
 
   handleDictionaryModeToggle(e) {
@@ -355,6 +213,20 @@ export default class ManualPage extends Component {
       () => {
         // console.log(this.state);
         this.display.setDictMode(this.state.dictionaryMode);
+      }
+    );
+  }
+
+  handleDictEditToggle(e) {
+    console.log("dictionary edit toggle");
+    console.log(e);
+    this.setState(
+      {
+        dictEdit: e.currentTarget.checked,
+      },
+      () => {
+        // console.log(this.state);
+        this.display.setDictEdit(this.state.dictEdit);
       }
     );
   }
@@ -374,183 +246,96 @@ export default class ManualPage extends Component {
             aria-label="Toolbar with Button groups"
             style={{ gap: "20px" }}
           >
-            <InputGroup>
-              <InputGroup.Text>
-                Current{NBSP}Memory{NBSP}Code:
-              </InputGroup.Text>
-              <FormControl
-                type="number"
-                min="0"
-                value={this.state.code}
-                onChange={this.handleMemoryCodeChange}
-                readOnly
-                style={{ width: "100px" }}
-              />
+            <Memory
+              ref={(m) => (this.memory = m)}
+              onUpdateMemory={this.handleFetchMemory}
+              fragments={this.handleGetMemoryFragments}
+            />
 
+            <InputGroup aria-label="Dictionary Group">
+              {/*TODO: determine if we need this label here... or maybe take a way the icon button? but I like the button... :') */}
+              <InputGroup.Text>Dictionary</InputGroup.Text>
+              {/* <InputGroup.Text style={{ width: "75px" }}>
+                {this.state.dictionaryMode ? "ON" : "OFF"}
+              </InputGroup.Text> */}
               <OverlayTrigger
                 placement="bottom"
                 overlay={
-                  <Tooltip id={`tooltip-mem-load-button`}>
-                    Load Memory Code
+                  <Tooltip id="tooltip-disabled">
+                    {this.state.dictionaryMode ? "Close" : "Open"}
+                    {NBSP}Dictionary
                   </Tooltip>
                 }
               >
-                <Button
-                  variant="outline-secondary"
-                  onClick={() => this.setState({ fetchOverlayShow: true })}
-                  ref={(b) => {
-                    this.fetchButton = b;
-                  }}
+                <ToggleButton
+                  id="toggle_dict"
+                  type="checkbox"
+                  variant="outline-success"
+                  checked={this.state.dictionaryMode}
+                  onChange={this.handleDictionaryModeToggle}
                 >
-                  <TiFolderOpen />
-                </Button>
-              </OverlayTrigger>
-              <Overlay
-                placement="bottom"
-                show={this.state.fetchOverlayShow}
-                target={ReactDOM.findDOMNode(this.fetchButton)}
-                onHide={this.handleHideFetchOverlay}
-                rootClose
-              >
-                <Popover>
-                  <Popover.Header>Load Memory Code</Popover.Header>
-                  <Popover.Body>
-                    <InputGroup>
-                      <InputGroup.Text>Code:</InputGroup.Text>
-                      <FormControl
-                        type="number"
-                        min={0}
-                        value={this.state.fetchCode}
-                        onChange={this.handleMemoryCodeChange}
-                        style={{ textAlign: "center", width: "100px" }}
-                      />
-                      <Button
-                        variant="outline-secondary"
-                        onClick={this.handleFetchMemoryButtonClick}
-                      >
-                        <BsArrowBarRight></BsArrowBarRight>
-                      </Button>
-                    </InputGroup>
-                  </Popover.Body>
-                </Popover>
-              </Overlay>
-              <OverlayTrigger
-                placement="bottom"
-                overlay={
-                  <Tooltip id={`tooltip-mem-save-button`}>
-                    Save Current Memory
-                  </Tooltip>
-                }
-              >
-                <Button
-                  variant="outline-secondary"
-                  onClick={this.handleSaveMemoryButtonClick}
-                >
-                  <MdSave />
-                </Button>
+                  {this.state.dictionaryMode ? (
+                    <GiSpellBook></GiSpellBook>
+                  ) : (
+                    <GiSecretBook></GiSecretBook>
+                  )}
+                </ToggleButton>
               </OverlayTrigger>
               <OverlayTrigger
                 placement="bottom"
                 overlay={
-                  <Tooltip id={`tooltip-mem-info-button`}>
-                    Info on Memory Codes
+                  <Tooltip id="tooltip-disabled">
+                    {this.state.dictEdit ? "No Edit" : "Edit"}
+                    {NBSP}Dictionary
                   </Tooltip>
                 }
               >
-                <Button
-                  variant="outline-secondary"
-                  onClick={this.handleMemoryInfoButtonClick}
+                <ToggleButton
+                  id="toggle_edit"
+                  type="checkbox"
+                  variant="outline-success"
+                  checked={this.state.dictEdit}
+                  onChange={this.handleDictEditToggle}
                 >
-                  <MdInfoOutline />
-                </Button>
+                  <MdEdit></MdEdit>
+                </ToggleButton>
               </OverlayTrigger>
             </InputGroup>
-
-            <Offcanvas
-              show={this.state.show}
-              onHide={this.handleClose}
-              placement="top"
-              style={{ height: "fit-content", padding: "0px 10px 10px 10px" }}
-            >
-              <Offcanvas.Header closeButton>
-                <Offcanvas.Title style={{ marginInline: "auto" }}>
-                  Manual Page
-                </Offcanvas.Title>
-              </Offcanvas.Header>
-              <Offcanvas.Body>
-                <Grid container style={{ padding: "0px", margin: "0px" }}>
-                  <Annotation
-                    ref={(a) => (this.annotation = a)}
-                    onAnnotate={this.handleAnnotate}
-                    onClose={this.handleCloseAnnotation}
-                    text={this.state.text}
-                  />
-                  {/* <Grid
-                    container
-                    justifyContent="center"
-                    alignItems="center"
-                    style={{ height: "auto" }}
-                  >
-                    <Grid item align="center">
-                      <TextField
-                        required={true}
-                        type="integer"
-                        onChange={this.handleMemoryCodeChange}
-                        value={this.state.fetchCode}
-                        inputProps={{
-                          style: { textAlign: "center" },
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs={2} align="center" style={{ padding: "5px" }}>
-                      <Button
-                        variant="primary"
-                        onClick={(e) => {
-                          // this.disabled = true;
-                          this.handleFetchMemoryButtonClick(this, e);
-                        }}
-                      >
-                        Fetch
-                      </Button>
-                    </Grid>
-                    <Grid item xs={2} align="center" style={{ padding: "5px" }}>
-                      <Button
-                        variant="primary"
-                        onClick={this.handleSaveMemoryButtonClick}
-                      >
-                        Save
-                      </Button>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={3}
-                      align="center"
-                      style={{ padding: "10px" }}
-                    >
-                      <Typography
-                        component="h4"
-                        varient="h4"
-                        style={{ width: "fit-content" }}
-                      >
-                        Current{NBSP}Code:{NBSP}
-                        {this.state.code}
-                      </Typography>
-                    </Grid>
-                  </Grid>*/}
-                </Grid>
-              </Offcanvas.Body>
-            </Offcanvas>
-            <ButtonGroup aria-label="First group">
-              {this.state.loading ? (
-                <OverlayTrigger
-                  placement="bottom"
-                  overlay={
-                    <Tooltip id="tooltip-disabled">
-                      Fetching your annotations...
-                    </Tooltip>
-                  }
-                >
-                  <span className="d-inline-block">
+            <ButtonGroup aria-label="Manual Annotation Group">
+              <Offcanvas
+                show={this.state.show}
+                onHide={this.handleClose}
+                placement="top"
+                style={{ height: "fit-content", padding: "0px 10px 10px 10px" }}
+              >
+                <Offcanvas.Header closeButton>
+                  <Offcanvas.Title style={{ marginInline: "auto" }}>
+                    Manual Page
+                  </Offcanvas.Title>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                  <Grid container style={{ padding: "0px", margin: "0px" }}>
+                    <Annotation
+                      ref={(a) => (this.annotation = a)}
+                      onAnnotate={this.handleAnnotate}
+                      onClose={this.handleCloseAnnotation}
+                      text={this.state.text}
+                    />
+                  </Grid>
+                </Offcanvas.Body>
+              </Offcanvas>
+              <OverlayTrigger
+                placement="bottom"
+                overlay={
+                  <UpdatingTooltip id="tooltip-disabled-manual">
+                    {this.state.loading
+                      ? "Fetching your annotations..."
+                      : "Manual Entry"}
+                  </UpdatingTooltip>
+                }
+              >
+                <span className="d-inline-block">
+                  {this.state.loading ? (
                     <Button
                       variant="primary"
                       onClick={this.handleShow}
@@ -567,39 +352,14 @@ export default class ManualPage extends Component {
                         <span className="visually-hidden">Loading...</span>
                       </Spinner>
                     </Button>
-                  </span>
-                </OverlayTrigger>
-              ) : (
-                <Button variant="primary" onClick={this.handleShow}>
-                  <FiBookOpen />
-                </Button>
-              )}
-            </ButtonGroup>
-            <InputGroup>
-              <InputGroup.Text>Dictionary Mode:</InputGroup.Text>
-              <InputGroup.Text>
-                {this.state.dictionaryMode ? "ON" : "OFF"}
-              </InputGroup.Text>
-              <OverlayTrigger
-                placement="bottom"
-                overlay={
-                  <Tooltip id="tooltip-disabled">
-                    Toggle{NBSP}Dictionary{NBSP}Mode{" "}
-                    {this.state.dictionaryMode ? "ON" : "OFF"}
-                  </Tooltip>
-                }
-              >
-                <ToggleButton
-                  id="toggle"
-                  type="checkbox"
-                  variant="outline-success"
-                  checked={this.state.dictionaryMode}
-                  onChange={this.handleDictionaryModeToggle}
-                >
-                  <GiArchiveResearch></GiArchiveResearch>
-                </ToggleButton>
+                  ) : (
+                    <Button variant="primary" onClick={this.handleShow}>
+                      <RiQuillPenFill />
+                    </Button>
+                  )}
+                </span>
               </OverlayTrigger>
-            </InputGroup>
+            </ButtonGroup>
           </ButtonToolbar>
         </Grid>
         <Grid container style={{ height: "100%", overflowY: "hidden" }}>
@@ -614,11 +374,3 @@ export default class ManualPage extends Component {
     );
   }
 }
-
-// <Container>
-//   <InputForm
-//     ref={(i) => (this.input = i)}
-//     onSubmit={this.triggerAnnotate.bind(this)}
-//   />
-// <DisplayArea ref={(d) => (this.display = d)} />
-// </Container>
