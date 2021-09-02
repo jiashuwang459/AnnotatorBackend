@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 // import styled from "styled-components";
-import { InputForm } from "./InputForm";
 import { DisplayArea } from "./DisplayArea";
 import { MdEdit } from "react-icons/md";
 import {

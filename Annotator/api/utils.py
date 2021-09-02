@@ -59,6 +59,18 @@ def loadCustomEntries():
 
 
 @transaction.atomic
+def loadDefaultBlacklist():
+    # f = open('./data/data.json', 'r')
+    with open(os.path.join(DATA_DIR, 'blacklist.json')) as f:
+        data = json.load(f)
+        # print(data)
+        for item in data:
+            entry = BlacklistEntry(owner=DEFAULT_OWNER, traditional=item['traditional'],
+                                   simplified=item['simplified'], pinyin=item['pinyin'], english=item['english'], reason=item['reason'])
+            entry.save()
+
+
+@transaction.atomic
 def updatePriorities(data, priority):
     for item in data:
         queryset = Entry.objects.filter(traditional=item['traditional'],
@@ -88,21 +100,9 @@ def updateBlacklistPriorities():
 
 
 def updateCustomPriorities():
-    with open(os.path.join(DATA_DIR, 'priority.json')) as f:
+    with open(os.path.join(DATA_DIR, 'custom.json')) as f:
         data = json.load(f)
         return updatePriorities(data, CUSTOM_PRIORITY)
-
-
-@transaction.atomic
-def loadDefaultBlacklist():
-    # f = open('./data/data.json', 'r')
-    with open(os.path.join(DATA_DIR, 'blacklist.json')) as f:
-        data = json.load(f)
-        # print(data)
-        for item in data:
-            entry = BlacklistEntry(owner=DEFAULT_OWNER, traditional=item['traditional'],
-                                   simplified=item['simplified'], pinyin=item['pinyin'], english=item['english'], reason=item['reason'])
-            entry.save()
 
 
 def OwnerOrDefault(owner):

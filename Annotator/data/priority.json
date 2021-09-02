@@ -32,12 +32,13 @@
     "english": "that"
   },
   {
-    "id": 58857,
+    "id": 298636,
     "owner": "default",
     "traditional": "比",
     "simplified": "比",
-    "pinyin": "bi1",
-    "english": "euphemistic variant of 屄[bi1]"
+    "pinyin": "bi3",
+    "english": "to compare/(followed by a noun and adjective) more {adj.} than {noun}/ratio/to gesture/(Taiwan pr. [bi4] in some compounds derived from Classical Chinese)",
+    "priority": 500
   },
   {
     "id": 27137,
@@ -554,5 +555,21 @@
     "simplified": "圈",
     "pinyin": "quan1",
     "english": "circle/ring/loop/classifier for loops, orbits, laps of race etc/CL:個|个[ge4]/to surround/to circle"
+  },
+  {
+    "id": 339837,
+    "owner": "default",
+    "traditional": "越",
+    "simplified": "越",
+    "pinyin": "yue4",
+    "english": "to exceed/to climb over/to surpass/the more... the more"
+  },
+  {
+    "id": 276680,
+    "owner": "default",
+    "traditional": "廣",
+    "simplified": "广",
+    "pinyin": "guang3",
+    "english": "wide/numerous/to spread"
   }
 ]

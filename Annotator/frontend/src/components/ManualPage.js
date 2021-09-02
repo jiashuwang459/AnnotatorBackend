@@ -1,9 +1,9 @@
 import React, { Component, useEffect } from "react";
 // import styled from "styled-components";
-import { InputForm } from "./InputForm";
 import { DisplayArea } from "./DisplayArea";
 import { Annotation } from "./Annotation";
 import { Memory } from "./Memory";
+import { UpdatingTooltip } from "./UpdatingTooltip";
 import {
   MdEdit,
   MdFileDownload,
@@ -46,6 +46,7 @@ import ToggleButton from "react-bootstrap/ToggleButton";
 import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 
+
 const TextArea = styled.textarea`
   resize: vertical;
   flex: auto;
@@ -56,40 +57,6 @@ const TextArea = styled.textarea`
 const MemoryInput = styled.input``;
 
 const NBSP = "\u00a0";
-
-// This somehow works...?
-// const UpdatingTooltop = React.forwardRef(
-//   ({ popover, children, show: _, ...props }, ref) => {
-//     useEffect(() => {
-//       console.log("updating");
-//       popover.scheduleUpdate();
-//     }, [children, popover]);
-
-//     return (
-//       // <Popover ref={ref} body {...props}>
-//       //   {children}
-//       // </Popover>
-//       <Tooltip ref={ref} {...props}>
-//         {children}
-//       </Tooltip>
-//     );
-//   }
-// );
-
-const UpdatingTooltip = React.forwardRef(
-  ({ popper, children, show: _, ...props }, ref) => {
-    useEffect(() => {
-      console.log("updating!");
-      popper.scheduleUpdate();
-    }, [children, popper]);
-
-    return (
-      <Tooltip ref={ref} {...props}>
-        {children}
-      </Tooltip>
-    );
-  }
-);
 
 export default class ManualPage extends Component {
   constructor(props) {

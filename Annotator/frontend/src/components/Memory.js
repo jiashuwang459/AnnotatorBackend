@@ -1,6 +1,5 @@
 import React, { Component, useEffect } from "react";
 // import styled from "styled-components";
-// import { InputForm } from "./InputForm";
 // import { DisplayArea } from "./DisplayArea";
 // import { Annotation } from "./Annotation";
 import {
@@ -180,7 +179,11 @@ export class Memory extends Component {
   }
 
 
-  //TODO: consider adding a lock... so you can overwrite current memories
+  //TODO: consider adding a lock... so you can overwrite current memories and just remember one code.
+  //TODO: add memory info/instructions
+  //TODO: Add a page where you can view/edit(add/remove) your memories.
+  //TODO: maybe have some sorta history?
+  //TODO: change code to some passphrase or email?
   render() {
     return (
       <InputGroup aria-label="Memory Group">

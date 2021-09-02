@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import JSONField
 from .models import BlacklistEntry, ChineseEntry, Entry, Memory, Fragment
-from .utils import isChinese
+from .utils import isChinese, parsePinyin
 
 
 class EntrySerializer(serializers.ModelSerializer):
@@ -115,6 +115,39 @@ class MemoryCreateSerializer(serializers.ModelSerializer):
 
 class AnnotationSerializer(serializers.Serializer):
     text = serializers.CharField(allow_blank=True, trim_whitespace=False)
+
+
+
+# class PinyinField(serializers.CharField):
+#     default_error_messages = {
+#         'incorrect_type': 'Incorrect type. Expected a string, but got {input_type}',
+#         'incorrect_format': 'Incorrect format. Expected `ce(?,?)`.',
+#         'not_single_char': 'cchar was not a single char',
+#         'not_chinese_char': "cchar wasn't a chinese character",
+#     }
+
+#     def to_representation(self, value):
+#         return " ".join([parsePinyin(pinyin) for pinyin in value.split(" ")])
+        
+
+#     def to_internal_value(self, data):
+#         if not isinstance(data, str):
+#             self.fail('incorrect_type', input_type=type(data).__name__)
+
+#         if not re.match(r"^ce\(.*,.*\)$", data):
+#             self.fail('incorrect_format')
+
+#         data = data.strip('ce(').rstrip(')')
+#         pinyin, cchar = [col for col in data.split(',')]
+
+#         if len(cchar) > 1:
+#             self.fail('not_single_char')
+
+#         if not isChinese(cchar):
+#             self.fail('not_chinese_char')
+
+#         return ChineseEntry(pinyin, cchar)
+
 
 
 # class ChineseEntryField(serializers.Field):

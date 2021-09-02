@@ -1,8 +1,6 @@
 import React from "react";
 import { List } from "semantic-ui-react";
 import styled from "styled-components";
-import { Trie } from "./Trie.js";
-import { DictionaryStore } from "./DictionaryStore.js";
 import { MemoryRouter } from "react-router-dom";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
@@ -20,6 +18,7 @@ const Container = styled.div`
   height: 100%;
   border: green;
   border-style: double;
+  font-size: large;
 `;
 
 const ButtonContainer = styled.div`
@@ -259,7 +258,7 @@ export class DisplayArea extends React.Component {
     return (
       <Popover id={`phrase-popover`} {...props}>
         <Popover.Header as="h3">
-          {phrase.cchars.map((item) => item.cchar)}
+          {phrase.cchars.map((item) => item.pinyin).join(" ")}
         </Popover.Header>
         <Popover.Body>{phrase.english}</Popover.Body>
       </Popover>
@@ -357,7 +356,6 @@ export class DisplayArea extends React.Component {
                               );
                             } else {
                               return (
-                                //TODO: add a phrase container?
                                 <CharacterContainer
                                   key={index2}
                                   onClick={(e) =>
@@ -413,7 +411,6 @@ export class DisplayArea extends React.Component {
                       );
                     } else {
                       return (
-                        //TODO: add a phrase container?
                         <CharacterContainer
                           key={index}
                           onClick={(e) => this.handleCharacterClick(item, e)}

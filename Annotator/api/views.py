@@ -5,6 +5,7 @@ from collections import namedtuple
 from pprint import pprint
 
 from django.db.models import Q, query
+from django.db.models.manager import BaseManager
 from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework import filters, generics, serializers, status
@@ -54,9 +55,20 @@ class EntryView(generics.ListAPIView):
         """
         queryset = Entry.objects.all()
         phrase = self.request.query_params.get('phrase')
+        # individualChars = self.request.query_params.get('individualChars')
         if phrase is not None:
             queryset = queryset.filter(
-                Q(simplified=phrase) | Q(traditional=phrase))
+                Q(simplified=phrase) | Q(traditional=phrase)).order_by("priority")
+            # if individualChars is not None:
+            #     # queryset = None
+            #     unionset = None
+            #     item = queryset.first()
+            #     for cchar in phrase:
+            #         subset = queryset.filter(
+            #             Q(simplified=cchar) | Q(traditional=cchar)).order_by("priority")
+            #     unionset = subset if unionset is None else unionset.union(subset)
+            #     return unionset
+
             return queryset
         if self.request.query_params.get('search') is not None:
             return queryset
@@ -496,7 +508,8 @@ class CleanMemoryView(APIView):
         # return Response({"OK": "counted and list current memory codes", "count": count, "data": memory}, status=status.HTTP_200_OK)
 
         # memory = Memory.objects.filter(code__in=codes)
-        memoryEmpty = Memory.objects.filter(fragments=None).exclude(code=0).values_list("code", flat=True)
+        memoryEmpty = Memory.objects.filter(fragments=None).exclude(
+            code=0).values_list("code", flat=True)
         countEmpty = memoryEmpty.count()
         # memory.delete()
         return Response({
@@ -604,6 +617,8 @@ class ReloadCustomEntryView(APIView):
             return Response({'Bad Request': 'Unable to delete custom entries'}, status=status.HTTP_400_BAD_REQUEST)
 
         loadCustomEntries()
+        updateCustomPriorities()
+
         print("created new custom entries")
         queryset = Entry.objects.filter(owner=owner)
         if not queryset.exists():

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import styled from "styled-components";
-import { InputForm } from "./InputForm";
 import { DisplayArea } from "./DisplayArea";
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -10,6 +10,7 @@ import {
   Redirect,
 } from "react-router-dom";
 import ManualPage from "./ManualPage";
+import DictionaryPage from "./DictionaryPage";
 
 const Container = styled.div`
   display: flex;
@@ -50,6 +51,7 @@ export default class Home extends Component {
             <p> This is home</p>
           </Route>
           <Route exact path="/manual" component={ManualPage}></Route>
+          <Route exact path="/dictionary" component={DictionaryPage}></Route>
         </Switch>
       </Router>
     );

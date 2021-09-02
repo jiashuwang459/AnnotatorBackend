@@ -31,3 +31,36 @@ body {
   margin: 4px;
   background: aliceblue;
 }
+
+.Collapsible {
+  border: black;
+  border-style: solid;
+}
+
+/* .Collapsible__trigger {
+  margin: 5px;
+} */
+
+.Collapsible__trigger {
+  display: block;
+  font-weight: 400;
+  margin: 5px;
+  text-decoration: none;
+  position: relative;
+  padding: 10px;
+  background:lightpink;
+}
+
+.Collapsible__trigger::after {
+  font-family: "FontAwesome";
+  content: "\f107";
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: block;
+  transition: transform 300ms;
+}
+
+.Collapsible__trigger.is-open::after {
+  transform: rotateZ(180deg);
+}

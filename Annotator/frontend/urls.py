@@ -4,5 +4,6 @@ from .views import index
 
 urlpatterns = [
     path('', index),
-    path('manual', index)
+    path('manual', index),
+    path('dictionary', index)
 ]
