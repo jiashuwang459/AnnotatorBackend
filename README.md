@@ -5,10 +5,20 @@
 I recommend creating a python venv to work on this project.
 NOTE: I'm currently using python 3.9.1
 
+
+### From a fresh Ubuntu installation on Windows
+
+Using python 3.8.10
+
+```bash
+sudo apt-get update
+sudo apt install python3.8-venv
+```
+
 ### Creating a python venv
 When you're in the base directory, `AnnotatorBackend`
 
-```
+```bash
 python3 -m venv chinese-env
 . ./setenv
 ```
