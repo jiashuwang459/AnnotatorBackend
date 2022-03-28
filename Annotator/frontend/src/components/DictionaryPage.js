@@ -220,21 +220,38 @@ export default class DictionaryPage extends Component {
     var char = "";
     if (word.includes("a")) {
       char = "a";
+    } else if (word.includes("A")) {
+      char = "A";
     } else if (word.includes("o")) {
       char = "o";
+    } else if (word.includes("O")) {
+      char = "O";
     } else if (word.includes("e")) {
       char = "e";
+    } else if (word.includes("E")) {
+      char = "E";
     } else if (word.includes("iu")) {
+      char = "u";
+    } else if (word.includes("Iu")) {
       char = "u";
     } else if (word.includes("ui")) {
       char = "i";
+    } else if (word.includes("Ui")) {
+      char = "i";
     } else if (word.includes("i")) {
       char = "i";
+    } else if (word.includes("I")) {
+      char = "I";
     } else if (word.includes("u:")) {
       // confirmed by hand that u and u: don't appear in the same word
       char = "u:";
+    } else if (word.includes("U:")) {
+      // confirmed by hand that u and u: don't appear in the same word
+      char = "U:";
     } else if (word.includes("u")) {
       char = "u";
+    } else if (word.includes("U")) {
+      char = "U";
     } else {
       console.error("found pinyin with no vowel: " + pinyin);
     }
@@ -242,7 +259,8 @@ export default class DictionaryPage extends Component {
     if (this.vowels[char]) {
       return word
         .replace(char, this.vowels[char][accent], 1)
-        .replace("u:", "ü", 1);
+        .replace("u:", this.vowels["u:"]["5"], 1)
+        .replace("U:", this.vowels["U:"]["5"], 1);
     }
 
     return word;
@@ -327,11 +345,7 @@ export default class DictionaryPage extends Component {
           {this.state.individual.length === 0 ? (
             ""
           ) : (
-            <Collapsible
-              trigger="Individual Chars"
-              transitionTime={200}
-              open
-            >
+            <Collapsible trigger="Individual Chars" transitionTime={200} open>
               <IndividualView>
                 {this.state.individual.map((ccharEntries, idx) => (
                   <IndividualCharView key={idx}>

@@ -20,11 +20,11 @@ body {
   display: flex;
 }
 
-.jiashu_no_outline {
+.dictionary_no_outline {
   margin: 5px;
 }
 
-.jiashu_outline {
+.dictionary_outline {
   border: darkslateblue;
   border-style: dashed;
   border-width: thin;
@@ -48,7 +48,7 @@ body {
   text-decoration: none;
   position: relative;
   padding: 10px;
-  background:lightpink;
+  background: lightpink;
 }
 
 .Collapsible__trigger::after {
@@ -63,4 +63,44 @@ body {
 
 .Collapsible__trigger.is-open::after {
   transform: rotateZ(180deg);
+}
+
+#arrow,
+#arrow::before {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: inherit;
+}
+
+#arrow {
+  visibility: hidden;
+}
+
+#arrow::before {
+  visibility: visible;
+  content: "";
+  transform: rotate(45deg);
+}
+
+/* Hide the popper when the reference is hidden */
+#tooltip[data-popper-reference-hidden] {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#tooltip[data-popper-placement^="top"] > #arrow {
+  bottom: -4px;
+}
+
+#tooltip[data-popper-placement^="bottom"] > #arrow {
+  top: -4px;
+}
+
+#tooltip[data-popper-placement^="left"] > #arrow {
+  right: -4px;
+}
+
+#tooltip[data-popper-placement^="right"] > #arrow {
+  left: -4px;
 }

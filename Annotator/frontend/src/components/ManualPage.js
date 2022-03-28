@@ -193,7 +193,7 @@ export default class ManualPage extends Component {
       },
       () => {
         // console.log(this.state);
-        this.display.setDictEdit(this.state.dictEdit);
+        // this.display.setDictEdit(this.state.dictEdit);
       }
     );
   }
