@@ -37,7 +37,7 @@ class BlacklistEntryView(generics.ListCreateAPIView):
 class EntryView(generics.ListAPIView):
     class DynamicSearchFilter(filters.SearchFilter):
         def get_search_fields(self, view, request):
-            return request.GET.getlist('search_fields', ['simplified', 'traditional'])
+            return request.GET.getlist('search_fields', ['simplified', 'traditional', 'english'])
 
     # search_fields = ['simplified', 'traditional']
     # filter_backends = (filters.SearchFilter, )
@@ -306,8 +306,7 @@ class AnnotationView(APIView):
         print(trie)
 
         fragments = [text]
-        separators = ['。', '：', '？', ',', '、',
-                      '“', '”', '，', '）', '（', ' ', '\n']
+        separators = "。：？,、“”，）（ )(?:.,\"\'\n"
         for separator in separators:
             fragments = self.split(fragments, separator)
 
@@ -403,6 +402,7 @@ class AnnotationView(APIView):
             #     phrase, PhraseEntry) else ChineseEntrySerializer(phrase).data for phrase in data]
             responseData = [PhraseEntrySerializer(phrase).data if isinstance(phrase, PhraseEntry)
                             else ChineseEntrySerializer(phrase).data for phrase in data]
+            # responseData = [[ChineseEntrySerializer(entry).data] if isinstance(entry,ChineseEntry) else [PhraseEntrySerializer(phrase).data for phrase in entry] for entry in data]
             return Response(responseData, status=status.HTTP_200_OK)
 
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)

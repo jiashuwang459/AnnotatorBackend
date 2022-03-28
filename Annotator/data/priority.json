@@ -571,5 +571,14 @@
     "simplified": "广",
     "pinyin": "guang3",
     "english": "wide/numerous/to spread"
+  },
+  {
+    "id": 6224,
+    "owner": "default",
+    "traditional": "以",
+    "simplified": "以",
+    "pinyin": "yi3",
+    "english": "to use/by means of/according to/in order to/because of/at (a certain date or place)",
+    "priority": 500
   }
 ]

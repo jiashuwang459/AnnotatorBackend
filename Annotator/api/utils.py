@@ -209,6 +209,9 @@ def parsePinyin(pinyin):
 
     if pinyin == "r5":
         return "r"
+    
+    if pinyin == "R5":
+        return "R"
 
     word = pinyin[:-1]
     accent = pinyin[-1]
@@ -228,28 +231,45 @@ def parsePinyin(pinyin):
     char = ""
     if "a" in word:
         char = "a"
+    elif "A" in word:
+        char = "A"
     elif "o" in word:
         char = "o"
+    elif "O" in word:
+        char = "O"
     elif "e" in word:
         char = "e"
+    elif "E" in word:
+        char = "E"
     elif "iu" in word:
+        char = "u"
+    elif "Iu" in word:
         char = "u"
     elif "ui" in word:
         char = "i"
+    elif "Ui" in word:
+        char = "i"
     elif "i" in word:
         char = "i"
+    elif "I" in word:
+        char = "I"
     elif "u:" in word:
         # confirmed that u and u: don't appear in the same word, so this ordering is fine
         char = "u:"
+    elif "U:" in word:
+        # confirmed that u and u: don't appear in the same word, so this ordering is fine
+        char = "U:"
     elif "u" in word:
         char = "u"
+    elif "U" in word:
+        char = "U"
     else:
         print("ERROR: found pinyin with no vowel: " + pinyin)
         char = "?"
 
     # print(f"char: {char}")
     if vowels[char]:
-        return word.replace(char, vowels[char][accent], 1).replace('u:', 'ü', 1)
+        return word.replace(char, vowels[char][accent], 1).replace('u:', vowels['u:']["5"], 1).replace('U:', vowels['U:']["5"], 1)
 
     return word
 
