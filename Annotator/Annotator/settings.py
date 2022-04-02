@@ -36,7 +36,7 @@ DEBUG = False
 if DEBUG:
     ALLOWED_HOSTS = ['127.0.0.1:8000', 'localhost']
 else:
-    ALLOWED_HOSTS = ['https://chinese-annotator.herokuapp.com']
+    ALLOWED_HOSTS = ['https://chinese-annotator.herokuapp.com', 'chinese-annotator.netlify.app']
 
 
 # Application definition
