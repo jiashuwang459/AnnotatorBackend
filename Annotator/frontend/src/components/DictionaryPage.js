@@ -24,7 +24,7 @@ import {
   Link,
   Redirect,
 } from "react-router-dom";
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 // import { TextArea } from "semantic-ui-react";
 import styled from "styled-components";
 import Spinner from "react-bootstrap/Spinner";
@@ -41,6 +41,7 @@ import Overlay from "react-bootstrap/Overlay";
 import ToggleButton from "react-bootstrap/ToggleButton";
 import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
+import axios from "axios";
 
 const Container = styled.div`
   display: flex;
@@ -130,19 +131,33 @@ export default class DictionaryPage extends Component {
     console.log(this.state.cchars);
     // alert("You are submitting " + this.state.cchars);
 
-    const requestOptions = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
+    // const requestOptions = {
+    //   method: "GET",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    // };
 
     var params = new URLSearchParams({
       phrase: this.state.cchars,
     });
 
-    fetch("/api/entry?" + params.toString(), requestOptions)
-      .then((response) => response.json())
+    // fetch("/api/entry?" + params.toString(), requestOptions)
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     this.setState(
+    //       {
+    //         definitions: data,
+    //       },
+    //       () => {
+    //         console.log(data);
+    //       }
+    //     );
+    //   });
+
+    axios
+      .get("/api/entry?" + params.toString())
+      .then((response) => response.data)
       .then((data) => {
         this.setState(
           {
@@ -157,22 +172,26 @@ export default class DictionaryPage extends Component {
     var manyEntries = [];
     for (var cchar of this.state.cchars) {
       console.log("looking at cchar: " + cchar);
-      const requestOptions = {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
+      // const requestOptions = {
+      //   method: "GET",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // };
 
       var params = new URLSearchParams({
         phrase: cchar,
       });
 
-      var response = await fetch(
-        "/api/entry?" + params.toString(),
-        requestOptions
-      );
-      const json = await response.json();
+      // var response = await fetch(
+      //   "/api/entry?" + params.toString(),
+      //   requestOptions
+      // );
+      // const json = await response.json();
+
+      const response = await axios.get("/api/entry?" + params.toString());
+      const json = response.data;
+
       console.log(json);
       manyEntries.push(json);
     }
@@ -299,22 +318,24 @@ export default class DictionaryPage extends Component {
       <IndividualView>
         {this.state.cchars.map(async (cchar, idx) => {
           console.log("looking at cchar: " + cchar);
-          const requestOptions = {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          };
+          // const requestOptions = {
+          //   method: "GET",
+          //   headers: {
+          //     "Content-Type": "application/json",
+          //   },
+          // };
 
           var params = new URLSearchParams({
             phrase: cchar,
           });
 
-          var response = await fetch(
-            "/api/entry?" + params.toString(),
-            requestOptions
-          );
-          const charEntries = await response.json();
+          // var response = await fetch(
+          //   "/api/entry?" + params.toString(),
+          //   requestOptions
+          // );
+          const response = await axios.get("/api/entry?" + params.toString());
+          const charEntries = response.data;
+          // const charEntries = await response.json();
           return (
             <IndividualCharView key={idx}>
               {charEntries.map((charEntry, idx2) =>

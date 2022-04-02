@@ -88,5 +88,14 @@
     "pinyin": "bao3 hu4 guo2",
     "english": "protectorate",
     "reason": "who cares about protectorates... 保护国家 is where it's at!"
-}
+  },
+  {
+    "id": 753,
+    "owner": "default",
+    "traditional": "一聲",
+    "simplified": "一声",
+    "pinyin": "yi1 sheng1",
+    "english": "first tone in Mandarin (high, level tone)",
+    "reason": "We don't really care about tones, a single sound seems more common"
+  }
 ]

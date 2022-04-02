@@ -22,11 +22,6 @@ import { BsArrowBarRight } from "react-icons/bs";
 //   Link,
 //   Redirect,
 // } from "react-router-dom";
-// import Button from "@material-ui/core/Button";
-// import Grid from "@material-ui/core/Grid";
-// import Typography from "@material-ui/core/Typography";
-// import TextField from "@material-ui/core/TextField";
-// import { Grid } from "@material-ui/core";
 // import { TextArea } from "semantic-ui-react";
 // import styled from "styled-components";
 import Spinner from "react-bootstrap/Spinner";
@@ -41,9 +36,10 @@ import InputGroup from "react-bootstrap/InputGroup";
 import FormControl from "react-bootstrap/FormControl";
 import Overlay from "react-bootstrap/Overlay";
 import ToggleButton from "react-bootstrap/ToggleButton";
+import axios from "axios";
+
 // import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
 // import FloatingLabel from "react-bootstrap/FloatingLabel";
-
 
 const NBSP = "\u00a0";
 
@@ -96,18 +92,34 @@ export class Memory extends Component {
     console.log("fetch memory button clicked");
     this.handleHideFetchOverlay();
 
-    const requestOptions = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
+    // const requestOptions = {
+    //   method: "GET",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    // };
 
     var params = new URLSearchParams({
       code: this.state.fetchCode,
     });
-    fetch("/api/memory/fetch?" + params.toString(), requestOptions)
-      .then((response) => response.json())
+    // fetch("/api/memory/fetch?" + params.toString(), requestOptions)
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     console.log(data);
+    //     this.setState(
+    //       {
+    //         code: data["code"],
+    //       },
+    //       () => {
+    //         console.log(this.state);
+    //       }
+    //     );
+    //     this.props.onUpdateMemory(data["fragments"]);
+    //   });
+
+    axios
+      .get("/api/memory/fetch?" + params.toString())
+      .then((response) => response.data)
       .then((data) => {
         console.log(data);
         this.setState(
@@ -119,7 +131,6 @@ export class Memory extends Component {
           }
         );
         this.props.onUpdateMemory(data["fragments"]);
-        
       });
   }
 
@@ -128,18 +139,47 @@ export class Memory extends Component {
     this.setState({ memSaveLoading: true }, () => {
       console.log("before");
       console.log(this.state);
-      const requestOptions = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fragments: this.props.fragments()
-        }),
-      };
-      console.log(requestOptions);
-      fetch("/api/memory/save", requestOptions)
-        .then((response) => response.json())
+      // const requestOptions = {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     fragments: this.props.fragments(),
+      //   }),
+      // };
+      // console.log(requestOptions);
+      // fetch("/api/memory/save", requestOptions)
+      //   .then((response) => response.json())
+      //   .then((data) => {
+      //     console.log(data);
+      //     this.setState(
+      //       {
+      //         code: data["code"],
+      //       },
+      //       () => {
+      //         console.log(this.state);
+      //       }
+      //     );
+      //   })
+      //   .finally(() =>
+      //     this.setState(
+      //       {
+      //         memSaveLoading: false,
+      //       },
+      //       () => {
+      //         console.log("after");
+      //         console.log(this.state);
+      //       }
+      //     )
+      //   );
+
+      // const response = await
+      axios
+        .post("/api/memory/save", {
+          fragments: this.props.fragments(),
+        })
+        .then((response) => response.data)
         .then((data) => {
           console.log(data);
           this.setState(
@@ -162,6 +202,7 @@ export class Memory extends Component {
             }
           )
         );
+      // const json = ;
     });
   }
 
@@ -178,12 +219,12 @@ export class Memory extends Component {
     //TODO: add info here.
   }
 
-
   //TODO: consider adding a lock... so you can overwrite current memories and just remember one code.
   //TODO: add memory info/instructions
   //TODO: Add a page where you can view/edit(add/remove) your memories.
   //TODO: maybe have some sorta history?
   //TODO: change code to some passphrase or email?
+  //TODO: maybe add comments?
   render() {
     return (
       <InputGroup aria-label="Memory Group">

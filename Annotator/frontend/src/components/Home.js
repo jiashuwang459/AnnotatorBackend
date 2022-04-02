@@ -28,6 +28,7 @@ export default class Home extends Component {
     super(props);
     this.display = {};
     this.input = {};
+    
     // this.state = {};
   }
 

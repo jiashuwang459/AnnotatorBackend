@@ -1,4 +1,7 @@
 import * as React from "react";
+
+import { HelperCard } from "./HelperCard";
+
 import { List } from "semantic-ui-react";
 import styled from "styled-components";
 import { MemoryRouter } from "react-router-dom";
@@ -21,6 +24,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import ToggleButton from "@mui/material/ToggleButton";
+import Box from "@mui/material/Box";
+import Paper from '@mui/material/Paper';
+import axios from "axios";
 
 const Container = styled.div`
   display: flex;
@@ -120,6 +126,7 @@ export class DisplayArea extends React.Component {
     this.container = {};
     this.arrow = {};
     this.phrases = {};
+    this.helperCard = null;
 
     this.state = {
       paragraphs: [],
@@ -150,6 +157,9 @@ export class DisplayArea extends React.Component {
     this.handlePopoverAnchorEnter = this.handlePopoverAnchorEnter.bind(this);
     this.handlePopoverLeave = this.handlePopoverLeave.bind(this);
     this.handlePopoverEnter = this.handlePopoverEnter.bind(this);
+
+    this.handleUpdatePin = this.handleUpdatePin.bind(this);
+    // this.handleGetPopperPhrase = this.handleGetPopperPhrase.bind(this);
   }
 
   handlePopoverOpen(event) {
@@ -166,7 +176,16 @@ export class DisplayArea extends React.Component {
         anchor.removeEventListener("mouseleave", this.handlePopoverAnchorLeave);
       }
 
-      this.setState({ popperAnchor: target });
+      this.setState({ popperAnchor: target }, () => {
+        console.log("helper", this.helperCard)
+        if (this.helperCard) {
+          this.helperCard.setPhrase(
+            this.state.paragraphs[target.dataset.paragraph][
+              target.dataset.phrase
+            ]
+          );
+        }
+      });
 
       target.addEventListener("mouseenter", this.handlePopoverAnchorEnter);
       target.addEventListener("mouseleave", this.handlePopoverAnchorLeave);
@@ -401,15 +420,19 @@ export class DisplayArea extends React.Component {
     );
   }
 
+  handleUpdatePin(popperPinned) {
+    this.setState({ popperPinned: popperPinned });
+  }
+
   createPopperCard() {
     const anchor = this.state.popperAnchor;
     if (!anchor) {
       return;
     }
 
-    paragraphIdx = anchor.dataset.phraseIndex;
-    phraseIdx = anchor.dataset.phraseIndex;
-    phrase = this.state.paragraphs[paragraphIdx][phraseIdx][0];
+    const paragraphIdx = anchor.dataset.paragraph;
+    const phraseIdx = anchor.dataset.phrase;
+    const phrase = this.state.paragraphs[paragraphIdx][phraseIdx];
 
     return (
       <Card
@@ -429,11 +452,11 @@ export class DisplayArea extends React.Component {
             <Typography gutterBottom variant="subtitle1" component="span">
               {phrase.cchars.map((item) => item.pinyin).join(" ")}
             </Typography>
-            <span
+            {/* <span
               style={{ flexGrow: 1, paddingRight: "5px", paddingLeft: "5px" }}
-            />
-            <span>
-              {/* <IconButton
+            /> */}
+            {/* <span> */}
+            {/* <IconButton
                     sx={{
                       borderStyle: "solid",
                       borderWidth: "thin",
@@ -443,7 +466,7 @@ export class DisplayArea extends React.Component {
                   >
                     <CloseIcon />
                   </IconButton> */}
-            </span>
+            {/* </span> */}
           </CardHeader>
           <CardBody>
             <ol>
@@ -617,7 +640,7 @@ export class DisplayArea extends React.Component {
     //     </List>
     //   );
     const open = this.state.dictMode ? Boolean(this.state.popperAnchor) : false;
-
+    
     return (
       <Container ref={(container) => (this.container = container)}>
         <Virtuoso
@@ -806,12 +829,30 @@ export class DisplayArea extends React.Component {
               name: "hide",
             },
           ]}
+          onLoad={() => {
+            const paragraphIdx = target.dataset.paragraph;
+            const phraseIdx = target.dataset.phrase;
+            const phrase = this.state.paragraphs[paragraphIdx][phraseIdx];
+
+            this.helperCard.setPhrase(phrase);
+          }}
           onClose={this.handlePopoverClose}
           onMouseLeave={this.handlePopoverLeave}
           onMouseEnter={this.handlePopoverEnter}
           // disableRestoreFocus
         >
-          {this.createPopperCard()}
+          <HelperCard
+            ref={(h) => (this.helperCard = h)}
+            onPinned={(e) => this.handleUpdatePin(e)}
+            phrase={
+              this.state.popperAnchor
+                ? this.state.paragraphs[
+                    this.state.popperAnchor.dataset.paragraph
+                  ][this.state.popperAnchor.dataset.phrase]
+                : ""
+            }
+          ></HelperCard>
+          {/* {this.createPopperCard()} */}
           {/* <div id={"arrow"} data-popper-arrow=""></div> */}
         </Popper>
       </Container>

@@ -16,6 +16,7 @@ import { TiFolderOpen } from "react-icons/ti";
 import { BsArrowBarRight } from "react-icons/bs";
 import { GiArchiveResearch, GiSpellBook, GiSecretBook } from "react-icons/gi";
 import { RiQuillPenFill } from "react-icons/ri";
+import { withTheme } from "@mui/material/styles";
 
 import {
   BrowserRouter as Router,
@@ -24,11 +25,7 @@ import {
   Link,
   Redirect,
 } from "react-router-dom";
-// import Button from "@material-ui/core/Button";
-// import Grid from "@material-ui/core/Grid";
-// import Typography from "@material-ui/core/Typography";
-// import TextField from "@material-ui/core/TextField";
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 // import { TextArea } from "semantic-ui-react";
 import styled from "styled-components";
 import Spinner from "react-bootstrap/Spinner";
@@ -45,7 +42,9 @@ import Overlay from "react-bootstrap/Overlay";
 import ToggleButton from "react-bootstrap/ToggleButton";
 import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
-
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import axios from "axios";
 
 const TextArea = styled.textarea`
   resize: vertical;
@@ -106,19 +105,25 @@ export default class ManualPage extends Component {
               this.display.updateDisplay([]);
               continue;
             }
-            const requestOptions = {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                text: paragraph,
-              }),
-            };
+            // const requestOptions = {
+            //   method: "POST",
+            //   headers: {
+            //     "Content-Type": "application/json",
+            //   },
+            //   body: JSON.stringify({
+            //     text: paragraph,
+            //   }),
+            // };
 
-            const response = await fetch("/api/annotate", requestOptions);
-            const json = await response.json();
-            console.log(json);
+            // const response = await fetch("/api/annotate", requestOptions);
+            // const json = await response.json();
+
+            const response = await axios.post("/api/annotate", {
+              text: paragraph,
+            });
+            const json = response.data;
+
+            console.log("jiashu", json);
             await this.display.updateDisplay(json);
             // .then((response) => {
             //   console.log(response.status);
@@ -141,8 +146,8 @@ export default class ManualPage extends Component {
     );
   };
 
-  handleGetMemoryFragments(){
-    return this.display.getMemory()
+  handleGetMemoryFragments() {
+    return this.display.getMemory();
   }
 
   handleFetchMemory(fragments) {
@@ -199,6 +204,7 @@ export default class ManualPage extends Component {
   }
 
   render() {
+    // const myGrid = useTheme();
     return (
       <Grid
         container

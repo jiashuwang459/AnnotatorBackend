@@ -56,6 +56,16 @@ python manage.py runserver
 
 The frontend's base directory is: `/AnnotatorBackend/Annotator/frontend`.
 
+
+### Installing npm
+
+see https://github.com/nvm-sh/nvm
+
+```
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+nvm install node
+```
+
 ### NPM dependencies
 
 ``` bash
