@@ -12,17 +12,14 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import django_heroku
-import dotenv
+from dotenv import load_dotenv
 import dj_database_url
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-dotenv_file = os.path.join(BASE_DIR, ".env")
-if os.path.isfile(dotenv_file):
-    dotenv.load_dotenv(dotenv_file)
+load_dotenv()
 
 
 # Quick-start development settings - unsuitable for production
@@ -32,9 +29,14 @@ if os.path.isfile(dotenv_file):
 SECRET_KEY = 'django-insecure-abcyv&ajbu43#6f-yc2evu58ve^8k+^5@$y55#w)22l43^35k+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['chinese-annotator.herokuapp.com', '127.0.0.1:8000', 'localhost']
+SECRET_KEY = '' # Change to empty string
+
+if DEBUG:
+    ALLOWED_HOSTS = ['127.0.0.1:8000', 'localhost']
+else:
+    ALLOWED_HOSTS = ['https://chinese-annotator.herokuapp.com']
 
 
 # Application definition
@@ -142,10 +144,15 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'build/static')
+    os.path.join(BASE_DIR, 'static')
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
