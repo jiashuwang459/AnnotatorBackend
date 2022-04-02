@@ -26,12 +26,12 @@ load_dotenv()
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-abcyv&ajbu43#6f-yc2evu58ve^8k+^5@$y55#w)22l43^35k+'
+SECRET_KEY = 'y87-@d^e3gw=1*yf2-gjf#q2a5r-&d00d(ih6xb*mh%-v%lyp7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-SECRET_KEY = '' # Change to empty string
+# SECRET_KEY = '' # Change to empty string
 
 if DEBUG:
     ALLOWED_HOSTS = ['127.0.0.1:8000', 'localhost']
@@ -163,7 +163,7 @@ APPEND_SLASH = False
 
 # Option 1
 CORS_ORIGIN_WHITELIST = [
-    'https://localhost:3000',
+    'https://localhost:8000',
 ]
 
 
