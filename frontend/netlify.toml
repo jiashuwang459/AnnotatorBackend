@@ -150,5 +150,5 @@
 # An Edge Handler declaration
 #[[edge_handlers]]
 #  path = "/*"
-#  handler = "filterRequests"
+#r  handler = "filterRequests"
   
