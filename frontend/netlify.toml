@@ -15,5 +15,5 @@
   publish = "static/frontend/"
 
   # Default build command.
-  command = "npm dev build"
+  command = "npm run build"
 
