@@ -698,26 +698,49 @@ class CacheView(APIView):
     def post(self, request, format=None):
 
         rType = None
-
+        method = None
+        id = None
+        
         if 'type' in request.data:
             rType = request.data['type']
+            
+        if 'id' in request.data:
+            id = request.data['id']
+            
+        if 'method' in request.data:
+            method = request.data['method']
 
-        if(rType):
-            if(rType == DICT):
-                EntryManager.reloadDictionary()
-            elif(rType == CUSTOM):
-                EntryManager.reloadCustom()
-            elif(rType == PRIORITY):
-                EntryManager.reloadPriorities()
-            elif(rType == BLACKLIST):
-                EntryManager.reloadBlacklist()
+        if method == 'reload':
+            if(rType):
+                if(rType == DICT):
+                    EntryManager.reloadDictionary()
+                elif(rType == CUSTOM):
+                    EntryManager.reloadCustom()
+                elif(rType == PRIORITY):
+                    EntryManager.reloadPriorities()
+                elif(rType == BLACKLIST):
+                    EntryManager.reloadBlacklist()
+                else:
+                    EntryManager.reload()
             else:
                 EntryManager.reload()
         else:
-            EntryManager.reload()
+            if(rType):
+                if(rType == DICT):
+                    EntryManager.loadDictionary(id)
+                elif(rType == CUSTOM):
+                    EntryManager.loadCustom()
+                elif(rType == PRIORITY):
+                    EntryManager.loadPriorities()
+                elif(rType == BLACKLIST):
+                    EntryManager.loadBlacklist()
+                else:
+                    EntryManager.load()
+            else:
+                EntryManager.load()
 
         Trie.clearTries()
-        return Response({"OK": "Reloaded Entries", "type": rType}, status=status.HTTP_200_OK)
+        return Response({"OK": "Reloaded Entries", "type": rType, "method": method, "id": id}, status=status.HTTP_200_OK)
     
     def delete(self, request, format=None):
     
