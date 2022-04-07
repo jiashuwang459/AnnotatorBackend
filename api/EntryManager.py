@@ -94,12 +94,12 @@ class EntryManagerSingleton(object):
             with open(os.path.join(DATA_DIR, filename)) as f:
                 data = json.load(f)
                 cache.set_many(data)
-                keys = data.keys()
+                keys += data.keys()
 
             print("loading keylist")
             curKeys = cache.get("keylist::dict")
-            keys += curKeys if curKeys is not None else []
-            cache.set("keylist::dict", keys)
+            curKeys = curKeys if curKeys else []
+            cache.set("keylist::dict", keys + curKeys)
                     
     # def loadDictionary(self, i):
     #     print("load dictionary")
