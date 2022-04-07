@@ -73,14 +73,6 @@
     "english": "to carry on one's shoulder"
   },
   {
-    "id": 46712,
-    "owner": "default",
-    "traditional": "摃",
-    "simplified": "扛",
-    "pinyin": "gang1",
-    "english": "old variant of 扛[gang1]"
-  },
-  {
     "id": 90691,
     "owner": "default",
     "traditional": "著",
@@ -120,14 +112,6 @@
     "pinyin": "zhong4 zhong4",
     "english": "heavily",
     "priority": 999
-  },
-  {
-    "id": 110933,
-    "owner": "default",
-    "traditional": "離",
-    "simplified": "离",
-    "pinyin": "li2",
-    "english": "to leave"
   },
   {
     "id": 3057,

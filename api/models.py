@@ -11,7 +11,7 @@ import string
 
 
 class Entry(models.Model):
-    owner = models.CharField(max_length=50)
+    owner = models.CharField(max_length=50, default="")
     traditional = models.CharField(max_length=20, default="")
     simplified = models.CharField(max_length=20, null=False)
     pinyin = models.CharField(max_length=100, null=False)

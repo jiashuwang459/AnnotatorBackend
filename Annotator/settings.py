@@ -15,6 +15,9 @@ import django_heroku
 from dotenv import load_dotenv
 import dj_database_url
 import os
+import django_cache_url
+
+from Annotator import dj_redis_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -93,9 +96,39 @@ WSGI_APPLICATION = 'Annotator.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# CACHE_TTL = 60 * 15
+
+# REDIS_TLS_URL = "redis://127.0.0.1:6379/1",
+# CACHES = {'default': django_cache_url.parse(REDIS_URL)}
+
+CACHES = {
+    "default": dj_redis_url.config()
+}
 
 DATABASES = {}
 DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'ChineseAnnotator',
+#         'USER': 'jiashu',
+#         'PASSWORD': '123456',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'd254lrpu994doe',
+#         'USER': 'hmvnpbpjzerayq',
+#         'PASSWORD': '84187d732654298c65f9382cf003bb26dc9b77303cb77c1f6a1688648ef71a22',
+#         'HOST': 'ec2-52-21-136-176.compute-1.amazonaws.com',
+#         'PORT': '5432',
+#     }
+# }
 
 # DATABASES = {
 #     'default': {

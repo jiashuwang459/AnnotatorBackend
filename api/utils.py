@@ -1,3 +1,4 @@
+import bisect
 import json
 import os
 import re
@@ -5,6 +6,7 @@ from django.conf import settings
 from django.db import transaction
 from .models import BlacklistEntry, Entry
 from django.db.models import Q
+from django.core.cache import cache
 
 DATA_DIR = settings.BASE_DIR / 'data/'
 
@@ -27,35 +29,51 @@ INVALID_PRIORITY = MAX_PRIORITY + 100
 DEFAULT_OWNER = "default"
 
 
-@transaction.atomic
+# @transaction.atomic
 def loadDefaultDictionary():
     # f = open('./data/data.json', 'r')
     with open(os.path.join(DATA_DIR, 'data2.json')) as f:
         data = json.load(f)
         # print(data)
         for item in data:
-            priority = DEFAULT_PRIORITY
             if("surname" in item['english']):
-                priority = SURNAME_PRIORITY
+                item['priority'] = SURNAME_PRIORITY
+            elif("variant of" in item['english']):
+                item['priority'] = VARIANT_PRIORITY
+            else:
+                item['priority'] = DEFAULT_PRIORITY
 
-            if("variant of" in item['english']):
-                priority = VARIANT_PRIORITY
+            values = cache.get(item['simplified'])
+            if(values):
+                values.append(item)
+                values.sort(key=lambda x: x['priority'])
+                cache.set(item['simplified'], values)
+            else:
+                cache.set(item['simplified'], [item])
+            # entry = Entry(owner=DEFAULT_OWNER, traditional=item['traditional'],
+            #               simplified=item['simplified'], pinyin=item['pinyin'], english=item['english'], priority=priority)
+            # entry.save()
 
-            entry = Entry(owner=DEFAULT_OWNER, traditional=item['traditional'],
-                          simplified=item['simplified'], pinyin=item['pinyin'], english=item['english'], priority=priority)
-            entry.save()
 
-
-@transaction.atomic
+# @transaction.atomic
 def loadCustomEntries():
     # f = open('./data/data.json', 'r')
     with open(os.path.join(DATA_DIR, 'custom.json')) as f:
         data = json.load(f)
         # print(data)
         for item in data:
-            entry = Entry(owner="custom", traditional=item['traditional'],
-                          simplified=item['simplified'], pinyin=item['pinyin'], english=item['english'], priority=CUSTOM_PRIORITY)
-            entry.save()
+            item['priority'] = CUSTOM_PRIORITY
+            
+            values = cache.get(item['simplified'])
+            if(values):
+                values.append(item)
+                values.sort(key=lambda x: x['priority'])
+                cache.set(item['simplified'], values)
+            else:
+                cache.set(item['simplified'], [item])
+            # entry = Entry(owner="custom", traditional=item['traditional'],
+            #               simplified=item['simplified'], pinyin=item['pinyin'], english=item['english'], priority=CUSTOM_PRIORITY)
+            # entry.save()
 
 
 @transaction.atomic
@@ -70,22 +88,48 @@ def loadDefaultBlacklist():
             entry.save()
 
 
-@transaction.atomic
+# @transaction.atomic
 def updatePriorities(data, priority):
     for item in data:
-        queryset = Entry.objects.filter(traditional=item['traditional'],
-                                        simplified=item['simplified'], pinyin=item['pinyin'])
-        if not queryset.exists():
+        # queryset = Entry.objects.filter(traditional=item['traditional'],
+        #                                 simplified=item['simplified'], pinyin=item['pinyin'])
+
+        values = cache.get(item['simplified'])
+        
+        if not values:
             return (False, "Unable to find matching item", item)
+            
+        
+        found = False
+        for value in values:
+            if(value['traditional'] == item['traditional'] and value['pinyin'] == item['pinyin']):
+                value['priority'] = priority
+                found = True
+            
+        
+        if found:
+            # values.sort(key=priorityKey)
+            values.sort(key=lambda x: x['priority'])
+            cache.set(item['simplified'], values)
+        else:
+            return (False, "Found key, but unable to find matching traditional and pinyin", item)
+        # cache.set(item['simplified'], values)
+        # else:
+            # cache.set(item['simplified'], [item])
+        
+        # if not queryset.exists():
 
-        if not queryset.count() == 1:
-            return (False, "multiple matching items for", item)
+        # if not queryset.count() == 1:
+            # return (False, "multiple matching items for", item)
 
-        entry = queryset.first()
-        entry.priority = priority
-        entry.save()
+        # entry = queryset.first()
+        # entry.priority = priority
+        # entry.save()
     return (True, "All Priorities loaded", None)
 
+
+def entryKey(type, entry):
+    return cacheKey(type, f"{entry['traditional']}::{entry['simplified']}::{entry['pinyin']}")
 
 def updateDefaultPriorities():
     with open(os.path.join(DATA_DIR, 'priority.json')) as f:
@@ -274,9 +318,13 @@ def parsePinyin(pinyin):
     return word
 
 
+def cacheKey(type, key):
+    return f"{type}::{key}"
+
 def reloadCEDict():
 
-    entries = []
+    # entries = []
+    hashmap = {}
     with open(os.path.join(DATA_DIR, 'cedict_ts.u8')) as f:
         text = f.read()
         lines = text.split('\n')
@@ -293,19 +341,44 @@ def reloadCEDict():
             rest = split[2].split(']', 1)
             pinyin = rest[0].lstrip('[')
             english = rest[1].strip().strip('/')
-            entries.append({
+            
+            entry = {
                 'traditional': traditional,
                 'simplified': simplified,
                 'pinyin': pinyin,
                 'english': english
-            })
+            }
+            # entries.append(entry)
+            
+            priority = INVALID_PRIORITY
+            if("surname" in english):
+                priority = SURNAME_PRIORITY
+            elif("variant of" in english):
+                priority = VARIANT_PRIORITY
+            else:
+                priority = DEFAULT_PRIORITY
+
+            entry['priority'] = priority
+            
+            key = cacheKey("dict", simplified)
+            if key in hashmap:
+                try:
+                    hashmap[key].append(entry)
+                    hashmap[key].sort(key=lambda x: x['priority'])
+                except:
+                    pass
+            else:
+                hashmap[key] = [entry]
 
         print('Done!')
-        with open(os.path.join(DATA_DIR, 'data2.json'), 'w') as out_file:
-            json.dump(entries, out_file, ensure_ascii=False, indent=2)
+        # with open(os.path.join(DATA_DIR, 'data2.json'), 'w') as out_file:
+        #     json.dump(entries, out_file, ensure_ascii=False, indent=2)
         print('Done!Done!')
+        with open(os.path.join(DATA_DIR, 'datamap.json'), 'w') as out_file:
+            json.dump(hashmap, out_file, ensure_ascii=False, indent=2)
+        print('Done!Done!Done!')
 
-    return len(entries)
+    return len(hashmap)
     # remove entries for surnames from the data (optional):
 
     # print("Removing Surnames . . .")
