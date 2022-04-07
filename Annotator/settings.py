@@ -15,7 +15,6 @@ import django_heroku
 from dotenv import load_dotenv
 import dj_database_url
 import os
-import django_cache_url
 
 from Annotator import dj_redis_url
 
