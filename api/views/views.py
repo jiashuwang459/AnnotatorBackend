@@ -732,7 +732,7 @@ class CacheView(APIView):
             if(rType):
                 if(rType == DICT):
                     EntryManager.loadDictionary(id)
-                    Trie.loadTrie(id)
+                    # Trie.loadTrie(id)
                 elif(rType == CUSTOM):
                     EntryManager.loadCustom()
                 elif(rType == PRIORITY):

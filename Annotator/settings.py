@@ -31,7 +31,7 @@ load_dotenv()
 SECRET_KEY = 'y87-@d^e3gw=1*yf2-gjf#q2a5r-&d00d(ih6xb*mh%-v%lyp7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # SECRET_KEY = '' # Change to empty string
 
@@ -100,8 +100,25 @@ WSGI_APPLICATION = 'Annotator.wsgi.application'
 # REDIS_TLS_URL = "redis://127.0.0.1:6379/1",
 # CACHES = {'default': django_cache_url.parse(REDIS_URL)}
 
+# CACHES = {
+#     "default": dj_redis_url.config()
+# }
+
+import os
+try:
+    import urlparse
+except ImportError:
+    import urllib.parse as urlparse
+redis_url = urlparse.urlparse(os.environ.get('REDISCLOUD_URL'))
 CACHES = {
-    "default": dj_redis_url.config()
+        'default': {
+            'BACKEND': 'redis_cache.RedisCache',
+            'LOCATION': '%s:%s' % (redis_url.hostname, redis_url.port),
+            'OPTIONS': {
+                'PASSWORD': redis_url.password,
+                'DB': 0,
+        }
+    }
 }
 
 DATABASES = {}
