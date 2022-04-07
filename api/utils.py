@@ -325,6 +325,7 @@ def reloadCEDict():
 
     # entries = []
     hashmap = {}
+    cnt = 0;
     with open(os.path.join(DATA_DIR, 'cedict_ts.u8')) as f:
         text = f.read()
         lines = text.split('\n')
@@ -369,12 +370,23 @@ def reloadCEDict():
                     pass
             else:
                 hashmap[key] = [entry]
+            
+            if(len(hashmap) >= 10000):
+                filename = f"datamap{cnt}.json"
+                with open(os.path.join(DATA_DIR, filename), 'w') as out_file:
+                    json.dump(hashmap, out_file, ensure_ascii=False, indent=2)
+                hashmap = {}
+                cnt +=1;
+                print(f'Written to {filename}')
+                
+                
 
         print('Done!')
         # with open(os.path.join(DATA_DIR, 'data2.json'), 'w') as out_file:
         #     json.dump(entries, out_file, ensure_ascii=False, indent=2)
         print('Done!Done!')
-        with open(os.path.join(DATA_DIR, 'datamap.json'), 'w') as out_file:
+        filename = f"datamap{cnt}.json"
+        with open(os.path.join(DATA_DIR, filename), 'w') as out_file:
             json.dump(hashmap, out_file, ensure_ascii=False, indent=2)
         print('Done!Done!Done!')
 
