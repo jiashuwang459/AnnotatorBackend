@@ -70,41 +70,49 @@ class EntryManagerSingleton(object):
         return dictList + customList
 
     def loadDictionary(self):
+        print("load dictionary")
         # loadDefaultDictionary()
 
         # hashmap = {}
-        with open(os.path.join(DATA_DIR, 'datamap.json')) as f:
-            data = json.load(f)
-            cache.set_many(data)
 
-        cache.set("keylist::dict", [key.split("::")[1] for key in cache.iter_keys(cacheKey(DICT, "*"))])
-        
-            # print(data)
-            # for item in data:
-            #     if("surname" in item['english']):
-            #         item['priority'] = SURNAME_PRIORITY
-            #     elif("variant of" in item['english']):
-            #         item['priority'] = VARIANT_PRIORITY
-            #     else:
-            #         item['priority'] = DEFAULT_PRIORITY
+        keys = []
+        for i in range(11):
+            print(f"loading {i}")
+            filename = f"datamap{i}.json"
+            with open(os.path.join(DATA_DIR, filename)) as f:
+                data = json.load(f)
+                cache.set_many(data)
+                keys += data.keys()
+        print("loading keylist")
+        cache.set("keylist::dict", keys)
 
-            #     key = item['simplified']
-            #     if key in hashmap:
-            #         hashmap[key].append(item)
-            #         hashmap[key].sort(key=lambda x: x['priority'])
-            #     else:
-            #         hashmap[key] = [item]
+        # print(data)
+        # for item in data:
+        #     if("surname" in item['english']):
+        #         item['priority'] = SURNAME_PRIORITY
+        #     elif("variant of" in item['english']):
+        #         item['priority'] = VARIANT_PRIORITY
+        #     else:
+        #         item['priority'] = DEFAULT_PRIORITY
 
-            # values = self.dictCache.get(key)
-            # if(values):
-            #     # values.append(item)
-            #     # values.sort(key=lambda x: x['priority'])
-            #     bisect.insort(values, item, key=lambda x: x['priority'])
-            #     self.dictCache.set(item['simplified'], values)
-            # else:
-            #     self.dictCache.set(item['simplified'], [item])
+        #     key = item['simplified']
+        #     if key in hashmap:
+        #         hashmap[key].append(item)
+        #         hashmap[key].sort(key=lambda x: x['priority'])
+        #     else:
+        #         hashmap[key] = [item]
+
+        # values = self.dictCache.get(key)
+        # if(values):
+        #     # values.append(item)
+        #     # values.sort(key=lambda x: x['priority'])
+        #     bisect.insort(values, item, key=lambda x: x['priority'])
+        #     self.dictCache.set(item['simplified'], values)
+        # else:
+        #     self.dictCache.set(item['simplified'], [item])
 
     def loadCustom(self):
+        print("load custom")
         with open(os.path.join(DATA_DIR, 'custom.json')) as f:
             data = json.load(f)
             # print(data)
@@ -120,10 +128,12 @@ class EntryManagerSingleton(object):
                 else:
                     cache.set(key, [item])
 
-        cache.set("keylist::custom", [key.split("::")[1] for key in cache.iter_keys(cacheKey(CUSTOM, "*"))])
+        cache.set("keylist::custom", [key.split("::")[1]
+                  for key in cache.iter_keys(cacheKey(CUSTOM, "*"))])
         # updateCustomPriorities()
 
     def loadBlacklist(self):
+        print("load blacklist")
         # loadDefaultBlacklist()
         # updateBlacklistPriorities()
         with open(os.path.join(DATA_DIR, 'blacklist.json')) as f:
@@ -144,6 +154,7 @@ class EntryManagerSingleton(object):
                 cache.set(entryKey(BLACKLIST, item), True)
 
     def loadPriorities(self):
+        print("load priorities")
         with open(os.path.join(DATA_DIR, 'priority.json')) as f:
             data = json.load(f)
             # print(data)
@@ -191,11 +202,11 @@ class EntryManagerSingleton(object):
     def reloadBlacklist(self):
         self.clearBlacklist()
         self.loadBlacklist()
-        
+
     def reloadPriorities(self):
         self.clearPriorities()
         self.loadPriorities()
-                
+
     def reload(self):
         self.clear()
         self.load()
@@ -205,7 +216,7 @@ class EntryManagerSingleton(object):
         self.loadCustom()
         self.loadBlacklist()
         self.loadPriorities()
-        
+
     def clear(self):
         cache.clear()
 
@@ -223,13 +234,11 @@ class EntryManagerSingleton(object):
         customEntries = cache.get(cacheKey(CUSTOM, phrase))
         priorityEntries = cache.get(cacheKey(PRIORITY, phrase))
         blacklistEntries = cache.get(cacheKey(BLACKLIST, phrase))
-        
-        
+
         dictEntries = dictEntries if dictEntries else []
         customEntries = customEntries if customEntries else []
         priorityEntries = priorityEntries if priorityEntries else []
         blacklistEntries = blacklistEntries if blacklistEntries else []
-
 
         # if not entries:
         # not in regular dictionary, check if it's in custom
