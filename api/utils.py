@@ -323,7 +323,7 @@ def cacheKey(type, key):
 
 def reloadCEDict():
 
-    # entries = []
+    keys = []
     hashmap = {}
     cnt = 0;
     with open(os.path.join(DATA_DIR, 'cedict_ts.u8')) as f:
@@ -361,6 +361,7 @@ def reloadCEDict():
 
             entry['priority'] = priority
             
+            keys.append(simplified)
             key = cacheKey("dict", simplified)
             if key in hashmap:
                 try:
@@ -389,6 +390,11 @@ def reloadCEDict():
         with open(os.path.join(DATA_DIR, filename), 'w') as out_file:
             json.dump(hashmap, out_file, ensure_ascii=False, indent=2)
         print('Done!Done!Done!')
+        filename = "keylist.json"
+        with open(os.path.join(DATA_DIR, filename), 'w') as out_file:
+            json.dump(keys, out_file, ensure_ascii=False, indent=2)
+        print('Done!Done!Done!Done!')
+            
 
     return len(hashmap)
     # remove entries for surnames from the data (optional):

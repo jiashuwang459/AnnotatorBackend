@@ -38,6 +38,7 @@ from bisect import bisect
 import json
 import os
 from django.core.cache import cache
+from api.Trie import Trie
 from api.models import BlacklistEntry
 
 from api.utils import CUSTOM_PRIORITY, DATA_DIR, DEFAULT_PRIORITY, INVALID_PRIORITY, MAIN_PRIORITY, SURNAME_PRIORITY, VARIANT_PRIORITY, cacheKey, entryKey, loadCustomEntries, loadDefaultBlacklist, loadDefaultDictionary, updateBlacklistPriorities, updateCustomPriorities, updateDefaultPriorities
@@ -60,14 +61,14 @@ class EntryManagerSingleton(object):
         # }
         self.owner = owner
 
-    def getValidKeyList(self):
-        dictList = cache.get("keylist::dict")
-        customList = cache.get("keylist::custom")
+    # def getValidKeyList(self):
+        # dictList = cache.get("keylist::dict")
+        # customList = cache.get("keylist::custom")
 
-        dictList = dictList if dictList else []
-        customList = customList if customList else []
+        # dictList = dictList if dictList else []
+        # customList = customList if customList else []
 
-        return dictList + customList
+        # return dictList + customList
 
     def loadDictionary(self, specific=None):
         print("load dictionary")
@@ -76,7 +77,7 @@ class EntryManagerSingleton(object):
         # hashmap = {}
 
         if specific is None:
-            keys = []
+            # keys = []
             
             for i in range(11):
                 print(f"loading {i}")
@@ -84,22 +85,23 @@ class EntryManagerSingleton(object):
                 with open(os.path.join(DATA_DIR, filename)) as f:
                     data = json.load(f)
                     cache.set_many(data)
-                    keys += data.keys()
-            print("loading keylist")
-            cache.set("keylist::dict", keys)
+                    # keys += data.keys()
+            # print("loading keylist")
+            # cache.set("keylist::dict", keys)
         else:
-            keys = []
+            # keys = []
             print(f"loading {specific}")
             filename = f"datamap{specific}.json"
             with open(os.path.join(DATA_DIR, filename)) as f:
                 data = json.load(f)
                 cache.set_many(data)
-                keys += data.keys()
+                
+                # keys += data.keys()
 
-            print("loading keylist")
-            curKeys = cache.get("keylist::dict")
-            curKeys = curKeys if curKeys else []
-            cache.set("keylist::dict", keys + curKeys)
+            # print("loading keylist")
+            # curKeys = cache.get("keylist::dict")
+            # curKeys = curKeys if curKeys else []
+            # cache.set("keylist::dict", keys + curKeys)
                     
     # def loadDictionary(self, i):
     #     print("load dictionary")

@@ -35,6 +35,12 @@
 #         return ''.join(output)
 
 
+import json
+import os
+
+from api.utils import DATA_DIR
+
+
 class Trie(object):
     _TrieCache = dict()
     END = "_end_"
@@ -52,7 +58,10 @@ class Trie(object):
             current_dict = current_dict.setdefault(
                 letter, {Trie.NAME: letter}
             )
-        current_dict[Trie.END] = True
+        if Trie.END in current_dict:
+            current_dict[Trie.END] += 1
+        else:
+            current_dict[Trie.END] = 1
         pass
 
     def insertMany(self, words):
@@ -69,7 +78,9 @@ class Trie(object):
             node = node[letter]
             char = node[Trie.NAME]
 
-        if Trie.END in node:
+        if Trie.END in node and node[Trie.END] > 1:
+            node[Trie.END] -= 1
+        elif Trie.END in node and node[Trie.END] == 1:
             del node[Trie.END]
 
             # Ex.
@@ -176,8 +187,27 @@ class Trie(object):
             print(f" {key}")
 
         if owner not in Trie._TrieCache:
-            return None
+            return Trie.createTrie(owner,[])
         return Trie._TrieCache[owner]
+    
+    @staticmethod
+    def loadTrie():
+        trie: Trie = Trie.getTrie("default")
+        filename = f"keylist.json"
+        with open(os.path.join(DATA_DIR, filename)) as f:
+            data = json.load(f)
+            trie.insertMany(data)
+            
+        with open(os.path.join(DATA_DIR, "custom.json")) as f:
+            data = json.load(f)
+            for item in data:
+                trie.insert(item['simplified'])
+
+        with open(os.path.join(DATA_DIR, 'blacklist.json')) as f:
+            data = json.load(f)
+            # print(data)
+            for item in data:
+                trie.remove(item['simplified'])
 
     @staticmethod
     def createTrie(owner, words):

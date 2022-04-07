@@ -363,9 +363,9 @@ class AnnotationView(APIView):
         print("===============================")
         print(text)
         # TODO: return only simplified?
-
+        owner = "default"
         trie = Trie.getTrie(owner)
-        if not trie:
+        if not trie.contains('你'):
             # blacklistQuerySet = BlacklistEntry.objects.filter(OwnerOrDefault(owner)).values_list(
             #     'simplified', 'traditional')
             # blacklist = [
@@ -395,10 +395,11 @@ class AnnotationView(APIView):
                 # print("created new blacklist")
                 EntryManager.reload()
             
-            words = EntryManager.getValidKeyList()
+            Trie.loadTrie()
+            # words = EntryManager.getValidKeyList()
 
-            print(len(words))
-            trie = Trie.createTrie(owner, words)
+            # print(len(words))
+            # trie = Trie.createTrie(owner, words)
 
         print(trie)
 
@@ -438,8 +439,7 @@ class AnnotationView(APIView):
                     phrase = trie.findBest(remaining)
                     # print("phrase: '" + phrase + "'")
                     if not phrase:
-                        # print("Unable to find best phrase from '" +
-                        #   remaining + "'.")
+                        # print("Unable to find best phrase from '" + remaining + "'.")
                         return []  # tentatively return cause error
                     else:
                         # found something in trie, remove phrase from remaining
@@ -507,11 +507,14 @@ class AnnotationView(APIView):
             # print(chineseEntries)
             data = self.annotate(owner, text)
             # pprint(data)
+            
+            # pprint(data)
             # [print(namedtuple("PhraseEntry", phrase.keys())(*phrase.values()).english) if isinstance(
             #     phrase, PhraseEntry) else ChineseEntrySerializer(phrase).data for phrase in data]
             responseData = [PhraseEntrySerializer(phrase).data if isinstance(phrase, PhraseEntry)
                             else ChineseEntrySerializer(phrase).data for phrase in data]
             # responseData = [[ChineseEntrySerializer(entry).data] if isinstance(entry,ChineseEntry) else [PhraseEntrySerializer(phrase).data for phrase in entry] for entry in data]
+            
             return Response(responseData, status=status.HTTP_200_OK)
 
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
@@ -724,10 +727,12 @@ class CacheView(APIView):
                     EntryManager.reload()
             else:
                 EntryManager.reload()
+            Trie.clearTries()
         else:
             if(rType):
                 if(rType == DICT):
                     EntryManager.loadDictionary(id)
+                    Trie.loadTrie(id)
                 elif(rType == CUSTOM):
                     EntryManager.loadCustom()
                 elif(rType == PRIORITY):
@@ -739,7 +744,6 @@ class CacheView(APIView):
             else:
                 EntryManager.load()
 
-        Trie.clearTries()
         return Response({"OK": "Reloaded Entries", "type": rType, "method": method, "id": id}, status=status.HTTP_200_OK)
     
     def delete(self, request, format=None):
