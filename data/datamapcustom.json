@@ -1,0 +1,298 @@
+{
+  "custom::少夫人": [
+    {
+      "traditional": "少夫人",
+      "simplified": "少夫人",
+      "pinyin": "shao4 fu1 ren5",
+      "english": "young madam/young lady/young mrs./ polite address of the lady of the house",
+      "priority": 200
+    }
+  ],
+  "custom::凌秦": [
+    {
+      "traditional": "凌秦",
+      "simplified": "凌秦",
+      "pinyin": "Ling2 Qin2",
+      "english": "凌 family butler in '穿越未来之男人不好当'",
+      "priority": 200
+    }
+  ],
+  "custom::凌兰": [
+    {
+      "traditional": "凌蘭",
+      "simplified": "凌兰",
+      "pinyin": "Ling2 Lan2",
+      "english": "Protagonist in '穿越未来之男人不好当'",
+      "priority": 200
+    }
+  ],
+  "custom::小四": [
+    {
+      "traditional": "小四",
+      "simplified": "小四",
+      "pinyin": "xiao3 si4",
+      "english": "Ling Lan's mecha learning machine in '穿越未来之男人不好当'",
+      "priority": 200
+    }
+  ],
+  "custom::清清楚楚": [
+    {
+      "traditional": "清清楚楚",
+      "simplified": "清清楚楚",
+      "pinyin": "qing1 qing1 chu3 chu3",
+      "english": "clearly",
+      "priority": 200
+    }
+  ],
+  "custom::倒落": [
+    {
+      "traditional": "倒落",
+      "simplified": "倒落",
+      "pinyin": "dao4 luo4",
+      "english": "fall down",
+      "priority": 200
+    }
+  ],
+  "custom::不知道": [
+    {
+      "traditional": "不知道",
+      "simplified": "不知道",
+      "pinyin": "bu4 zhi1 dao4",
+      "english": "don't know/have no idea",
+      "priority": 200
+    }
+  ],
+  "custom::大不大": [
+    {
+      "traditional": "大不大",
+      "simplified": "大不大",
+      "pinyin": "da4 bu4 da4",
+      "english": "is it big?",
+      "priority": 200
+    }
+  ],
+  "custom::寒颤": [
+    {
+      "owner": "default",
+      "traditional": "寒颤",
+      "simplified": "寒颤",
+      "pinyin": "han2 zhan4",
+      "english": "shiver, variant of 寒战",
+      "priority": 200
+    }
+  ],
+  "custom::颤": [
+    {
+      "traditional": "顫",
+      "simplified": "颤",
+      "pinyin": "zhan4",
+      "english": "shiver/tremble/shudder, used in 寒颤",
+      "priority": 200
+    }
+  ],
+  "custom::泄露": [
+    {
+      "traditional": "泄露",
+      "simplified": "泄露",
+      "pinyin": "xie4 lou4",
+      "english": "to leak (information)/to divulge/give away (information)",
+      "priority": 200
+    }
+  ],
+  "custom::过长": [
+    {
+      "traditional": "過长",
+      "simplified": "过长",
+      "pinyin": "guo4 chang2",
+      "english": "too long",
+      "priority": 200
+    }
+  ],
+  "custom::饭点": [
+    {
+      "traditional": "飯點",
+      "simplified": "饭点",
+      "pinyin": "fan4 dian3",
+      "english": "meal time",
+      "priority": 200
+    }
+  ],
+  "custom::白老鼠": [
+    {
+      "traditional": "白老鼠",
+      "simplified": "白老鼠",
+      "pinyin": "bai2 lao3 shu3",
+      "english": "(experimental) lab rat/while mouse (literal)",
+      "priority": 200
+    }
+  ],
+  "custom::一只": [
+    {
+      "traditional": "一隻",
+      "simplified": "一只",
+      "pinyin": "yi1 zhi1",
+      "english": "a/a single thing, specificly for birds and certain animals, one of a pair, some utensils, vessels etc",
+      "priority": 200
+    }
+  ],
+  "custom::意识": [
+    {
+      "traditional": "意識",
+      "simplified": "意识",
+      "pinyin": "yi4 shi5",
+      "english": "consciousness/awareness",
+      "priority": 200
+    }
+  ],
+  "custom::见过": [
+    {
+      "traditional": "見過",
+      "simplified": "见过",
+      "pinyin": "jian4",
+      "english": "have met before",
+      "priority": 200
+    }
+  ],
+  "custom::小家伙": [
+    {
+      "traditional": "小家伙",
+      "simplified": "小家伙",
+      "pinyin": "xiao3 jia1 huo5",
+      "english": "little guy/small chap",
+      "priority": 200
+    }
+  ],
+  "custom::军功": [
+    {
+      "traditional": "軍功",
+      "simplified": "军功",
+      "pinyin": "jun1 gong1",
+      "english": "military exploits (literary, military); military achievements; meritorious war service",
+      "priority": 200
+    }
+  ],
+  "custom::为上": [
+    {
+      "traditional": "為上",
+      "simplified": "为上",
+      "pinyin": "wei2 shang4",
+      "english": "to take as priority",
+      "priority": 200
+    }
+  ],
+  "custom::安全为上": [
+    {
+      "traditional": "安全為上",
+      "simplified": "安全为上",
+      "pinyin": "an1 quan2 wei2 shang4",
+      "english": "prioritize safety/safety first (see also 安全第一[an1 quan2 di4 yi1])",
+      "priority": 200
+    }
+  ],
+  "custom::安全第一": [
+    {
+      "traditional": "安全第一",
+      "simplified": "安全第一",
+      "pinyin": "an1 quan2 wei2 shang4",
+      "english": "safety first",
+      "priority": 200
+    },
+    {
+      "traditional": "安全第一",
+      "simplified": "安全第一",
+      "pinyin": "an1 quan2 wei2 shang4",
+      "english": "safety first",
+      "priority": 200
+    }
+  ],
+  "custom::蓝洛凤": [
+    {
+      "traditional": "藍洛鳳",
+      "simplified": "蓝洛凤",
+      "pinyin": "Lan2 Luo4 Feng4",
+      "english": "凌兰[Ling2 Lan2]'s mother in '穿越未来之男人不好当'",
+      "priority": 200
+    }
+  ],
+  "custom::凌霄": [
+    {
+      "traditional": "凌霄",
+      "simplified": "凌霄",
+      "pinyin": "Ling2 Xiao1",
+      "english": "凌兰[Ling2 Lan2]'s father in '穿越未来之男人不好当'",
+      "priority": 200
+    }
+  ],
+  "custom::凌肃正": [
+    {
+      "traditional": "凌肅正",
+      "simplified": "凌肃正",
+      "pinyin": "Ling2 Su4 Zheng1",
+      "english": "凌霄[Ling2 Xiao1]'s father in '穿越未来之男人不好当'",
+      "priority": 200
+    }
+  ],
+  "custom::有机会": [
+    {
+      "traditional": "有機會",
+      "simplified": "有机会",
+      "pinyin": "you3 ji1 hui4",
+      "english": "to have an opportunity",
+      "priority": 200
+    }
+  ],
+  "custom::下等": [
+    {
+      "traditional": "下等",
+      "simplified": "下等",
+      "pinyin": "xia4 deng3",
+      "english": "lower-level",
+      "priority": 200
+    }
+  ],
+  "custom::凌家": [
+    {
+      "traditional": "凌家",
+      "simplified": "凌家",
+      "pinyin": "Ling2 jia1",
+      "english": "凌兰[Ling2 Lan2]'s family in '穿越未来之男人不好当'",
+      "priority": 200
+    }
+  ],
+  "custom::凌肃仁": [
+    {
+      "traditional": "凌肅仁",
+      "simplified": "凌肃仁",
+      "pinyin": "Ling2 Su4 Ren2",
+      "english": "凌 branch family head in '穿越未来之男人不好当'",
+      "priority": 200
+    }
+  ],
+  "custom::拉拉": [
+    {
+      "traditional": "拉拉",
+      "simplified": "拉拉",
+      "pinyin": "la1 la5",
+      "english": "pulls (verb)",
+      "priority": 200
+    }
+  ],
+  "custom::军部": [
+    {
+      "traditional": "軍部",
+      "simplified": "军部",
+      "pinyin": "jun1 bu4",
+      "english": "ministry of military",
+      "priority": 200
+    }
+  ],
+  "custom::看清楚": [
+    {
+      "traditional": "看清楚",
+      "simplified": "看清楚",
+      "pinyin": "kan4 qing1 chu3",
+      "english": "see clearly",
+      "priority": 200
+    }
+  ]
+}

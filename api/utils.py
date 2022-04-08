@@ -1,9 +1,9 @@
-import bisect
 import json
 import os
 import re
 from django.conf import settings
 from django.db import transaction
+
 from .models import BlacklistEntry, Entry
 from django.db.models import Q
 from django.core.cache import cache
@@ -13,6 +13,11 @@ DATA_DIR = settings.BASE_DIR / 'data/'
 NBSP = '\u00a0'
 SESSIONS = False
 
+
+DICT = "dict"
+BLACKLIST = "black"
+PRIORITY = "priority"
+CUSTOM = "custom"
 
 # TODO: find a better term for priority... cause 'low priority' should be bad ^_^"
 # Priority is lower the better, anything over MAX_PRIORITY will be skipped and has been blacklisted
@@ -74,7 +79,7 @@ def loadCustomEntries():
             # entry = Entry(owner="custom", traditional=item['traditional'],
             #               simplified=item['simplified'], pinyin=item['pinyin'], english=item['english'], priority=CUSTOM_PRIORITY)
             # entry.save()
-
+            
 
 @transaction.atomic
 def loadDefaultBlacklist():
@@ -323,8 +328,10 @@ def cacheKey(type, key):
 
 def reloadCEDict():
 
-    keys = []
-    hashmap = {}
+    # hashmap = {}
+    halfmapA = {}
+    halfmapB = {}
+    keys = set()
     cnt = 0;
     with open(os.path.join(DATA_DIR, 'cedict_ts.u8')) as f:
         text = f.read()
@@ -360,44 +367,158 @@ def reloadCEDict():
                 priority = DEFAULT_PRIORITY
 
             entry['priority'] = priority
-            
-            keys.append(simplified)
             key = cacheKey("dict", simplified)
-            if key in hashmap:
-                try:
-                    hashmap[key].append(entry)
-                    hashmap[key].sort(key=lambda x: x['priority'])
-                except:
-                    pass
+            # if key in hashmap:
+            #     try:
+            #         hashmap[key].append(entry)
+            #         hashmap[key].sort(key=lambda x: x['priority'])
+            #     except:
+            #         pass
+            # else:
+            #     hashmap[key] = [entry]
+            
+            if key in halfmapA:
+                halfmapA[key].append(entry)
+                halfmapA[key].sort(key=lambda x: x['priority'])
             else:
-                hashmap[key] = [entry]
-            
-            if(len(hashmap) >= 10000):
-                filename = f"datamap{cnt}.json"
-                with open(os.path.join(DATA_DIR, filename), 'w') as out_file:
-                    json.dump(hashmap, out_file, ensure_ascii=False, indent=2)
-                hashmap = {}
-                cnt +=1;
-                print(f'Written to {filename}')
-                
+                if cnt < 60000:
+                    keys.add(simplified)
+                    halfmapA[key] = [entry]
+                else:
+                    if key in halfmapB:
+                        halfmapB[key].append(entry)
+                        halfmapB[key].sort(key=lambda x: x['priority'])
+                    else:
+                        halfmapB[key] = [entry]
+            cnt += 1;
                 
 
-        print('Done!')
-        # with open(os.path.join(DATA_DIR, 'data2.json'), 'w') as out_file:
-        #     json.dump(entries, out_file, ensure_ascii=False, indent=2)
-        print('Done!Done!')
-        filename = f"datamap{cnt}.json"
-        with open(os.path.join(DATA_DIR, filename), 'w') as out_file:
-            json.dump(hashmap, out_file, ensure_ascii=False, indent=2)
-        print('Done!Done!Done!')
-        filename = "keylist.json"
-        with open(os.path.join(DATA_DIR, filename), 'w') as out_file:
-            json.dump(keys, out_file, ensure_ascii=False, indent=2)
-        print('Done!Done!Done!Done!')
-            
+    print('Done!')
+    # writeDataToFile(hashmap, "datamap.json")
+    print('Done!Done!')
+    writeDataToFile(list(keys), "keylistA.json")
+    print('Done!Done!Done!')
+    
 
-    return len(hashmap)
+    # cnt = 0;
+    # for key, value in hashmap:
+    #     if cnt < 50000:
+    #         halfmapA[key] = value
+    #         cnt +=1;
+    #     else:
+    #         halfmapB[key] = value
+    
+    writeDataToFile(halfmapA, "datamapA.json")
+    writeDataToFile(halfmapB, "datamapB.json")
+    
+    print('Done!Done!Done!Done!')
+    setupCustomEntries()
+    setupBlacklistEntries()
+    setupPriorityEntries()
+    print('Done!Done!Done!Done!Done!')
+    
+    return len(halfmapA), len(halfmapB)
     # remove entries for surnames from the data (optional):
+
+def setupCustomEntries():
+    # f = open('./data/data.json', 'r')
+    
+    keys = set()
+    hashmap = {}
+    with open(os.path.join(DATA_DIR, 'custom.json')) as f:
+        data = json.load(f)
+        # print(data)
+        for entry in data:
+            entry['priority'] = CUSTOM_PRIORITY
+            
+            simplified = entry['simplified']
+            
+            key = cacheKey(CUSTOM, simplified)
+            
+            if key in hashmap:
+                hashmap[key].append(entry)
+                hashmap[key].sort(key=lambda x: x['priority'])
+            else:
+                keys.add(simplified)
+                hashmap[key] = [entry]
+                
+    print('Done!')
+    writeDataToFile(list(keys), f"keylist{CUSTOM}.json")
+    print('Done!Done!')
+    writeDataToFile(hashmap, f"datamap{CUSTOM}.json")
+    print('Done!Done!Done!')
+
+def setupBlacklistEntries():
+    # f = open('./data/data.json', 'r')
+    
+    keys = set()
+    hashmap = {}
+    with open(os.path.join(DATA_DIR, 'blacklist.json')) as f:
+        data = json.load(f)
+        # print(data)
+        for entry in data:
+            entry['priority'] = CUSTOM_PRIORITY
+            
+            simplified = entry['simplified']
+            
+            key = cacheKey(BLACKLIST, simplified)
+            
+            if key in hashmap:
+                hashmap[key].append(entry)
+                hashmap[key].sort(key=lambda x: x['priority'])
+            else:
+                keys.add(simplified)
+                hashmap[key] = [entry]
+                
+    print('Done!')
+    writeDataToFile(list(keys), f"keylist{BLACKLIST}.json")
+    print('Done!Done!')
+    writeDataToFile(hashmap, f"datamap{BLACKLIST}.json")
+    print('Done!Done!Done!')
+
+def setupPriorityEntries():
+    # f = open('./data/data.json', 'r')
+    
+    keys = set()
+    hashmap = {}
+    with open(os.path.join(DATA_DIR, 'priority.json')) as f:
+        data = json.load(f)
+        # print(data)
+        for entry in data:
+            entry['priority'] = CUSTOM_PRIORITY
+            
+            simplified = entry['simplified']
+            
+            key = cacheKey(PRIORITY, simplified)
+            
+            if key in hashmap:
+                hashmap[key].append(entry)
+                hashmap[key].sort(key=lambda x: x['priority'])
+            else:
+                keys.add(simplified)
+                hashmap[key] = [entry]
+                
+    print('Done!')
+    writeDataToFile(list(keys), f"keylist{PRIORITY}.json")
+    print('Done!Done!')
+    writeDataToFile(hashmap, f"datamap{PRIORITY}.json")
+    print('Done!Done!Done!')
+    
+    # writeDataToFile(hashmap, "datamap.json")
+            # values = cache.get(entry['simplified'])
+            # if(values):
+            #     values.append(item)
+            #     values.sort(key=lambda x: x['priority'])
+            #     cache.set(item['simplified'], values)
+            # else:
+            #     cache.set(item['simplified'], [item])
+            #     keys.append()
+
+
+
+def writeDataToFile(data, filename):
+    with open(os.path.join(DATA_DIR, filename), 'w') as out_file:
+            json.dump(data, out_file, ensure_ascii=False, indent=2)
 
     # print("Removing Surnames . . .")
     # remove_surnames()

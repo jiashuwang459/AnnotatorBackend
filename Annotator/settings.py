@@ -10,7 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import logging
 from pathlib import Path
+from pprint import pprint
 import django_heroku
 from dotenv import load_dotenv
 import dj_database_url
@@ -38,7 +40,8 @@ DEBUG = True
 if DEBUG:
     ALLOWED_HOSTS = ['127.0.0.1:8000', 'localhost']
 else:
-    ALLOWED_HOSTS = ['https://chinese-annotator.herokuapp.com', 'https://chinese-annotator.netlify.app']
+    ALLOWED_HOSTS = ['https://chinese-annotator.herokuapp.com',
+                     'https://chinese-annotator.netlify.app']
 
 
 # Application definition
@@ -104,22 +107,30 @@ WSGI_APPLICATION = 'Annotator.wsgi.application'
 #     "default": dj_redis_url.config()
 # }
 
-import os
-try:
-    import urlparse
-except ImportError:
-    import urllib.parse as urlparse
+import urllib.parse as urlparse
+    
 redis_url = urlparse.urlparse(os.environ.get('REDISCLOUD_URL'))
+
+pprint(redis_url)
+
+pprint(redis_url.hostname)
+pprint(redis_url.port)
+pprint(redis_url.password)
+
 CACHES = {
-        'default': {
-            'BACKEND': 'redis_cache.RedisCache',
-            'LOCATION': '%s:%s' % (redis_url.hostname, redis_url.port),
-            'OPTIONS': {
-                'PASSWORD': redis_url.password,
-                'DB': 0,
-        }
+    "default": dj_redis_url.config(),
+    'extra': {
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': '%s:%d' % (redis_url.hostname, redis_url.port),
+        'OPTIONS': {
+            'PASSWORD': redis_url.password,
+            'DB': 0,
+        },
+        'TIMEOUT': None
     }
 }
+
+pprint(CACHES)
 
 DATABASES = {}
 DATABASES['default'] = dj_database_url.config(conn_max_age=600)
@@ -215,7 +226,6 @@ CORS_ORIGIN_WHITELIST = [
     'https://localhost:8000',
 ]
 
-import logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

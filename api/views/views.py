@@ -3,6 +3,7 @@ import os
 import re
 from collections import namedtuple
 from pprint import pprint
+import timeit
 
 from django.conf import settings
 from django.core.cache.backends.base import DEFAULT_TIMEOUT
@@ -101,7 +102,7 @@ def getEntry(request):
     #     "fragment": FragmentSerializer(Memory.objects.get(code=code).fragments.all(), many=True).data
     # }
 
-    entries = EntryManager.getDict(phrase);
+    entries = EntryManager.getDict(phrase)
 
     if entries is None:
         return Response({'Not Found': f'phrase {phrase} not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -394,7 +395,7 @@ class AnnotationView(APIView):
 
                 # print("created new blacklist")
                 EntryManager.reload()
-            
+
             Trie.loadTrie()
             # words = EntryManager.getValidKeyList()
 
@@ -449,10 +450,11 @@ class AnnotationView(APIView):
                         # entry = ownerQueryset.filter(
                         #     Q(simplified=phrase)
                         #     | Q(traditional=phrase), Q(priority__lte=MAX_PRIORITY)).order_by("priority").values_list("pinyin", "english").first()
-
                         entries = EntryManager.get(phrase)
                         if(entries):
                             entry = entries[0]
+                            # print("entry: '" +  + "'")
+                            # pprint(entry)
 
                             # print(pinyins.query)
 
@@ -461,7 +463,7 @@ class AnnotationView(APIView):
                             # english = entry[1]
 
                             pinyin = entry['pinyin'].split(" ")
-                            english = entry['english']
+                            # english = entry['english']
 
                             # print(pinyin)
                             # pinyin = dict.getPinYin(self.phrase).split(" ")
@@ -479,7 +481,7 @@ class AnnotationView(APIView):
                                     ChineseEntry(parsePinyin(
                                         pinyin[i]), phrase[i])
                                 )
-                            lst.append(PhraseEntry(phraselst, english))
+                            lst.append(PhraseEntry(phraselst))
                         else:
                             print(f"Unable to find entry {phrase}")
         return lst
@@ -507,14 +509,14 @@ class AnnotationView(APIView):
             # print(chineseEntries)
             data = self.annotate(owner, text)
             # pprint(data)
-            
+
             # pprint(data)
             # [print(namedtuple("PhraseEntry", phrase.keys())(*phrase.values()).english) if isinstance(
             #     phrase, PhraseEntry) else ChineseEntrySerializer(phrase).data for phrase in data]
             responseData = [PhraseEntrySerializer(phrase).data if isinstance(phrase, PhraseEntry)
                             else ChineseEntrySerializer(phrase).data for phrase in data]
             # responseData = [[ChineseEntrySerializer(entry).data] if isinstance(entry,ChineseEntry) else [PhraseEntrySerializer(phrase).data for phrase in entry] for entry in data]
-            
+
             return Response(responseData, status=status.HTTP_200_OK)
 
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
@@ -680,36 +682,36 @@ class ReloadCEDictView(APIView):
             self.request.session.create()
         # print(request.data)
 
-        reloadCEDict()
-        return Response({"OK": "Done reloaded CEDict"}, status=status.HTTP_200_OK)
+        lenA, lenB = reloadCEDict()
+        return Response({"OK": "Done reloaded CEDict", "lenA": lenA, "lenB": lenB}, status=status.HTTP_200_OK)
 
 
 class CacheView(APIView):
 
-    def get(self, request, format=None):
-        count = len([x for x in cache.iter_keys("*")])
-        dictCount = len([x for x in cache.iter_keys("dict::*")])
-        blacklistCount = len([x for x in cache.iter_keys("black::*")])
-        customCount = len([x for x in cache.iter_keys("custom::*")])
-        priorityCount = len([x for x in cache.iter_keys("priority::*")])
+    # def get(self, request, format=None):
+    # count = len([x for x in cache.iter_keys("*")])
+    # dictCount = len([x for x in cache.iter_keys("dict::*")])
+    # blacklistCount = len([x for x in cache.iter_keys("black::*")])
+    # customCount = len([x for x in cache.iter_keys("custom::*")])
+    # priorityCount = len([x for x in cache.iter_keys("priority::*")])
 
-        return Response({"OK": "Fetched count", "count": count, "dictCount": dictCount,
-                         "blacklistCount": blacklistCount,
-                         "customCount": customCount,
-                         "priorityCount": priorityCount, }, status=status.HTTP_200_OK)
+    # return Response({"OK": "Fetched count", "count": count, "dictCount": dictCount,
+    #  "blacklistCount": blacklistCount,
+    #  "customCount": customCount,
+    #  "priorityCount": priorityCount, }, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
 
         rType = None
         method = None
         id = None
-        
+
         if 'type' in request.data:
             rType = request.data['type']
-            
+
         if 'id' in request.data:
             id = request.data['id']
-            
+
         if 'method' in request.data:
             method = request.data['method']
 
@@ -724,7 +726,7 @@ class CacheView(APIView):
                 elif(rType == BLACKLIST):
                     EntryManager.reloadBlacklist()
                 else:
-                    EntryManager.reload()
+                    return Response({"Bad Request": "Invalid Type", "type": rType, "method": method, "id": id}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 EntryManager.reload()
             Trie.clearTries()
@@ -740,14 +742,14 @@ class CacheView(APIView):
                 elif(rType == BLACKLIST):
                     EntryManager.loadBlacklist()
                 else:
-                    EntryManager.load()
+                    return Response({"Bad Request": "Invalid Type", "type": rType, "method": method, "id": id}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 EntryManager.load()
 
         return Response({"OK": "Reloaded Entries", "type": rType, "method": method, "id": id}, status=status.HTTP_200_OK)
-    
+
     def delete(self, request, format=None):
-    
+
         rType = None
 
         if 'type' in request.data:
@@ -763,12 +765,12 @@ class CacheView(APIView):
             elif(rType == BLACKLIST):
                 EntryManager.clearBlacklist()
             else:
-                EntryManager.clear()
+                return Response({"Bad Request": "Invalid Type", "type": rType, "method": method, "id": id}, status=status.HTTP_400_BAD_REQUEST)
         else:
             EntryManager.clear()
-        
+
         Trie.clearTries()
-        return Response({"OK": "Reloaded Entries", "type": rType}, status=status.HTTP_200_OK)
+        return Response({"OK": "Deleted Entries", "type": rType}, status=status.HTTP_200_OK)
 
 
 # class PriorityView(APIView):
