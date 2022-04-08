@@ -21,7 +21,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 let theme = createTheme({
   palette: {
-    mode: "dark",
+    mode: "light",
     primary: {
       main: "#3f51b5",
     },
