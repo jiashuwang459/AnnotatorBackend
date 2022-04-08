@@ -564,5 +564,12 @@
     "pinyin": "yi3",
     "english": "to use/by means of/according to/in order to/because of/at (a certain date or place)",
     "priority": 500
+  },
+  {
+    "traditional": "片",
+    "simplified": "片",
+    "pinyin": "pian4",
+    "english": "thin piece/flake/a slice/film/TV play/to slice/to carve thin/partial/incomplete/one-sided/classifier for slices, tablets, tract of land, area of water/classifier for CDs, movies, DVDs etc/used with numeral 一[yi1]: classifier for scenario, scene, feeling, atmosphere, sound etc/Kangxi radical 91",
+    "priority": 500
   }
 ]

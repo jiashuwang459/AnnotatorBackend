@@ -294,5 +294,14 @@
       "english": "see clearly",
       "priority": 200
     }
+  ],
+  "custom::并不长": [
+    {
+      "traditional": "並不長",
+      "simplified": "并不长",
+      "pinyin": "bing4 bu4 chang2",
+      "english": "not at all long",
+      "priority": 200
+    }
   ]
 }
