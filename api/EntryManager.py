@@ -298,32 +298,32 @@ class EntryManagerSingleton(object):
         # variantEntries = self.dictCache.get(f"variant::{phrase}")
         # userEntries = self.dictCache.get(f"user::{phrase}")
         
-        start_time = timeit.default_timer()
+        # start_time = timeit.default_timer()
         dictEntries = self.getDict(phrase)
         dictEntries = dictEntries if dictEntries else []
-        print(f"dict:{timeit.default_timer() - start_time}")
+        # print(f"dict:{timeit.default_timer() - start_time}")
         
-        start_time = timeit.default_timer()
+        # start_time = timeit.default_timer()
         if phrase in self.customkeylist:
             customEntries = caches['default'].get(cacheKey(CUSTOM, phrase))
         else:
             customEntries = []
-        print(f"custom:{timeit.default_timer() - start_time}")
+        # print(f"custom:{timeit.default_timer() - start_time}")
 
-        start_time = timeit.default_timer()
+        # start_time = timeit.default_timer()
         if phrase in self.prioritykeylist:
             priorityEntries = caches['default'].get(cacheKey(PRIORITY, phrase))
         else:
             priorityEntries = []
-        print(f"priority:{timeit.default_timer() - start_time}")
+        # print(f"priority:{timeit.default_timer() - start_time}")
 
 
-        start_time = timeit.default_timer()
+        # start_time = timeit.default_timer()
         if phrase in self.blacklistkeylist:
             blacklistEntries = caches['default'].get(cacheKey(BLACKLIST, phrase))
         else:
             blacklistEntries = []
-        print(f"blacklist:{timeit.default_timer() - start_time}")
+        # print(f"blacklist:{timeit.default_timer() - start_time}")
 
         
         # customEntries = customEntries if customEntries else []
@@ -338,7 +338,7 @@ class EntryManagerSingleton(object):
 
         # entries = priorityEntries + customEntries + userEntries + defaultEntries + surnameEntries + variantEntries
 
-        start_time = timeit.default_timer()
+        # start_time = timeit.default_timer()
         entries = customEntries + dictEntries
 
 
@@ -359,7 +359,7 @@ class EntryManagerSingleton(object):
             return None
 
         entries.sort(key=lambda x: x['priority'])
-        print(f"other:{timeit.default_timer() - start_time}")
+        # print(f"other:{timeit.default_timer() - start_time}")
 
         return entries
 

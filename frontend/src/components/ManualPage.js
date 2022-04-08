@@ -269,6 +269,7 @@ export default class ManualPage extends Component {
                   variant="outline-success"
                   checked={this.state.dictEdit}
                   onChange={this.handleDictEditToggle}
+                  disabled
                 >
                   <MdEdit></MdEdit>
                 </ToggleButton>

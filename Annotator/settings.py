@@ -33,7 +33,7 @@ load_dotenv()
 SECRET_KEY = 'y87-@d^e3gw=1*yf2-gjf#q2a5r-&d00d(ih6xb*mh%-v%lyp7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # SECRET_KEY = '' # Change to empty string
 
@@ -111,11 +111,11 @@ import urllib.parse as urlparse
     
 redis_url = urlparse.urlparse(os.environ.get('REDISCLOUD_URL'))
 
-pprint(redis_url)
+# pprint(redis_url)
 
-pprint(redis_url.hostname)
-pprint(redis_url.port)
-pprint(redis_url.password)
+# pprint(redis_url.hostname)
+# pprint(redis_url.port)
+# pprint(redis_url.password)
 
 CACHES = {
     "default": dj_redis_url.config(),
@@ -130,7 +130,7 @@ CACHES = {
     }
 }
 
-pprint(CACHES)
+# pprint(CACHES)
 
 DATABASES = {}
 DATABASES['default'] = dj_database_url.config(conn_max_age=600)
