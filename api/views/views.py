@@ -36,10 +36,10 @@ from api.utils import (DEFAULT_OWNER, DEFAULT_PRIORITY, MAIN_PRIORITY, MAX_PRIOR
 
 # CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
-import redis
+# import redis
 import json
 from django.conf import settings
-import redis
+# import redis
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.response import Response

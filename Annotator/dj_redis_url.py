@@ -1,55 +1,55 @@
 # -*- coding: utf-8 -*-
 
-import os
+# import os
 
-try:
-    import urlparse
-except ImportError:
-    import urllib.parse as urlparse
-
-
-# Register database schemes in URLs.
-urlparse.uses_netloc.append("redis")
-
-DEFAULT_ENV = "REDIS_URL"
+# try:
+#     import urlparse
+# except ImportError:
+#     import urllib.parse as urlparse
 
 
-def config(env=DEFAULT_ENV, default=None, **overrides):
-    """Returns configured REDIS dictionary from REDIS_URL."""
+# # Register database schemes in URLs.
+# urlparse.uses_netloc.append("redis")
 
-    config = {}
-
-    s = os.environ.get(env, default)
-
-    if s:
-        config = parse(s)
-
-    overrides = dict([(k.upper(), v) for k, v in overrides.items()])
-
-    config.update(overrides)
-
-    return config
+# DEFAULT_ENV = "REDIS_URL"
 
 
-def parse(url):
-    """Parses a database URL."""
+# def config(env=DEFAULT_ENV, default=None, **overrides):
+#     """Returns configured REDIS dictionary from REDIS_URL."""
 
-    config = {}
+#     config = {}
 
-    # url = urlparse.urlparse(url)
+#     s = os.environ.get(env, default)
 
-    # # Remove query strings.
-    # path = url.path[1:]
-    # path = path.split('?', 2)[0]
+#     if s:
+#         config = parse(s)
 
-    # Update with environment configuration.
-    config.update({
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": url,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        },
-        'TIMEOUT': None,
-    })
+#     overrides = dict([(k.upper(), v) for k, v in overrides.items()])
 
-    return config
+#     config.update(overrides)
+
+#     return config
+
+
+# def parse(url):
+#     """Parses a database URL."""
+
+#     config = {}
+
+#     # url = urlparse.urlparse(url)
+
+#     # # Remove query strings.
+#     # path = url.path[1:]
+#     # path = path.split('?', 2)[0]
+
+#     # Update with environment configuration.
+#     config.update({
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": url,
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#         },
+#         'TIMEOUT': None,
+#     })
+
+#     return config

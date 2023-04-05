@@ -54,7 +54,7 @@ python manage.py runserver
 
 ## Frontend (React)
 
-The frontend's base directory is: `/AnnotatorBackend/Annotator/frontend`.
+The frontend's base directory is: `/AnnotatorBackend/frontend`.
 
 
 ### Installing npm

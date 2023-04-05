@@ -107,9 +107,9 @@ WSGI_APPLICATION = 'Annotator.wsgi.application'
 #     "default": dj_redis_url.config()
 # }
 
-import urllib.parse as urlparse
+# import urllib.parse as urlparse
     
-redis_url = urlparse.urlparse(os.environ.get('REDISCLOUD_URL'))
+# redis_url = urlparse.urlparse(os.environ.get('REDISCLOUD_URL'))
 
 # pprint(redis_url)
 
@@ -117,18 +117,18 @@ redis_url = urlparse.urlparse(os.environ.get('REDISCLOUD_URL'))
 # pprint(redis_url.port)
 # pprint(redis_url.password)
 
-CACHES = {
-    "default": dj_redis_url.config(),
-    'extra': {
-        'BACKEND': 'redis_cache.RedisCache',
-        'LOCATION': '%s:%d' % (redis_url.hostname, redis_url.port),
-        'OPTIONS': {
-            'PASSWORD': redis_url.password,
-            'DB': 0,
-        },
-        'TIMEOUT': None
-    }
-}
+# CACHES = {
+#     "default": dj_redis_url.config(),
+#     'extra': {
+#         'BACKEND': 'redis_cache.RedisCache',
+#         'LOCATION': '%s:%d' % (redis_url.hostname, redis_url.port),
+#         'OPTIONS': {
+#             'PASSWORD': redis_url.password,
+#             'DB': 0,
+#         },
+#         'TIMEOUT': None
+#     }
+# }
 
 # pprint(CACHES)
 

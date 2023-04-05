@@ -117,13 +117,12 @@ export default class ManualPage extends Component {
 
             // const response = await fetch("/api/annotate", requestOptions);
             // const json = await response.json();
-
             const response = await axios.post("/api/annotate", {
               text: paragraph,
             });
             const json = response.data;
 
-            console.log("jiashu", json);
+            // console.log("jiashu", json);
             await this.display.updateDisplay(json);
             // .then((response) => {
             //   console.log(response.status);
@@ -206,145 +205,170 @@ export default class ManualPage extends Component {
   render() {
     // const myGrid = useTheme();
     return (
-      <
-        container
-        spacing={1}
-        alignItems="flex-start"
-        style={{ padding: "10px", flexWrap: "nowrap" }}
-        direction="column"
-      >
-        <Grid item>
-          <ButtonToolbar
-            className="justify-content-between"
-            aria-label="Toolbar with Button groups"
-            style={{ gap: "20px" }}
+      <div style={{ height: "100%", width: "100%" }}>
+        <Box
+          sx={{
+            display: "flex",
+            // bgcolor: "primary",
+            // color: "secondary",
+            flexDirection: "column",
+            p: 1,
+            flexWrap: "nowrap",
+            // alignItems: "flex-start",
+            bgcolor: "background.paper",
+            borderRadius: 1,
+            height: "100%"
+          }}
+          // container
+          // spacing={1}
+          // style={{
+          //   padding: "10px",
+          //   flexWrap: "nowrap",
+          //   backgroundColor: "primary"
+          // }}
+          // direction="column"
+        >
+          <Box
+            sx={{
+              p: 1,
+            }}
           >
-            <Memory
-              ref={(m) => (this.memory = m)}
-              onUpdateMemory={this.handleFetchMemory}
-              fragments={this.handleGetMemoryFragments}
-            />
+            <ButtonToolbar
+              className="justify-content-between"
+              aria-label="Toolbar with Button groups"
+              style={{ gap: "20px" }}
+            >
+              <Memory
+                ref={(m) => (this.memory = m)}
+                onUpdateMemory={this.handleFetchMemory}
+                fragments={this.handleGetMemoryFragments}
+              />
 
-            <InputGroup aria-label="Dictionary Group">
-              {/*TODO: determine if we need this label here... or maybe take a way the icon button? but I like the button... :') */}
-              <InputGroup.Text>Dictionary</InputGroup.Text>
-              {/* <InputGroup.Text style={{ width: "75px" }}>
+              <InputGroup aria-label="Dictionary Group">
+                {/*TODO: determine if we need this label here... or maybe take a way the icon button? but I like the button... :') */}
+                <InputGroup.Text>Dictionary</InputGroup.Text>
+                {/* <InputGroup.Text style={{ width: "75px" }}>
                 {this.state.dictionaryMode ? "ON" : "OFF"}
               </InputGroup.Text> */}
-              <OverlayTrigger
-                placement="bottom"
-                overlay={
-                  <Tooltip id="tooltip-disabled">
-                    {this.state.dictionaryMode ? "Close" : "Open"}
-                    {NBSP}Dictionary
-                  </Tooltip>
-                }
-              >
-                <ToggleButton
-                  id="toggle_dict"
-                  type="checkbox"
-                  variant="outline-success"
-                  checked={this.state.dictionaryMode}
-                  onChange={this.handleDictionaryModeToggle}
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={
+                    <Tooltip id="tooltip-disabled">
+                      {this.state.dictionaryMode ? "Close" : "Open"}
+                      {NBSP}Dictionary
+                    </Tooltip>
+                  }
                 >
-                  {this.state.dictionaryMode ? (
-                    <GiSpellBook></GiSpellBook>
-                  ) : (
-                    <GiSecretBook></GiSecretBook>
-                  )}
-                </ToggleButton>
-              </OverlayTrigger>
-              <OverlayTrigger
-                placement="bottom"
-                overlay={
-                  <Tooltip id="tooltip-disabled">
-                    {this.state.dictEdit ? "No Edit" : "Edit"}
-                    {NBSP}Dictionary
-                  </Tooltip>
-                }
-              >
-                <ToggleButton
-                  id="toggle_edit"
-                  type="checkbox"
-                  variant="outline-success"
-                  checked={this.state.dictEdit}
-                  onChange={this.handleDictEditToggle}
-                  disabled
+                  <ToggleButton
+                    id="toggle_dict"
+                    type="checkbox"
+                    variant="outline-success"
+                    checked={this.state.dictionaryMode}
+                    onChange={this.handleDictionaryModeToggle}
+                  >
+                    {this.state.dictionaryMode ? (
+                      <GiSpellBook></GiSpellBook>
+                    ) : (
+                      <GiSecretBook></GiSecretBook>
+                    )}
+                  </ToggleButton>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={
+                    <Tooltip id="tooltip-disabled">
+                      {this.state.dictEdit ? "No Edit" : "Edit"}
+                      {NBSP}Dictionary
+                    </Tooltip>
+                  }
                 >
-                  <MdEdit></MdEdit>
-                </ToggleButton>
-              </OverlayTrigger>
-            </InputGroup>
-            <ButtonGroup aria-label="Manual Annotation Group">
-              <Offcanvas
-                show={this.state.show}
-                onHide={this.handleClose}
-                placement="top"
-                style={{ height: "fit-content", padding: "0px 10px 10px 10px" }}
-              >
-                <Offcanvas.Header closeButton>
-                  <Offcanvas.Title style={{ marginInline: "auto" }}>
-                    Manual Page
-                  </Offcanvas.Title>
-                </Offcanvas.Header>
-                <Offcanvas.Body>
-                  <Grid container style={{ padding: "0px", margin: "0px" }}>
-                    <Annotation
-                      ref={(a) => (this.annotation = a)}
-                      onAnnotate={this.handleAnnotate}
-                      onClose={this.handleCloseAnnotation}
-                      text={this.state.text}
-                    />
-                  </Grid>
-                </Offcanvas.Body>
-              </Offcanvas>
-              <OverlayTrigger
-                placement="bottom"
-                overlay={
-                  <UpdatingTooltip id="tooltip-disabled-manual">
-                    {this.state.loading
-                      ? "Fetching your annotations..."
-                      : "Manual Entry"}
-                  </UpdatingTooltip>
-                }
-              >
-                <span className="d-inline-block">
-                  {this.state.loading ? (
-                    <Button
-                      variant="primary"
-                      onClick={this.handleShow}
-                      disabled
-                      style={{ pointerEvents: "none" }}
-                    >
-                      <Spinner
-                        as="span"
-                        animation="border"
-                        role="status"
-                        size="sm"
-                        aria-hidden="true"
+                  <ToggleButton
+                    id="toggle_edit"
+                    type="checkbox"
+                    variant="outline-success"
+                    checked={this.state.dictEdit}
+                    onChange={this.handleDictEditToggle}
+                    disabled
+                  >
+                    <MdEdit></MdEdit>
+                  </ToggleButton>
+                </OverlayTrigger>
+              </InputGroup>
+              <ButtonGroup aria-label="Manual Annotation Group">
+                <Offcanvas
+                  show={this.state.show}
+                  onHide={this.handleClose}
+                  placement="top"
+                  style={{
+                    height: "fit-content",
+                    padding: "0px 10px 10px 10px",
+                  }}
+                >
+                  <Offcanvas.Header closeButton>
+                    <Offcanvas.Title style={{ marginInline: "auto" }}>
+                      Manual Page
+                    </Offcanvas.Title>
+                  </Offcanvas.Header>
+                  <Offcanvas.Body>
+                    <Grid container style={{ padding: "0px", margin: "0px" }}>
+                      <Annotation
+                        ref={(a) => (this.annotation = a)}
+                        onAnnotate={this.handleAnnotate}
+                        onClose={this.handleCloseAnnotation}
+                        text={this.state.text}
+                      />
+                    </Grid>
+                  </Offcanvas.Body>
+                </Offcanvas>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={
+                    <UpdatingTooltip id="tooltip-disabled-manual">
+                      {this.state.loading
+                        ? "Fetching your annotations..."
+                        : "Manual Entry"}
+                    </UpdatingTooltip>
+                  }
+                >
+                  <span className="d-inline-block">
+                    {this.state.loading ? (
+                      <Button
+                        variant="primary"
+                        onClick={this.handleShow}
+                        disabled
+                        style={{ pointerEvents: "none" }}
                       >
-                        <span className="visually-hidden">Loading...</span>
-                      </Spinner>
-                    </Button>
-                  ) : (
-                    <Button variant="primary" onClick={this.handleShow}>
-                      <RiQuillPenFill />
-                    </Button>
-                  )}
-                </span>
-              </OverlayTrigger>
-            </ButtonGroup>
-          </ButtonToolbar>
-        </Grid>
-        <Grid container style={{ height: "100%", overflowY: "hidden" }}>
-          <Grid item xs align="center" style={{ height: "100%" }}>
+                        <Spinner
+                          as="span"
+                          animation="border"
+                          role="status"
+                          size="sm"
+                          aria-hidden="true"
+                        >
+                          <span className="visually-hidden">Loading...</span>
+                        </Spinner>
+                      </Button>
+                    ) : (
+                      <Button variant="primary" onClick={this.handleShow}>
+                        <RiQuillPenFill />
+                      </Button>
+                    )}
+                  </span>
+                </OverlayTrigger>
+              </ButtonGroup>
+            </ButtonToolbar>
+          </Box>
+
+          <Box
+            sx={{ height: "100%", flexGrow: 1, overflowY: "hidden" }}
+          >
             <DisplayArea
               ref={(d) => (this.display = d)}
               // mode={this.state.displayMode}
             />
-          </Grid>
-        </Grid>
-      </Grid>
+          </Box>
+        </Box>
+      </div>
     );
   }
 }

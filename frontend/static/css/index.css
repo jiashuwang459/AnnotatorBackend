@@ -21,14 +21,14 @@ body {
 }
 
 .dictionary_no_outline {
-  margin: 5px;
+  margin: 2px;
 }
 
 .dictionary_outline {
   border: darkslateblue;
   border-style: dashed;
   border-width: thin;
-  margin: 4px;
+  margin: 1px;
   background: aliceblue;
 }
 

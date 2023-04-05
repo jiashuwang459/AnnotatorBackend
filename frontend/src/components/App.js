@@ -14,19 +14,93 @@ import {
 //     // some CSS that access to theme
 //   }
 // });
-import axios from 'axios';
+import axios from "axios";
+import { flexbox } from "@mui/system";
 
-axios.defaults.xsrfCookieName = 'csrftoken'
-axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+axios.defaults.xsrfCookieName = "csrftoken";
+axios.defaults.xsrfHeaderName = "X-CSRFToken";
 
-let theme = createTheme({
+const defaultTheme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#3f51b5",
+      main: '#fdf5e6',
     },
     secondary: {
-      main: "#f50057",
+      main: '#8add5d',
+    },
+    background: {
+      paper: '#fdf5e6',
+    },
+  }
+});
+
+let theme = createTheme({
+  palette: defaultTheme.palette,
+  components: {
+    MuiPaper: {
+      variants: [
+        {
+          props: { variant: "newline" },
+          style: {
+            // textTransform: "none",
+            // border: `2px dashed ${blue[500]}`,
+            margin: "4px",
+          },
+        },
+        {
+          props: { variant: "character" },
+          style: {
+            // textTransform: "none",
+            // border: `2px dashed ${blue[500]}`,
+            margin: "2px",
+            backgroundColor: "transparent",
+          },
+        },
+        {
+          props: { variant: "annotation" },
+          style: {
+            // textTransform: "none",
+            // border: `2px dashed ${blue[500]}`,
+            textAlign: "center",
+            fontSize: "small",
+            backgroundColor: "transparent",
+          },
+        },
+        {
+          props: { variant: "cchar" },
+          style: {
+            // alignItems: "center",
+            textAlign: "center",
+            fontSize: "x-large",
+            backgroundColor: "transparent",
+          },
+        },
+        {
+          props: { variant: "phrase" },
+          style: {
+            // textTransform: "none",
+            // border: `2px dashed ${blue[500]}`,
+            margin: "2px",
+            gap: "4px",
+            display: "flex",
+            flexDiration: "row",
+          },
+        },
+        {
+          props: { variant: "phrase_outline" },
+          style: {
+            // textTransform: "none",
+            border: `1px dashed ${defaultTheme.palette.secondary.light}`,
+            backgroundColor: "aliceblue",
+            margin: "1px",
+            // color: defaultTheme.palette.secondary.main,
+            gap: "4px",
+            display: "flex",
+            flexDiration: "row",
+          },
+        },
+      ],
     },
   },
 });

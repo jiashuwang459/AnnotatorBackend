@@ -25,22 +25,23 @@ import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import ToggleButton from "@mui/material/ToggleButton";
 import Box from "@mui/material/Box";
-import Paper from '@mui/material/Paper';
+import Paper from "@mui/material/Paper";
 import axios from "axios";
+import Container from "@mui/material/Container";
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* justify-content: center;*/
-  /* padding: 20px; */
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border: green;
-  border-style: double;
-  font-size: large;
-`;
+// const Container = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   /* justify-content: center;*/
+//   /* padding: 20px; */
+//   position: relative;
+//   width: 100%;
+//   height: 100%;
+//   border: green;
+//   border-style: double;
+//   font-size: large;
+// `;
 
 const CardHeader = styled.div`
   display: flex;
@@ -56,66 +57,83 @@ const CardBody = styled.div`
   padding: 5px;
 `;
 
-const PopoverCChar = styled.span`
-  flex: auto;
-  padding-right: 15px;
-  font-size: larger;
-`;
+// const PopoverCChar = styled.span`
+//   flex: auto;
+//   padding-right: 15px;
+//   font-size: larger;
+// `;
 
-const PopoverPinyin = styled.span`
-  flex: auto;
-  font-size: small;
-`;
+// const PopoverPinyin = styled.span`
+//   flex: auto;
+//   font-size: small;
+// `;
 
-const Display = styled.div`
-  display: flex;
-  width: 100%;
-  padding: 10px;
-  flex-direction: row;
-  flex-wrap: wrap;
-  overflow-y: auto;
-`;
+// const Display = styled.div`
+//   display: flex;
+//   width: 100%;
+//   padding: 10px;
+//   flex-direction: row;
+//   flex-wrap: wrap;
+//   overflow-y: auto;
+// `;
 
-const Text = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  font-size: x-large;
-`;
+// const Text = styled.div`
+//   display: flex;
+//   align-items: center;
+//   flex-direction: column;
 
-const Annotation = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  font-size: small;
-`;
+// `;
 
-const PhraseContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
+// const Annotation = styled.div`
+//   display: flex;
+//   align-items: center;
+//   flex-direction: column;
+//   font-size: small;
+// `;
 
-const CharacterContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 5px;
-`;
+// const PhraseContainer = styled.div`
+//   display: flex;
+//   flex-direction: row;
+//   align-items: center;
+//   gap: 4px;
+// `;
 
-const NewLineContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 5px;
-  width: 100%;
-`;
+// const CharacterContainer = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   margin: 2px;
+// `;
 
-const MemoryInput = styled.input``;
+// const NewLineContainer = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   width: 100%;
+//   margin: 4px;
+// `;
 
-const MemoryButton = styled.button`
-  margin: auto;
-`;
+// const MemoryInput = styled.input``;
+
+// const MemoryButton = styled.button`
+//   margin: auto;
+// `;
+
+// const ListContainer = ({ listRef, style, children }) => {
+//   return (
+//     <List ref={listRef} style={{ ...style, padding: 0 }}>
+//       {children}
+//     </List>
+//   );
+// };
+
+// const ItemContainer = ({ children, ...props }) => {
+//   return (
+//     <ListItem {...props} style={{ margin: 0 }}>
+//       {children}
+//     </ListItem>
+//   );
+// };
 
 const NBSP = "\u00a0";
 const HIDDEN = { visibility: "hidden" };
@@ -177,7 +195,7 @@ export class DisplayArea extends React.Component {
       }
 
       this.setState({ popperAnchor: target }, () => {
-        console.log("helper", this.helperCard)
+        console.log("helper", this.helperCard);
         if (this.helperCard) {
           this.helperCard.setPhrase(
             this.state.paragraphs[target.dataset.paragraph][
@@ -563,8 +581,18 @@ export class DisplayArea extends React.Component {
     const paragraphs = this.state.paragraphs;
     if (!paragraphs?.length) {
       return (
-        <Container>
-          <Display style={{ textAlign: "initial" }}>
+        <Container
+          sx={{
+            // border: "green",
+            // borderStyle: "double",
+            fontSize: "large",
+            p: 1,
+          }}
+        >
+          <Paper
+            variant="outlined"
+            sx={{ height: "100%", p: 2, textAlign: "initial" }}
+          >
             <p>
               Welcome! Click on the <RiQuillPenFill></RiQuillPenFill> in the top
               right to get started!
@@ -579,215 +607,200 @@ export class DisplayArea extends React.Component {
               memory bank. Remember to save your memory bank before you leave!
               Your code will change everytime you save!
             </p>
-          </Display>
+          </Paper>
         </Container>
       );
     }
-
-    // createPopper(this.state.popperAnchor, this.tooltip, {
-    //   placement: "bottom",
-    //   modifiers: [
-    //     {
-    //       name: "flip",
-    //       options: {
-    //         altBoundary: true,
-    //         rootBoundary: "viewport",
-    //         boundary: this.container,
-    //         padding: 8,
-    //       },
-    //     },
-    //     {
-    //       name: "preventOverflow",
-    //       enabled: true,
-    //       options: {
-    //         altBoundary: true,
-    //         tether: true,
-    //         rootBoundary: "viewport",
-    //         boundary: this.container,
-    //         padding: 8,
-    //       },
-    //     },
-    //     {
-    //       name: "arrow",
-    //       options: {
-    //         padding: 5,
-    //       },
-    //     },
-    //     {
-    //       name: "hide",
-    //     },
-    //   ],
-    // });
-
-    //     const rowHeights = new Array(1000)
-    //     .fill(true)
-    //     .map(() => 25 + Math.round(Math.random() * 50));
-
-    //   const getItemSize = index => rowHeights[index];
-
-    //   const Row = ({ index, style }) => (
-    //     <div style={style}>Row {index}</div>
-    //   );
-
-    //   const Example = () => (
-    //     <List
-    //       height={150}
-    //       itemCount={1000}
-    //       itemSize={getItemSize}
-    //       width={300}
-    //     >
-    //       {Row}
-    //     </List>
-    //   );
     const open = this.state.dictMode ? Boolean(this.state.popperAnchor) : false;
-    
+
     return (
-      <Container ref={(container) => (this.container = container)}>
-        <Virtuoso
-          style={{ height: "100%", width: "100%" }}
-          data={paragraphs}
-          totalCount={paragraphs.length}
-          itemContent={(paragraphIndex, paragraph) => {
-            // const paragraph = paragraphs[paragraphIndex];
-            return (
-              <Display key={paragraphIndex}>
-                {paragraph.map((entry, phraseIndex) => {
-                  if (entry.cchars) {
-                    // This means it's is a phrase.
-                    const phrase = entry;
+      <Container
+        ref={(container) => (this.container = container)}
+        sx={{
+          fontSize: "large",
+          height: "100%",
+          p: 1,
+        }}
+      >
+        <Paper
+          variant="outlined"
+          sx={{ height: "100%", p: 1, textAlign: "initial" }}
+        >
+          <Virtuoso
+            // Item={Paper}
+            components={{
+              Item: ({ children, ...props }) => (
+                <Box {...props}>{children}</Box>
+              ),
+            }}
+            // List={Box}
+            // GroupContainer={Paper}
+            style={{ height: "100%", width: "100%" }}
+            data={paragraphs}
+            totalCount={paragraphs.length}
+            itemContent={(paragraphIndex, paragraph) => {
+              // const paragraph = paragraphs[paragraphIndex];
+              return (
+                <Box
+                  // elevation={12}
+                  sx={{
+                    display: "flex",
+                    width: "100%",
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    overflowY: "auto",
+                  }}
+                  key={paragraphIndex}
+                >
+                  {paragraph.map((entry, phraseIndex) => {
+                    if (entry.cchars) {
+                      // This means it's is a phrase.
+                      const phrase = entry;
 
-                    // TODO: don't change the dom each time.
-                    //   return this.props.mode == "dict" ?
-                    return (
-                      // 'auto-start' | 'auto' | 'auto-end' | 'top-start' | 'top' | 'top-end' | 'right-start' | 'right' | 'right-end' | 'bottom-end' | 'bottom' | 'bottom-start' | 'left-end' | 'left' | 'left-start'
-                      // <OverlayTrigger
-                      //   trigger={this.state.dictOverlayTrigger}
-                      //   key={index}
-                      //   placement="auto-start"
-                      //   rootClose
-                      //   overlay={(props) => this.getPopover(props, phrase)}
-                      // >
-                      // <MDBPopover
-                      //   options={{ 'data-mdb-trigger': "hover", container: 'body' }}
-                      //   btnChildren={
+                      // TODO: don't change the dom each time.
+                      //   return this.props.mode == "dict" ?
+                      return (
+                        // 'auto-start' | 'auto' | 'auto-end' | 'top-start' | 'top' | 'top-end' | 'right-start' | 'right' | 'right-end' | 'bottom-end' | 'bottom' | 'bottom-start' | 'left-end' | 'left' | 'left-start'
+                        // <OverlayTrigger
+                        //   trigger={this.state.dictOverlayTrigger}
+                        //   key={index}
+                        //   placement="auto-start"
+                        //   rootClose
+                        //   overlay={(props) => this.getPopover(props, phrase)}
+                        // >
+                        // <MDBPopover
+                        //   options={{ 'data-mdb-trigger': "hover", container: 'body' }}
+                        //   btnChildren={
 
-                      //   }
-                      // >
-                      //   <MDBPopoverHeader tag="h3">
-                      //     <PopoverCChar>{phrase.cchars.map((item) => item.cchar).join("")}</PopoverCChar>
-                      //     <PopoverPinyin>{phrase.cchars.map((item) => item.pinyin).join(" ")}</PopoverPinyin>
-                      //   </MDBPopoverHeader>
-                      //   <MDBPopoverBody><ol>{phrase.english.split("/").map((item) => <li>{item}</li>)}</ol></MDBPopoverBody>
-                      // </MDBPopover>
-                      // <div>
-                      <PhraseContainer
-                        className={
-                          phrase.cchars.length > 1 && this.state.dictMode
-                            ? "dictionary_outline"
-                            : "dictionary_no_outline"
-                        }
-                        key={phraseIndex}
-                        // onClick={(e) => this.handleCharacterClick(item, e)}
-                        aria-owns={open ? "tooltip" : undefined}
-                        // onMouseEnter={this.handlePopoverOpen}
-                        // onMouseLeave={this.handlePopoverClose}
-                        data-cchars={phrase.cchars
-                          .map((item) => item.cchar)
-                          .join("")}
-                        data-pinyin={phrase.cchars
-                          .map((item) => item.pinyin)
-                          .join(" ")}
-                        data-english={phrase.english}
-                        data-paragraph={paragraphIndex}
-                        data-phrase={phraseIndex}
-                        onClick={(e) => {
-                          this.handlePopoverOpen(e);
-                          // console.log(this.cardContent);
-                          // }
-                        }}
-                      >
-                        {phrase.cchars.map((item, ccharIndex) => {
-                          if (item.cchar == "\n") {
-                            return (
-                              <NewLineContainer key={ccharIndex}>
-                                <Annotation></Annotation>
-                                <Text></Text>
-                              </NewLineContainer>
-                            );
-                          } else {
-                            return (
-                              <CharacterContainer
-                                key={ccharIndex}
-                                onClick={(e) =>
-                                  this.handleCharacterClick(item, e)
-                                }
-                              >
-                                <Annotation style={this.hideBlock(item)}>
-                                  {item.pinyin}
-                                </Annotation>
-                                <Text>{item.cchar}</Text>
-                              </CharacterContainer>
-                            );
+                        //   }
+                        // >
+                        //   <MDBPopoverHeader tag="h3">
+                        //     <PopoverCChar>{phrase.cchars.map((item) => item.cchar).join("")}</PopoverCChar>
+                        //     <PopoverPinyin>{phrase.cchars.map((item) => item.pinyin).join(" ")}</PopoverPinyin>
+                        //   </MDBPopoverHeader>
+                        //   <MDBPopoverBody><ol>{phrase.english.split("/").map((item) => <li>{item}</li>)}</ol></MDBPopoverBody>
+                        // </MDBPopover>
+                        // <div>
+                        <Paper
+                          variant={
+                            this.state.dictMode ? "phrase_outline" : "phrase"
                           }
-                        })}
-                      </PhraseContainer>
-                      // </div>
-                    );
-                    //   ) : (
-                    //     <PhraseContainer key={index}>
-                    //       {phrase.cchars.map((item, index2) => {
-                    //         if (item.cchar == "\n") {
-                    //           return (
-                    //             <NewLineContainer key={index2}>
-                    //               <Annotation></Annotation>
-                    //               <Text></Text>
-                    //             </NewLineContainer>
-                    //           );
-                    //         } else {
-                    //           return (
-                    //             //TODO: add a phrase container?
-                    //             <CharacterContainer
-                    //               key={index2}
-                    //               onClick={(e) => this.handleCharacterClick(item, e)}
-                    //             >
-                    //               <Annotation style={this.hideBlock(item)}>
-                    //                 {item.pinyin}
-                    //               </Annotation>
-                    //               <Text>{item.cchar}</Text>
-                    //             </CharacterContainer>
-                    //           );
-                    //         }
-                    //       })}
-                    //     </PhraseContainer>
-                    //   );
-                  } else {
-                    const item = entry;
-                    if (item.cchar == "\n") {
-                      return (
-                        <NewLineContainer key={phraseIndex}>
-                          <Annotation></Annotation>
-                          <Text></Text>
-                        </NewLineContainer>
-                      );
-                    } else {
-                      return (
-                        <CharacterContainer
+                          // className={
+                          // phrase.cchars.length > 1 && this.state.dictMode
+                          //   ? "dictionary_outline"
+                          //   : "dictionary_no_outline"
+                          // }
                           key={phraseIndex}
-                          onClick={(e) => this.handleCharacterClick(item, e)}
+                          // onClick={(e) => this.handleCharacterClick(item, e)}
+                          aria-owns={open ? "tooltip" : undefined}
+                          // onMouseEnter={this.handlePopoverOpen}
+                          // onMouseLeave={this.handlePopoverClose}
+                          data-cchars={phrase.cchars
+                            .map((item) => item.cchar)
+                            .join("")}
+                          data-pinyin={phrase.cchars
+                            .map((item) => item.pinyin)
+                            .join(" ")}
+                          data-english={phrase.english}
+                          data-paragraph={paragraphIndex}
+                          data-phrase={phraseIndex}
+                          onClick={(e) => {
+                            this.handlePopoverOpen(e);
+                            // console.log(this.cardContent);
+                            // }
+                          }}
                         >
-                          <Annotation style={this.hideBlock(item)}>
-                            {item.pinyin}
-                          </Annotation>
-                          <Text>{item.cchar}</Text>
-                        </CharacterContainer>
+                          {phrase.cchars.map((item, ccharIndex) => {
+                            if (item.cchar == "\n") {
+                              return (
+                                <Paper variant="newline" key={ccharIndex}>
+                                  <Paper component="Annotation"></Paper>
+                                  <Paper component="Text"></Paper>
+                                </Paper>
+                              );
+                            } else {
+                              return (
+                                <Paper
+                                  variant="character"
+                                  key={ccharIndex}
+                                  onClick={(e) =>
+                                    this.handleCharacterClick(item, e)
+                                  }
+                                >
+                                  <Paper
+                                    variant="annotation"
+                                    style={this.hideBlock(item)}
+                                  >
+                                    {item.pinyin}
+                                  </Paper>
+                                  <Paper variant="cchar">{item.cchar}</Paper>
+                                </Paper>
+                              );
+                            }
+                          })}
+                        </Paper>
+                        // </div>
                       );
+                      //   ) : (
+                      //     <PhraseContainer key={index}>
+                      //       {phrase.cchars.map((item, index2) => {
+                      //         if (item.cchar == "\n") {
+                      //           return (
+                      //             <NewLineContainer key={index2}>
+                      //               <Annotation></Annotation>
+                      //               <Text></Text>
+                      //             </NewLineContainer>
+                      //           );
+                      //         } else {
+                      //           return (
+                      //             //TODO: add a phrase container?
+                      //             <CharacterContainer
+                      //               key={index2}
+                      //               onClick={(e) => this.handleCharacterClick(item, e)}
+                      //             >
+                      //               <Annotation style={this.hideBlock(item)}>
+                      //                 {item.pinyin}
+                      //               </Annotation>
+                      //               <Text>{item.cchar}</Text>
+                      //             </CharacterContainer>
+                      //           );
+                      //         }
+                      //       })}
+                      //     </PhraseContainer>
+                      //   );
+                    } else {
+                      const item = entry;
+                      if (item.cchar == "\n") {
+                        return (
+                          <Box variant="newline" key={phraseIndex}>
+                            <Box variant="annotation"></Box>
+                            <Box variant="cchar"></Box>
+                          </Box>
+                        );
+                      } else {
+                        return (
+                          <Box
+                            variant="character"
+                            key={phraseIndex}
+                            onClick={(e) => this.handleCharacterClick(item, e)}
+                          >
+                            <Box
+                              variant="annotation"
+                              style={this.hideBlock(item)}
+                            >
+                              {item.pinyin}
+                            </Box>
+                            <Box variant="cchar">{item.cchar}</Box>
+                          </Box>
+                        );
+                      }
                     }
-                  }
-                })}
-              </Display>
-            );
-          }}
-        ></Virtuoso>
+                  })}
+                </Box>
+              );
+            }}
+          ></Virtuoso>
+        </Paper>
         <Popper
           id={"tooltip"}
           open={open}

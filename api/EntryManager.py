@@ -326,7 +326,7 @@ class EntryManagerSingleton(object):
         # print(f"blacklist:{timeit.default_timer() - start_time}")
 
         
-        # customEntries = customEntries if customEntries else []
+        customEntries = customEntries if customEntries else []
 
         # if not entries:
         # not in regular dictionary, check if it's in custom
