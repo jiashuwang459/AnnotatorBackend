@@ -49,7 +49,15 @@ export default class Home extends Component {
       <Router>
         <Switch>
           <Route exact path="/">
-            <p> This is home</p>
+            <div><p> This is home</p></div>
+            <Link to="/manual"><button>
+              Go to Manual Page (This is probably the one you want to click)
+            </button>
+            </Link>
+            <Link to="/dictionary"><button>
+              Go to Dictionary
+            </button>
+            </Link>
           </Route>
           <Route exact path="/manual" component={ManualPage}></Route>
           <Route exact path="/dictionary" component={DictionaryPage}></Route>

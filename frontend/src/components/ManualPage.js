@@ -206,7 +206,7 @@ export default class ManualPage extends Component {
   render() {
     // const myGrid = useTheme();
     return (
-      <Grid
+      <
         container
         spacing={1}
         alignItems="flex-start"
