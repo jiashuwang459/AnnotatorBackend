@@ -145,6 +145,7 @@ export class DisplayArea extends React.Component {
     this.arrow = {};
     this.phrases = {};
     this.helperCard = null;
+    this.jiashupopper = {};
 
     this.state = {
       paragraphs: [],
@@ -170,6 +171,7 @@ export class DisplayArea extends React.Component {
     this.handlePopoverClose = this.handlePopoverClose.bind(this);
 
     this.createPopperCard = this.createPopperCard.bind(this);
+    this.createNewPopper = this.createNewPopper.bind(this);
 
     this.handlePopoverAnchorLeave = this.handlePopoverAnchorLeave.bind(this);
     this.handlePopoverAnchorEnter = this.handlePopoverAnchorEnter.bind(this);
@@ -183,17 +185,23 @@ export class DisplayArea extends React.Component {
   handlePopoverOpen(event) {
     console.log("popoverOpen");
     if (this.state.dictMode) {
+      console.log("dictmode");
       const anchor = this.state.popperAnchor;
+      console.log("anchor", anchor);
       const target = event.currentTarget;
+      console.log("target", target);
       if (anchor === target) {
         return;
       }
 
-      if (anchor) {
-        anchor.removeEventListener("mouseenter", this.handlePopoverAnchorEnter);
-        anchor.removeEventListener("mouseleave", this.handlePopoverAnchorLeave);
-      }
+      // if (anchor) {
+      //   anchor.removeEventListener("mouseenter", this.handlePopoverAnchorEnter);
+      //   anchor.removeEventListener("mouseleave", this.handlePopoverAnchorLeave);
+      // }
 
+      if(!this.state.popperAnchor) {
+        this.state.popperAnchor = target;
+      }
       this.setState({ popperAnchor: target }, () => {
         console.log("helper", this.helperCard);
         if (this.helperCard) {
@@ -203,10 +211,11 @@ export class DisplayArea extends React.Component {
             ]
           );
         }
+        this.createNewPopper();
       });
 
-      target.addEventListener("mouseenter", this.handlePopoverAnchorEnter);
-      target.addEventListener("mouseleave", this.handlePopoverAnchorLeave);
+      // target.addEventListener("mouseenter", this.handlePopoverAnchorEnter);
+      // target.addEventListener("mouseleave", this.handlePopoverAnchorLeave);
       // onMouseEnter={this.handlePopoverOpen}
       // onMouseLeave={this.handlePopoverClose}
     }
@@ -442,119 +451,126 @@ export class DisplayArea extends React.Component {
     this.setState({ popperPinned: popperPinned });
   }
 
-  createPopperCard() {
+  createNewPopper() {
     const anchor = this.state.popperAnchor;
     if (!anchor) {
       return;
     }
 
+    const popper = this.state.jiashupopper;
+    if(!popper) {
+      return;
+    }
+    
     const paragraphIdx = anchor.dataset.paragraph;
     const phraseIdx = anchor.dataset.phrase;
     const phrase = this.state.paragraphs[paragraphIdx][phraseIdx];
 
-    return (
-      <Card
-        sx={{
-          maxWidth: 345,
-          borderStyle: "solid",
-          borderColor: "dimgrey",
-          backgroundColor: "antiquewhite",
-        }}
-      >
-        <CardContent>
-          <CardHeader>
-            <Typography gutterBottom variant="h5" component="span">
-              {phrase.cchars.map((item) => item.cchar).join("")}
-            </Typography>
-            <span style={{ width: "5px" }}></span>
-            <Typography gutterBottom variant="subtitle1" component="span">
-              {phrase.cchars.map((item) => item.pinyin).join(" ")}
-            </Typography>
-            {/* <span
-              style={{ flexGrow: 1, paddingRight: "5px", paddingLeft: "5px" }}
-            /> */}
-            {/* <span> */}
-            {/* <IconButton
-                    sx={{
-                      borderStyle: "solid",
-                      borderWidth: "thin",
-                      borderColor: "dimgrey",
-                    }}
-                    size="small"
-                  >
-                    <CloseIcon />
-                  </IconButton> */}
-            {/* </span> */}
-          </CardHeader>
-          <CardBody>
-            <ol>
-              {phrase.english.split("/").map((item, englishIdx) => {
-                return (
-                  <li key={englishIdx}>
-                    <Typography variant="body2" color="text.secondary">
-                      {item}
-                    </Typography>
-                  </li>
-                );
-              })}
-            </ol>
-          </CardBody>
-        </CardContent>
-        <CardActions
-          sx={{
-            borderTopStyle: "solid",
-            borderTopWidth: "thin",
-            borderTopColor: "dimgrey",
-          }}
-        >
-          {/* <Button
-              sx={{
-                borderStyle: "solid",
-                borderWidth: "thin",
-                borderColor: "dimgrey",
-              }}
-              size="small"
-            >
-              Share
-            </Button> */}
-          <ToggleButton
-            value="check"
-            selected={this.state.popperPinned}
-            onChange={() => {
-              this.setState((state) => {
-                return { popperPinned: !state.popperPinned };
-              });
-            }}
-          >
-            {this.state.popperPinned ? (
-              <PushPinIcon />
-            ) : (
-              <PushPinOutlinedIcon />
-            )}
-          </ToggleButton>
-          <IconButton
-            sx={{
-              borderStyle: "solid",
-              borderWidth: "thin",
-              borderColor: "dimgrey",
-            }}
-            size="small"
-          >
-            <KeyboardArrowLeftIcon />
-          </IconButton>
-          <IconButton
-            sx={{
-              borderStyle: "solid",
-              borderWidth: "thin",
-              borderColor: "dimgrey",
-            }}
-            size="small"
-          >
-            <ChevronRightIcon />
-          </IconButton>
-        </CardActions>
-      </Card>
-    );
+    createPopper(anchor, popper, {});
+    //todo: look into poppers. 
+    // return (
+    //   <Card
+    //     sx={{
+    //       maxWidth: 345,
+    //       borderStyle: "solid",
+    //       borderColor: "dimgrey",
+    //       backgroundColor: "antiquewhite",
+    //     }}
+    //   >
+    //     <CardContent>
+    //       <CardHeader>
+    //         <Typography gutterBottom variant="h5" component="span">
+    //           {phrase.cchars.map((item) => item.cchar).join("")}
+    //         </Typography>
+    //         <span style={{ width: "5px" }}></span>
+    //         <Typography gutterBottom variant="subtitle1" component="span">
+    //           {phrase.cchars.map((item) => item.pinyin).join(" ")}
+    //         </Typography>
+    //         {/* <span
+    //           style={{ flexGrow: 1, paddingRight: "5px", paddingLeft: "5px" }}
+    //         /> */}
+    //         {/* <span> */}
+    //         {/* <IconButton
+    //                 sx={{
+    //                   borderStyle: "solid",
+    //                   borderWidth: "thin",
+    //                   borderColor: "dimgrey",
+    //                 }}
+    //                 size="small"
+    //               >
+    //                 <CloseIcon />
+    //               </IconButton> */}
+    //         {/* </span> */}
+    //       </CardHeader>
+    //       <CardBody>
+    //         <ol>
+    //           {phrase.english.split("/").map((item, englishIdx) => {
+    //             return (
+    //               <li key={englishIdx}>
+    //                 <Typography variant="body2" color="text.secondary">
+    //                   {item}
+    //                 </Typography>
+    //               </li>
+    //             );
+    //           })}
+    //         </ol>
+    //       </CardBody>
+    //     </CardContent>
+    //     <CardActions
+    //       sx={{
+    //         borderTopStyle: "solid",
+    //         borderTopWidth: "thin",
+    //         borderTopColor: "dimgrey",
+    //       }}
+    //     >
+    //       {/* <Button
+    //           sx={{
+    //             borderStyle: "solid",
+    //             borderWidth: "thin",
+    //             borderColor: "dimgrey",
+    //           }}
+    //           size="small"
+    //         >
+    //           Share
+    //         </Button> */}
+    //       <ToggleButton
+    //         value="check"
+    //         selected={this.state.popperPinned}
+    //         onChange={() => {
+    //           this.setState((state) => {
+    //             return { popperPinned: !state.popperPinned };
+    //           });
+    //         }}
+    //       >
+    //         {this.state.popperPinned ? (
+    //           <PushPinIcon />
+    //         ) : (
+    //           <PushPinOutlinedIcon />
+    //         )}
+    //       </ToggleButton>
+    //       <IconButton
+    //         sx={{
+    //           borderStyle: "solid",
+    //           borderWidth: "thin",
+    //           borderColor: "dimgrey",
+    //         }}
+    //         size="small"
+    //       >
+    //         <KeyboardArrowLeftIcon />
+    //       </IconButton>
+    //       <IconButton
+    //         sx={{
+    //           borderStyle: "solid",
+    //           borderWidth: "thin",
+    //           borderColor: "dimgrey",
+    //         }}
+    //         size="small"
+    //       >
+    //         <ChevronRightIcon />
+    //       </IconButton>
+    //     </CardActions>
+    //   </Card>
+    // );
   }
 
   // getPopover(props, phrase) {
@@ -707,7 +723,6 @@ export class DisplayArea extends React.Component {
                           onClick={(e) => {
                             this.handlePopoverOpen(e);
                             // console.log(this.cardContent);
-                            // }
                           }}
                         >
                           {phrase.cchars.map((item, ccharIndex) => {
@@ -803,8 +818,9 @@ export class DisplayArea extends React.Component {
         </Paper>
         <Popper
           id={"tooltip"}
+          ref={(popper) => (this.jiashupopper = popper)}
           open={open}
-          anchorEl={this.state.popperAnchor}
+          anchorEl={() => { console.log("jiashu", this.state.popperAnchor); return this.state.popperAnchor}}
           placement={"bottom"}
           // style={{
           //   borderStyle: "solid",
@@ -838,9 +854,9 @@ export class DisplayArea extends React.Component {
             //     padding: 5,
             //   },
             // },
-            {
-              name: "hide",
-            },
+            // {
+            //   name: "hide",
+            // },
           ]}
           onLoad={() => {
             const paragraphIdx = target.dataset.paragraph;
