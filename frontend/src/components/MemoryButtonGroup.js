@@ -67,6 +67,7 @@ const MemoryButtonGroup = () => {
   const dispatch = useMemoryDispatch();
   const memory = useMemory();
   const loading = memory.loading;
+  const fragments = memory.fragments;
 
   function handleFetchCodeChange(e) {
     setFetchCode(e.target.value);
@@ -89,9 +90,9 @@ const MemoryButtonGroup = () => {
       console.log(data);
 
       const newCode = data["code"];
-      const fragments = data["fragments"];
+      const dfrags = data["fragments"];
       setMemoryCode(newCode);
-      dispatch({ type: "set", code: newCode, fragments: fragments });
+      dispatch({ type: "set", code: newCode, fragments: dfrags });
     } catch (err) {
       dispatch({ type: "error", error: err });
     } finally {
@@ -109,7 +110,7 @@ const MemoryButtonGroup = () => {
 
     axios
       .post("/api/memory/save", {
-        fragments: [],
+        fragments: fragments,
       })
       .then((response) => response.data)
       .then((data) => {
