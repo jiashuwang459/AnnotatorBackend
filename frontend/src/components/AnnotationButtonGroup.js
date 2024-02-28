@@ -101,12 +101,7 @@ const AnnotationButtonGroup = () => {
     }
     //setLoading(true);
     setShowManualEntry(false);
-    console.log(2);
-    dispatch({
-      type: "fetch",
-      sourceText: text,
-    });
-    console.log(3);
+    dispatch({ type: "fetch", sourceText: text });
 
     //notify parent loading with current text;
     try {
@@ -117,33 +112,16 @@ const AnnotationButtonGroup = () => {
       }
 
       for (var paragraph of paragraphs) {
-        // if (paragraph == "\n") {
-        //   dispatch({
-        //     type: "add",
-        //     content: [{ text: "\n" }],
-        //   });
-        //   continue;
-        // }
-
         const response = await axios.post("/api/annotate", {
           text: paragraph,
         });
         const json = response.data;
-        dispatch({
-          type: "add",
-          content: json,
-        });
+        dispatch({ type: "add", content: json });
       }
     } catch (err) {
-      dispatch({
-        type: "error",
-        error: err,
-      });
+      dispatch({ type: "error", error: err });
     } finally {
-      dispatch({
-        type: "done",
-      });
-      //setLoading(false);
+      dispatch({ type: "done" });
     }
   };
 

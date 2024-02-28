@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import Grid from "@mui/material/Unstable_Grid2";
 import Box from "@mui/material/Box";
@@ -9,7 +9,7 @@ import { green, purple } from "@mui/material/colors";
 //import { ButtonGroup } from "@mui/material";
 import { alpha, styled } from "@mui/material/styles";
 
-import { TiFolderOpen } from "react-icons/ti";
+import { TiFolder, TiFolderOpen } from "react-icons/ti";
 import { BsArrowBarRight } from "react-icons/bs";
 import NBSP from "./Utils";
 import { GiArchiveResearch, GiSpellBook, GiSecretBook } from "react-icons/gi";
@@ -36,8 +36,13 @@ import {
   MdInfoOutline,
 } from "react-icons/md";
 
+import { useMemoryDispatch, useMemory } from "./MemoryContext";
+
 //TODO: add info page
-//TODO: actually save the fragments, or have the parent save it.
+//TODO: maybe add a 'saving' variable to the memoryContext, so we can't load and save at the same time.
+//TODO: look into how to close the load 'tooltip' when clicking outside of tooltip/model.
+//TODO: perhaps rewrite current load popover with material-ui's barebones tooltip/popover
+// https://mui.com/material-ui/react-tooltip 
 
 const UpdatingTooltip = React.forwardRef(
   ({ popper, children, show: _, ...props }, ref) => {
@@ -53,31 +58,48 @@ const UpdatingTooltip = React.forwardRef(
   }
 );
 
-
 const MemoryButtonGroup = () => {
   const [memoryCode, setMemoryCode] = useState(0);
   const [fetchCode, setFetchCode] = useState(0);
   const [savingInProgress, setSavingInProgress] = useState(false);
+  const [showLoadPopup, setShowLoadPopup] = useState(false);
+
+  const dispatch = useMemoryDispatch();
+  const memory = useMemory();
+  const loading = memory.loading;
 
   function handleFetchCodeChange(e) {
     setFetchCode(e.target.value);
   }
 
-  function handleFetchCodeButtonClick() {
-    var params = new URLSearchParams({
-      code: fetchCode,
-    });
+  const handleFetchCodeButtonClick = async () => {
+    if (loading) {
+      return;
+    }
 
-    axios
-      .get("/api/memory/fetch?" + params.toString())
-      .then((response) => response.data)
-      .then((data) => {
-        console.log(data);
-        setMemoryCode(data["code"]);
-        //TODO: pass fragments back to parent, or have parent make this call instead.
-        // this.props.onUpdateMemory(data["fragments"]);
+    dispatch({ type: "init", code: fetchCode });
+    try {
+      var params = new URLSearchParams({
+        code: fetchCode,
       });
-  }
+      const response = await axios.get(
+        "/api/memory/fetch?" + params.toString()
+      );
+      const data = response.data;
+      console.log(data);
+
+      const newCode = data["code"];
+      const fragments = data["fragments"];
+      setMemoryCode(newCode);
+      dispatch({ type: "set", code: newCode, fragments: fragments });
+    } catch (err) {
+      dispatch({ type: "error", error: err });
+    } finally {
+      dispatch({ type: "done" });
+    }
+
+    setShowLoadPopup(false);
+  };
 
   function handleSaveCodeButtonClick() {
     if (savingInProgress) {
@@ -91,10 +113,20 @@ const MemoryButtonGroup = () => {
       })
       .then((response) => response.data)
       .then((data) => {
-        setMemoryCode(data["code"]);
+        const newCode = data["code"];
+        dispatch({ type: "save", code: newCode });
+        setMemoryCode(newCode);
       })
       .finally(() => setSavingInProgress(false));
   }
+
+  const handleToggleMemoryLoad = (e) => {
+    if (!showLoadPopup) {
+      setShowLoadPopup(true);
+    } else {
+      setShowLoadPopup(false);
+    }
+  };
 
   return (
     <InputGroup aria-label="Memory Group">
@@ -110,6 +142,7 @@ const MemoryButtonGroup = () => {
       />
       <OverlayTrigger
         placement="bottom"
+        show={showLoadPopup}
         trigger="click"
         overlay={
           <Popover>
@@ -135,9 +168,28 @@ const MemoryButtonGroup = () => {
           </Popover>
         }
       >
-        <Button variant="outline-secondary">
-          <TiFolderOpen />
-        </Button>
+        <ToggleButton
+          id="toggle_load_memory"
+          type="checkbox"
+          variant="outline-secondary"
+          checked={showLoadPopup}
+          onClick={handleToggleMemoryLoad}
+          disabled={loading}
+        >
+          {loading ? (
+            <Spinner
+              as="span"
+              animation="border"
+              role="status"
+              size="sm"
+              aria-hidden="true"
+            >
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          ) : (
+            <TiFolderOpen />
+          )}
+        </ToggleButton>
       </OverlayTrigger>
 
       <OverlayTrigger
