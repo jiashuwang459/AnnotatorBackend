@@ -4,6 +4,7 @@ import DisplayArea from "./components/DisplayArea";
 import MenuToolbar from "./components/MenuToolbar";
 import AnnotationProvider from "./components/AnnotationContext";
 import MemoryProvider from "./components/MemoryContext";
+import ModeProvider from "./components/ModeContext";
 
 import Stack from "@mui/material/Stack";
 import Item from "@mui/material/ListItem";
@@ -18,14 +19,16 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <AnnotationProvider>
         <MemoryProvider>
-          <Stack sx={{ height: "100%", backgroundColor: "white" }}>
-            <Item>
-              <MenuToolbar></MenuToolbar>
-            </Item>
-            <Item sx={{ height: "100%" }}>
-              <DisplayArea></DisplayArea>
-            </Item>
-          </Stack>
+          <ModeProvider>
+            <Stack sx={{ height: "100%", backgroundColor: "white" }}>
+              <Item>
+                <MenuToolbar></MenuToolbar>
+              </Item>
+              <Item sx={{ height: "100%" }}>
+                <DisplayArea></DisplayArea>
+              </Item>
+            </Stack>
+          </ModeProvider>
         </MemoryProvider>
       </AnnotationProvider>
     </ThemeProvider>

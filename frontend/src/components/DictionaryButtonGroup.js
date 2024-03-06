@@ -23,6 +23,7 @@ import ToggleButton from "react-bootstrap/ToggleButton";
 import FormControl from "react-bootstrap/FormControl";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
+import { useModeDispatch, useMode } from "./ModeContext";
 
 import {
   MdEdit,
@@ -36,12 +37,30 @@ import {
 //TODO: pass dictionary mode to parent?
 
 const DictionaryButtonGroup = () => {
-  const [dictionaryMode, setDictionaryMode] = useState(false);
+  // const [dictionaryMode, setDictionaryMode] = useState(false);
   // const [dictEdit, setFetchCode] = useState(0);
+
+  const dispatch = useModeDispatch();
+  const mode = useMode();
+  const dictMode = mode.dictMode;
+  const editMode = mode.editMode;
 
   function handleDictionaryModeToggle(e) {
     // console.log("dictionary mode toggle", e);
-    setDictionaryMode(e.currentTarget.checked);
+    if(e.currentTarget.checked) {
+      dispatch({ type: "dict" });
+    } else {
+      dispatch({ type: "read" });
+    }
+  }
+  
+  function handleEditModeToggle(e) {
+    // console.log("edit mode toggle", e);
+    if(e.currentTarget.checked) {
+      dispatch({ type: "edit" });
+    } else {
+      dispatch({ type: "read" });
+    }
   }
 
   return (
@@ -51,7 +70,7 @@ const DictionaryButtonGroup = () => {
         placement="bottom"
         overlay={
           <Tooltip id="tooltip-disabled">
-            {dictionaryMode ? "Close" : "Open"}
+            {dictMode ? "Close" : "Open"}
             {NBSP}Dictionary
           </Tooltip>
         }
@@ -60,10 +79,10 @@ const DictionaryButtonGroup = () => {
           id="toggle_dict"
           type="checkbox"
           variant="outline-success"
-          checked={dictionaryMode}
+          checked={dictMode}
           onChange={handleDictionaryModeToggle}
         >
-          {dictionaryMode ? (
+          {dictMode ? (
             <GiSpellBook></GiSpellBook>
           ) : (
             <GiSecretBook></GiSecretBook>
@@ -74,7 +93,9 @@ const DictionaryButtonGroup = () => {
         id="toggle_edit"
         type="checkbox"
         variant="outline-success"
-        disabled
+        checked={editMode}
+        onChange={handleEditModeToggle}
+        //disabled
       >
         <MdEdit></MdEdit>
       </ToggleButton>
