@@ -7,12 +7,16 @@ import Stack from "@mui/material/Stack";
 import { Virtuoso } from "react-virtuoso";
 import Paper from "@mui/material/Paper";
 import NBSP from "./Utils";
+import { useMode } from "./ModeContext";
 
 // TODO: feb 27, 2024. add a context for memory, and maybe a reducer for hiding stuffs.
 // https://react.dev/learn/scaling-up-with-reducer-and-context
 
 // TODO: optimize displaying/hiding the annotations... right now every character on the page get's rerendered.
 
+// TODO: doublecheck if this is sufficient in preventing random things
+// from being added to memory.
+// TODO: might need to cchar length check, to accomodate pharses in the future???
 const emptyFCHAR = (fchar) => {
   return fchar.pinyin == NBSP || fchar.pinyin == " " || fchar.cchar.length != 1;
 };
@@ -24,15 +28,15 @@ const CCharacter = (props) => {
   const dispatch = useMemoryDispatch();
   const memory = useMemory();
 
+  const mode = useMode();
+  const readMode = mode.readMode;
+
   function handleCharacterClick(e) {
     //console.log("click char", fchar);
+    if (!readMode) {
+      return;
+    }
 
-    // if (this.state.dictMode) {
-    //   return;
-    // }
-    // TODO: doublecheck if this is sufficient in preventing random things
-    // from being added to memory.
-    // TODO: might need to cchar length check, to accomodate pharses in the future???
     if (emptyFCHAR(fchar)) {
       return;
     }
@@ -59,6 +63,7 @@ const CCharacter = (props) => {
         return "annotation_hidden";
       }
 
+      // TODO: maybe change this to a hash, so no need to loop lookup.
       for (const entry of memory.fragments) {
         if (entry.pinyin == fchar.pinyin && entry.cchar == fchar.cchar) {
           return "annotation_hidden";

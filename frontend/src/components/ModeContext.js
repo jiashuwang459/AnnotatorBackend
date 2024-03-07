@@ -24,6 +24,7 @@ function modeReducer(mode, action) {
     case "dict": {
       return {
         ...mode,
+        readMode: false,
         dictMode: true,
         editMode: false,
       };
@@ -31,6 +32,7 @@ function modeReducer(mode, action) {
     case "edit": {
       return {
         ...mode,
+        readMode: false,
         dictMode: false,
         editMode: true,
       };
@@ -38,6 +40,7 @@ function modeReducer(mode, action) {
     case "read": {
       return {
         ...mode,
+        readMode: true,
         dictMode: false,
         editMode: false,
       };
@@ -45,7 +48,9 @@ function modeReducer(mode, action) {
     case "error": {
       return {
         ...mode,
-        code: -1,
+        readMode: true,
+        dictMode: false,
+        editMode: false,
       };
     }
     //TODO: add more cases.
@@ -56,6 +61,7 @@ function modeReducer(mode, action) {
 }
 
 const initialMode = {
+  readMode: true,
   dictMode: false,
   editMode: false,
 };

@@ -17,6 +17,9 @@ const MemoryProvider = ({ children }) => {
   );
 };
 
+// TODO: maybe add a stack and undo button?
+// TODO: maybe add a place to view all known words, or get stats on memory.
+
 function memoryReducer(memory, action) {
   //TODO: update these actions.
   // A memory has the following shape:

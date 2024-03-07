@@ -7,14 +7,27 @@ import Stack from "@mui/material/Stack";
 import { Virtuoso } from "react-virtuoso";
 import Paper from "@mui/material/Paper";
 import CCharacter from "./CCharacter";
+import { useMode } from "./ModeContext";
 
 // TODO: maybe change the returned pharse.cchars to return phrase.fchars
 const Phrase = (props) => {
   const phrase = props.phrase;
+
+  const mode = useMode();
+  const dictMode = mode.dictMode;
+
+  function phraseVarient() {
+    if (dictMode) {
+      return "phrase_outlined";
+    } else {
+      return "phrase";
+    }
+  }
+
   if (phrase.cchars) {
     // This means it's is a phrase.
     return (
-      <Paper variant="phrase" {...props}>
+      <Paper variant={phraseVarient()} {...props}>
         {phrase.cchars.map((fchar, ccharIndex) => {
           return (
             <CCharacter

@@ -159,16 +159,15 @@ const MyTheme = {
           },
         },
         {
-          props: { variant: "phrase_outline" },
+          props: { variant: "phrase_outlined" },
           style: {
             // textTransform: "none",
             border: `1px dashed ${defaultTheme.palette.secondary.light}`,
             backgroundColor: "aliceblue",
             margin: "1px",
-            // color: defaultTheme.palette.secondary.main,
+            // margin: "2px",
             gap: "4px",
             display: "flex",
-            flexDirection: "row",
           },
         },
       ],

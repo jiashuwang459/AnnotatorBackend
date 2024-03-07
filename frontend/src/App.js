@@ -11,8 +11,8 @@ import Item from "@mui/material/ListItem";
 import MyTheme from "./components/Theme";
 import { DebugTheme } from "./components/Theme";
 
-// const theme = createTheme(MyTheme);
-const theme = createTheme(DebugTheme);
+const theme = createTheme(MyTheme);
+// const theme = createTheme(DebugTheme);
 
 const App = () => {
   return (
