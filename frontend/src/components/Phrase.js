@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import Grid from "@mui/material/Unstable_Grid2";
 import Box from "@mui/material/Box";
@@ -8,6 +8,11 @@ import { Virtuoso } from "react-virtuoso";
 import Paper from "@mui/material/Paper";
 import CCharacter from "./CCharacter";
 import { useMode } from "./ModeContext";
+import Popover from "@mui/material/Popover";
+import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import { useFloating } from "@floating-ui/react";
 
 // TODO: maybe change the returned pharse.cchars to return phrase.fchars
 const Phrase = (props) => {

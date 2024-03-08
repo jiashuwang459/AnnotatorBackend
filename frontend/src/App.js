@@ -11,6 +11,8 @@ import Item from "@mui/material/ListItem";
 import MyTheme from "./components/Theme";
 import { DebugTheme } from "./components/Theme";
 
+import DictionaryPage from "./components/DictionaryPage";
+
 const theme = createTheme(MyTheme);
 // const theme = createTheme(DebugTheme);
 
@@ -28,6 +30,7 @@ const App = () => {
                 <DisplayArea></DisplayArea>
               </Item>
             </Stack>
+            {/* <DictionaryPage/> */}
           </ModeProvider>
         </MemoryProvider>
       </AnnotationProvider>

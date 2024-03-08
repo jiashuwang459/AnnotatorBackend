@@ -27,6 +27,7 @@ import Tooltip from "react-bootstrap/Tooltip";
 import Popover from "react-bootstrap/Popover";
 import axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
+import ClickAwayListener from '@mui/material/ClickAwayListener';
 
 import {
   MdEdit,
@@ -40,9 +41,8 @@ import { useMemoryDispatch, useMemory } from "./MemoryContext";
 
 //TODO: add info page
 //TODO: maybe add a 'saving' variable to the memoryContext, so we can't load and save at the same time.
-//TODO: look into how to close the load 'tooltip' when clicking outside of tooltip/model.
-//TODO: perhaps rewrite current load popover with material-ui's barebones tooltip/popover
-// https://mui.com/material-ui/react-tooltip 
+//TODO: perhaps rewrite current load popover with material-ui's barebones tooltip/popover or maybe with new floating ui.
+// https://mui.com/material-ui/react-tooltip
 
 const UpdatingTooltip = React.forwardRef(
   ({ popper, children, show: _, ...props }, ref) => {
@@ -68,6 +68,10 @@ const MemoryButtonGroup = () => {
   const memory = useMemory();
   const loading = memory.loading;
   const fragments = memory.fragments;
+
+  function handleCloseLoadPopup() {
+    setShowLoadPopup(false);
+  }
 
   function handleFetchCodeChange(e) {
     setFetchCode(e.target.value);
@@ -141,58 +145,62 @@ const MemoryButtonGroup = () => {
         readOnly
         style={{ width: "50px" }}
       />
-      <OverlayTrigger
-        placement="bottom"
-        show={showLoadPopup}
-        trigger="click"
-        overlay={
-          <Popover>
-            <Popover.Header>Load Memory Code</Popover.Header>
-            <Popover.Body>
-              <InputGroup>
-                <InputGroup.Text>Code:</InputGroup.Text>
-                <FormControl
-                  type="number"
-                  min={0}
-                  value={fetchCode}
-                  onChange={handleFetchCodeChange}
-                  style={{ textAlign: "center", width: "100px" }}
-                />
-                <Button
-                  variant="outline-secondary"
-                  onClick={handleFetchCodeButtonClick}
-                >
-                  <BsArrowBarRight></BsArrowBarRight>
-                </Button>
-              </InputGroup>
-            </Popover.Body>
-          </Popover>
-        }
-      >
-        <ToggleButton
-          id="toggle_load_memory"
-          type="checkbox"
-          variant="outline-secondary"
-          checked={showLoadPopup}
-          onClick={handleToggleMemoryLoad}
-          disabled={loading}
-        >
-          {loading ? (
-            <Spinner
-              as="span"
-              animation="border"
-              role="status"
-              size="sm"
-              aria-hidden="true"
-            >
-              <span className="visually-hidden">Loading...</span>
-            </Spinner>
-          ) : (
-            <TiFolderOpen />
-          )}
-        </ToggleButton>
-      </OverlayTrigger>
 
+      <ClickAwayListener onClickAway={handleCloseLoadPopup}>
+        <div>
+          <OverlayTrigger
+            placement="bottom"
+            show={showLoadPopup}
+            trigger="click"
+            overlay={
+              <Popover>
+                <Popover.Header>Load Memory Code</Popover.Header>
+                <Popover.Body>
+                  <InputGroup>
+                    <InputGroup.Text>Code:</InputGroup.Text>
+                    <FormControl
+                      type="number"
+                      min={0}
+                      value={fetchCode}
+                      onChange={handleFetchCodeChange}
+                      style={{ textAlign: "center", width: "100px" }}
+                    />
+                    <Button
+                      variant="outline-secondary"
+                      onClick={handleFetchCodeButtonClick}
+                    >
+                      <BsArrowBarRight></BsArrowBarRight>
+                    </Button>
+                  </InputGroup>
+                </Popover.Body>
+              </Popover>
+            }
+          >
+            <ToggleButton
+              id="toggle_load_memory"
+              type="checkbox"
+              variant="outline-secondary"
+              checked={showLoadPopup}
+              onClick={handleToggleMemoryLoad}
+              disabled={loading}
+            >
+              {loading ? (
+                <Spinner
+                  as="span"
+                  animation="border"
+                  role="status"
+                  size="sm"
+                  aria-hidden="true"
+                >
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              ) : (
+                <TiFolderOpen />
+              )}
+            </ToggleButton>
+          </OverlayTrigger>
+        </div>
+      </ClickAwayListener>
       <OverlayTrigger
         placement="bottom"
         overlay={

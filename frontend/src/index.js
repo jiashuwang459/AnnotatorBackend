@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 
 ReactDOM.render(
   <React.StrictMode>
-    <DictionaryPage />
+    <App />
   </React.StrictMode>,
   document.getElementById('main')
 );

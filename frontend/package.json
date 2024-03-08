@@ -7,6 +7,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@floating-ui/react": "^0.26.9",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/react-fontawesome": "^0.1.15",
@@ -15,7 +16,7 @@
     "@mui/styles": "^5.5.3",
     "@mui/system": "^5.12.1",
     "@popperjs/core": "^2.11.7",
-    "axios": "^0.26.1",
+    "axios": "^1.6.7",
     "bootstrap": "^5.0.2",
     "mdb-react-ui-kit": "^3.0.0",
     "mdb-ui-kit": "^3.11.0",
