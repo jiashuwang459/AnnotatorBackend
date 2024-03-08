@@ -7,6 +7,7 @@ import Stack from "@mui/material/Stack";
 import { Virtuoso } from "react-virtuoso";
 import Paper from "@mui/material/Paper";
 import Phrase from "./Phrase";
+import ControlledPhrase from "./ControlledPhrase";
 
 // TODO: maybe change the returned pharse.cchars to return phrase.fchars
 const Paragraph = (props) => {
@@ -22,7 +23,7 @@ const Paragraph = (props) => {
     return (
       <Paper variant="paragraph" {...props}>
         {paragraph.map((entry, phraseIndex) => {
-          return <Phrase key={phraseIndex} phrase={entry} />;
+          return <ControlledPhrase key={phraseIndex} phrase={entry} />;
         })}
       </Paper>
     );

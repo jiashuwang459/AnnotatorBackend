@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import DisplayArea from "./components/DisplayArea";
 import MenuToolbar from "./components/MenuToolbar";
@@ -16,6 +16,7 @@ import DictionaryPage from "./components/DictionaryPage";
 const theme = createTheme(MyTheme);
 // const theme = createTheme(DebugTheme);
 
+
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
@@ -30,6 +31,7 @@ const App = () => {
                 <DisplayArea></DisplayArea>
               </Item>
             </Stack>
+            {/* <Controlled /> */}
             {/* <DictionaryPage/> */}
           </ModeProvider>
         </MemoryProvider>

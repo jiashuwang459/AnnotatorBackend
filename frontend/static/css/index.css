@@ -64,7 +64,7 @@ body {
 .Collapsible__trigger.is-open::after {
   transform: rotateZ(180deg);
 }
-
+/* 
 #arrow,
 #arrow::before {
   position: absolute;
@@ -81,10 +81,10 @@ body {
   visibility: visible;
   content: "";
   transform: rotate(45deg);
-}
+} */
 
 /* Hide the popper when the reference is hidden */
-#tooltip[data-popper-reference-hidden] {
+/* #tooltip[data-popper-reference-hidden] {
   visibility: hidden;
   pointer-events: none;
 }
@@ -103,4 +103,23 @@ body {
 
 #tooltip[data-popper-placement^="right"] > #arrow {
   left: -4px;
+} */
+#jiashu_tooltip {
+  width: max-content;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #222;
+  color: white;
+  font-weight: bold;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 90%;
+}
+#arrow {
+  position: absolute;
+  background: #222;
+  width: 8px;
+  height: 8px;
+  transform: rotate(45deg);
 }
