@@ -158,6 +158,7 @@ export const PopoverContent = React.forwardRef(function PopoverContent({ style, 
     <FloatingPortal>
       <FloatingFocusManager context={floatingContext} modal={context.modal}>
         <Paper
+          variant="popover"
           ref={ref}
           style={{ ...context.floatingStyles, ...style }}
           aria-labelledby={context.labelId}
@@ -171,49 +172,49 @@ export const PopoverContent = React.forwardRef(function PopoverContent({ style, 
   );
 });
 
-export const PopoverHeading = React.forwardRef(function PopoverHeading(props, ref) {
-  const { setLabelId } = usePopoverContext();
-  const id = useId();
+// export const PopoverHeading = React.forwardRef(function PopoverHeading(props, ref) {
+//   const { setLabelId } = usePopoverContext();
+//   const id = useId();
 
-  // Only sets `aria-labelledby` on the Popover root element
-  // if this component is mounted inside it.
-  React.useLayoutEffect(() => {
-    setLabelId(id);
-    return () => setLabelId(undefined);
-  }, [id, setLabelId]);
+//   // Only sets `aria-labelledby` on the Popover root element
+//   // if this component is mounted inside it.
+//   React.useLayoutEffect(() => {
+//     setLabelId(id);
+//     return () => setLabelId(undefined);
+//   }, [id, setLabelId]);
 
-  return (
-    <h2 {...props} ref={ref} id={id}>
-      {props.children}
-    </h2>
-  );
-});
+//   return (
+//     <h2 {...props} ref={ref} id={id}>
+//       {props.children}
+//     </h2>
+//   );
+// });
 
-export const PopoverDescription = React.forwardRef(function PopoverDescription(props, ref) {
-  const { setDescriptionId } = usePopoverContext();
-  const id = useId();
+// export const PopoverDescription = React.forwardRef(function PopoverDescription(props, ref) {
+//   const { setDescriptionId } = usePopoverContext();
+//   const id = useId();
 
-  // Only sets `aria-describedby` on the Popover root element
-  // if this component is mounted inside it.
-  React.useLayoutEffect(() => {
-    setDescriptionId(id);
-    return () => setDescriptionId(undefined);
-  }, [id, setDescriptionId]);
+//   // Only sets `aria-describedby` on the Popover root element
+//   // if this component is mounted inside it.
+//   React.useLayoutEffect(() => {
+//     setDescriptionId(id);
+//     return () => setDescriptionId(undefined);
+//   }, [id, setDescriptionId]);
 
-  return <p {...props} ref={ref} id={id} />;
-});
+//   return <p {...props} ref={ref} id={id} />;
+// });
 
-export const PopoverClose = React.forwardRef(function PopoverClose(props, ref) {
-  const { setOpen } = usePopoverContext();
-  return (
-    <button
-      type="button"
-      ref={ref}
-      {...props}
-      onClick={(event) => {
-        props.onClick?.(event);
-        setOpen(false);
-      }}
-    />
-  );
-});
+// export const PopoverClose = React.forwardRef(function PopoverClose(props, ref) {
+//   const { setOpen } = usePopoverContext();
+//   return (
+//     <button
+//       type="button"
+//       ref={ref}
+//       {...props}
+//       onClick={(event) => {
+//         props.onClick?.(event);
+//         setOpen(false);
+//       }}
+//     />
+//   );
+// });

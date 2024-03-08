@@ -159,6 +159,23 @@ const MyTheme = {
           },
         },
         {
+          props: { variant: "popover" },
+          style: {
+            // textTransform: "none",
+            backgroundColor: "greenyellow",
+            border: `1px dashed`,
+            borderColor: "green",
+            margin: "1px",
+            padding: "2px",
+            gap: "4px",
+            display: "flex",
+            minWidth: "50%",
+            maxHeight: "40%",
+            textAlign: "center",
+            flexDirection: "column",
+          },
+        },
+        {
           props: { variant: "phrase_outlined" },
           style: {
             // textTransform: "none",
