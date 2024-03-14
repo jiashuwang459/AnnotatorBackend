@@ -33,8 +33,14 @@ IMPORTANT! Make sure to execute `. ./setenv` in the base folder to activate the 
 ### Python dependencies
 
 ``` bash
-pip install django
-pip install djangorestframework
+pip install -r requirements.txt
+```
+
+### Startup guide
+
+``` bash
+mkdir static
+python manage.py migrate
 ```
 
 ### Common Commands

@@ -13,12 +13,12 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import logging
 from pathlib import Path
 from pprint import pprint
-import django_heroku
+# import django_heroku
 from dotenv import load_dotenv
 import dj_database_url
 import os
 
-from Annotator import dj_redis_url
+# from Annotator import dj_redis_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -157,12 +157,12 @@ DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 #     }
 # }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 
 # Password validation
@@ -242,7 +242,7 @@ LOGGING = {
     },
 }
 
-django_heroku.settings(locals())
+# django_heroku.settings(locals())
 
 # Add these at the very last line of settings.py
 options = DATABASES['default'].get('OPTIONS', {})

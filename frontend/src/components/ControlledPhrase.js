@@ -9,6 +9,7 @@ import {
   PopoverClose,
 } from "./Popover";
 import Phrase from "./Phrase";
+import HelperCard from "./HelperCard";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Item from "@mui/material/ListItem";
@@ -27,7 +28,8 @@ function ControlledPhrase(props) {
         <Phrase phrase={phrase} {...props} />
       </PopoverTrigger>
       <PopoverContent>
-        <Stack sx={{ height: "100%", backgroundColor: "transparent", }}>
+        <HelperCard phrase={phrase} {...props}/>
+        {/* <Stack sx={{ height: "100%", backgroundColor: "transparent", }}>
           <Item>
             <Paper>
               {phrase.cchars
@@ -41,7 +43,7 @@ function ControlledPhrase(props) {
           <Item sx={{ height: "100%" }}>
             <Paper>Body</Paper>
           </Item>
-        </Stack>
+        </Stack> */}
       </PopoverContent>
     </Popover>
   );
