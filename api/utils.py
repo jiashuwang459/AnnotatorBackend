@@ -160,9 +160,8 @@ def OwnerOrDefault(owner):
 
 def isChinese(char):
     # print("checking if it's chinese~")
-    # Randomly taken from:
-    # https://flyingsky.github.io/2018/01/26/javascript-detect-chinese-japanese/
-    # http://www.unicode.org/versions/Unicode13.0.0/ch18.pdf Table 18-1, Table 18-2
+    # Taken from:
+    # https://www.unicode.org/versions/Unicode15.0.0/ch18.pdf Table 18-1, Table 18-2
     #
     # CJK Unified Ideographs 4E00–9FFF Common
     # CJK Unified Ideographs Extension A 3400–4DBF Rare
@@ -194,6 +193,11 @@ def isChinese(char):
     # 9FF0–9FFC 13.0 Zoological, chemical, and geological terms
     # 4DB6-4DBF 13.0 Corrections of mistaken unifications
     # 2A6D7-2A6DD 13.0 Gongche characters for Kunqu Opera
+    #  2A6DE–2A6DF 14.0 Interoperability with government implementations
+    #  2B735–2B736 14.0 Corrections of mistaken unifications
+    #  2B737 14.0 Urgently needed character
+    #  2B738 14.0 Correction of mistaken unification
+    #  2B739 15.0 Urgently needed character
 
     REGEX_CHINESE = '|'.join([r"[\u4E00-\u9FFF]",
                               r"[\u3400-\u4DBF]",
@@ -221,7 +225,12 @@ def isChinese(char):
                               r"[\u9FEE-\u9FEF]",
                               r"[\u9FF0-\u9FFC]",
                               r"[\u4DB6-\u4DBF]",
-                              r"[\U0002A6D7-\U0002A6DD]"])
+                              r"[\U0002A6D7-\U0002A6DD]",
+                              r"[\U0002A6DE-\U0002A6DF]",
+                              r"[\U0002B735-\U0002B736]",
+                              r"[\U0002B737]",
+                              r"[\U0002B738]",
+                              r"[\U0002B739]",])
 
     # REGEX_CHINESE = ''.join(['[\\u4e00-\\u9fff]',
     #                         '|[\\u3400-\\u4dbf]',
