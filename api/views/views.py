@@ -107,8 +107,7 @@ def getEntry(request):
     if entries is None:
         return Response({'Not Found': f'phrase {phrase} not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    responseData = [EntrySerializer(
-        entry).data for entry in entries if entry['priority'] < MAX_PRIORITY]
+    responseData = [EntrySerializer(entry).data for entry in entries if entry['priority'] < MAX_PRIORITY]
     return Response(responseData, status=status.HTTP_200_OK)
 
     # def get_queryset(self):
@@ -684,6 +683,7 @@ class ReloadCEDictView(APIView):
         # print(request.data)
 
         lenA, lenB = reloadCEDict()
+        EntryManager.reload()
         return Response({"OK": "Done reloaded CEDict", "lenA": lenA, "lenB": lenB}, status=status.HTTP_200_OK)
 
 

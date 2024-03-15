@@ -25,8 +25,12 @@ MAIN_PRIORITY = 100
 CUSTOM_PRIORITY = 200
 USER_PRIORITY = 300
 DEFAULT_PRIORITY = 500
+PRONOUN_PRIORITY = 600
+LOANWORD_PRIORITY = 700
 SURNAME_PRIORITY = 800
+OLD_PRIORITY = 850
 VARIANT_PRIORITY = 900
+OLD_VARIANT_PRIORITY = 950
 MAX_PRIORITY = 1000
 INVALID_PRIORITY = MAX_PRIORITY + 100
 
@@ -43,6 +47,14 @@ def loadDefaultDictionary():
         for item in data:
             if("surname" in item['english']):
                 item['priority'] = SURNAME_PRIORITY
+            elif(item['pinyin'][0].isupper()):
+                item['priority'] = PRONOUN_PRIORITY
+            elif("(archaic)" in item['english']):
+                item['priority'] = OLD_PRIORITY
+            elif("(loanword)" in item['english']):
+                item['priority'] = LOANWORD_PRIORITY
+            elif("oldvariant of" in item['english']):
+                item['priority'] = OLD_VARIANT_PRIORITY
             elif("variant of" in item['english']):
                 item['priority'] = VARIANT_PRIORITY
             else:
@@ -360,23 +372,39 @@ def reloadCEDict():
             pinyin = rest[0].lstrip('[')
             english = rest[1].strip().strip('/')
             
-            entry = {
-                'traditional': traditional,
-                'simplified': simplified,
-                'pinyin': pinyin,
-                'english': english
-            }
+            # entry = {
+            #     'traditional': traditional,
+            #     'simplified': simplified,
+            #     'pinyin': pinyin,
+            #     'english': english
+            # }
             # entries.append(entry)
             
             priority = INVALID_PRIORITY
             if("surname" in english):
                 priority = SURNAME_PRIORITY
+            elif(pinyin[0].isupper()):
+                priority = PRONOUN_PRIORITY
+            elif("(archaic)" in english):
+                priority = OLD_PRIORITY
+            elif("(loanword)" in english):
+                priority = LOANWORD_PRIORITY
+            elif("old variant of" in english):
+                priority = OLD_VARIANT_PRIORITY
             elif("variant of" in english):
                 priority = VARIANT_PRIORITY
             else:
                 priority = DEFAULT_PRIORITY
 
-            entry['priority'] = priority
+            # entry['priority'] = priority
+            
+            entry = {
+                'traditional': traditional,
+                'simplified': simplified,
+                'pinyin': pinyin,
+                'english': english,
+                'priority': priority
+            }
             key = cacheKey("dict", simplified)
             # if key in hashmap:
             #     try:
@@ -498,7 +526,7 @@ def setupPriorityEntries():
         data = json.load(f)
         # print(data)
         for entry in data:
-            entry['priority'] = CUSTOM_PRIORITY
+            entry['priority'] = USER_PRIORITY
             
             simplified = entry['simplified']
             

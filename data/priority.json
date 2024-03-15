@@ -1,19 +1,11 @@
 [
   {
-    "id": 31880,
-    "owner": "default",
-    "traditional": "富裕",
-    "simplified": "富裕",
-    "pinyin": "fu4 yu4",
-    "english": "prosperous"
-  },
-  {
     "id": 51973,
     "owner": "default",
     "traditional": "更",
     "simplified": "更",
     "pinyin": "geng4",
-    "english": "more"
+    "english": "more/even more/further/still/still more"
   },
   {
     "id": 94904,
@@ -21,32 +13,7 @@
     "traditional": "要",
     "simplified": "要",
     "pinyin": "yao4",
-    "english": "important"
-  },
-  {
-    "id": 104348,
-    "owner": "default",
-    "traditional": "那",
-    "simplified": "那",
-    "pinyin": "na4",
-    "english": "that"
-  },
-  {
-    "id": 298636,
-    "owner": "default",
-    "traditional": "比",
-    "simplified": "比",
-    "pinyin": "bi3",
-    "english": "to compare/(followed by a noun and adjective) more {adj.} than {noun}/ratio/to gesture/(Taiwan pr. [bi4] in some compounds derived from Classical Chinese)",
-    "priority": 500
-  },
-  {
-    "id": 27137,
-    "owner": "default",
-    "traditional": "大眾",
-    "simplified": "大众",
-    "pinyin": "da4 zhong4",
-    "english": "the masses"
+    "english": "to want; to need; to ask for/will; shall; about to/need to; should/if (same as 要是[yao4 shi5])/(bound form) important"
   },
   {
     "id": 3102,
@@ -57,20 +24,12 @@
     "english": "within"
   },
   {
-    "id": 76920,
-    "owner": "default",
-    "traditional": "神",
-    "simplified": "神",
-    "pinyin": "shen2",
-    "english": "deity"
-  },
-  {
     "id": 43046,
     "owner": "default",
     "traditional": "扛",
     "simplified": "扛",
     "pinyin": "kang2",
-    "english": "to carry on one's shoulder"
+    "english": "to carry on one's shoulder/(fig.) to take on (a burden, duty etc)"
   },
   {
     "id": 90691,
@@ -87,14 +46,6 @@
     "simplified": "抹",
     "pinyin": "mo3",
     "english": "to smear"
-  },
-  {
-    "id": 85558,
-    "owner": "default",
-    "traditional": "聽",
-    "simplified": "听",
-    "pinyin": "ting1",
-    "english": "to listen"
   },
   {
     "id": 105460,
@@ -119,7 +70,7 @@
     "traditional": "並",
     "simplified": "并",
     "pinyin": "bing4",
-    "english": "and"
+    "english": "and/furthermore/also/together with/(not) at all/simultaneously/to combine/to join/to merge"
   },
   {
     "id": 62993,
@@ -127,7 +78,7 @@
     "traditional": "涼",
     "simplified": "凉",
     "pinyin": "liang2",
-    "english": "cool"
+    "english": "cool/cold"
   },
   {
     "id": 70374,
@@ -143,7 +94,7 @@
     "traditional": "累",
     "simplified": "累",
     "pinyin": "lei4",
-    "english": "tired"
+    "english": "tired/weary/to strain/to wear out/to work hard"
   },
   {
     "id": 93426,
@@ -159,7 +110,7 @@
     "traditional": "熬",
     "simplified": "熬",
     "pinyin": "ao2",
-    "english": "to cook on a slow fire"
+    "english": "to cook on a slow fire; to extract by heating; to decoct/to endure"
   },
   {
     "id": 101407,
@@ -170,28 +121,12 @@
     "english": "to turn"
   },
   {
-    "id": 41884,
-    "owner": "default",
-    "traditional": "成功",
-    "simplified": "成功",
-    "pinyin": "cheng2 gong1",
-    "english": "success"
-  },
-  {
     "id": 96633,
     "owner": "default",
     "traditional": "說",
     "simplified": "说",
     "pinyin": "shuo1",
-    "english": "to speak"
-  },
-  {
-    "id": 102733,
-    "owner": "default",
-    "traditional": "通道",
-    "simplified": "通道",
-    "pinyin": "tong1 dao4",
-    "english": "(communications) channel"
+    "english": "to speak; to talk; to say/to explain; to comment/to scold; to tell off/(bound form) theory; doctrine"
   },
   {
     "id": 85802,
@@ -202,28 +137,12 @@
     "english": "belly"
   },
   {
-    "id": 50616,
-    "owner": "default",
-    "traditional": "明",
-    "simplified": "明",
-    "pinyin": "ming2",
-    "english": "bright"
-  },
-  {
     "id": 57775,
     "owner": "default",
     "traditional": "正",
     "simplified": "正",
     "pinyin": "zheng4",
-    "english": "straight"
-  },
-  {
-    "id": 85371,
-    "owner": "default",
-    "traditional": "聯想",
-    "simplified": "联想",
-    "pinyin": "lian2 xiang3",
-    "english": "to associate (cognitively)"
+    "english": "straight/upright/proper/main/principal/to correct/to rectify/exactly/just (at that time)/right (in that place)/(math.) positive"
   },
   {
     "id": 37325,
@@ -231,7 +150,7 @@
     "traditional": "弄",
     "simplified": "弄",
     "pinyin": "nong4",
-    "english": "to do"
+    "english": "to do/to manage/to handle/to play with/to fool with/to mess with/to fix/to toy with"
   },
   {
     "id": 19523,
@@ -247,15 +166,7 @@
     "traditional": "場",
     "simplified": "场",
     "pinyin": "chang3",
-    "english": "large place used for a specific purpose"
-  },
-  {
-    "id": 42680,
-    "owner": "default",
-    "traditional": "打",
-    "simplified": "打",
-    "pinyin": "da3",
-    "english": "to beat"
+    "english": "large place used for a specific purpose/stage/scene (of a play)/classifier for sporting or recreational activities/classifier for number of exams"
   },
   {
     "id": 37730,
@@ -263,15 +174,7 @@
     "traditional": "強",
     "simplified": "强",
     "pinyin": "qiang3",
-    "english": "to force"
-  },
-  {
-    "id": 98778,
-    "owner": "default",
-    "traditional": "資源",
-    "simplified": "资源",
-    "pinyin": "zi1 yuan2",
-    "english": "natural resource (such as water or minerals)"
+    "english": "to force/to compel/to strive/to make an effort"
   },
   {
     "id": 2002,
@@ -279,16 +182,8 @@
     "traditional": "不了",
     "simplified": "不了",
     "pinyin": "bu4 liao3",
-    "english": "unable to",
+    "english": "(as a resultative verb suffix) unable to (do sth)/(pattern: {verb} + 個|个[ge5] + ~) without end; incessantly",
     "note": "temporarily prioritized, but if we can't, maybe add 做不了 as custom"
-  },
-  {
-    "id": 18210,
-    "owner": "default",
-    "traditional": "句",
-    "simplified": "句",
-    "pinyin": "ju4",
-    "english": "sentence"
   },
   {
     "id": 22572,
@@ -296,16 +191,7 @@
     "traditional": "嚇",
     "simplified": "吓",
     "pinyin": "xia4",
-    "english": "to frighten"
-  },
-  {
-    "id": 63535,
-    "owner": "default",
-    "traditional": "清",
-    "simplified": "清",
-    "pinyin": "qing1",
-    "english": "clear",
-    "note": "consider adding 清清楚楚 as a pharse"
+    "english": "to frighten/to scare"
   },
   {
     "id": 90367,
@@ -313,7 +199,7 @@
     "traditional": "萬",
     "simplified": "万",
     "pinyin": "wan4",
-    "english": "ten thousand"
+    "english": "ten thousand/a great number"
   },
   {
     "id": 69661,
@@ -323,14 +209,6 @@
     "pinyin": "shuai4",
     "english": "to lead",
     "note": "for following your gender 率性"
-  },
-  {
-    "id": 40786,
-    "owner": "default",
-    "traditional": "意",
-    "simplified": "意",
-    "pinyin": "yi4",
-    "english": "idea"
   },
   {
     "id": 14874,
@@ -346,7 +224,7 @@
     "traditional": "號",
     "simplified": "号",
     "pinyin": "hao4",
-    "english": "ordinal number"
+    "english": "ordinal number/day of a month/mark/sign/business establishment/size/ship suffix/horn (wind instrument)/bugle call/assumed name/to take a pulse/classifier used to indicate number of people"
   },
   {
     "id": 81669,
@@ -381,140 +259,12 @@
     "english": "chief"
   },
   {
-    "id": 83871,
-    "owner": "default",
-    "traditional": "美",
-    "simplified": "美",
-    "pinyin": "mei3",
-    "english": "beautiful"
-  },
-  {
-    "id": 27665,
-    "owner": "default",
-    "traditional": "天柱",
-    "simplified": "天柱",
-    "pinyin": "tian1 zhu4",
-    "english": "pillars supporting heaven"
-  },
-  {
-    "id": 33726,
-    "owner": "default",
-    "traditional": "尼瑪",
-    "simplified": "尼玛",
-    "pinyin": "ni2 ma3",
-    "english": "(Internet slang) alternative for 你媽|你妈[ni3 ma1]"
-  },
-  {
-    "id": 9743,
-    "owner": "default",
-    "traditional": "儀",
-    "simplified": "仪",
-    "pinyin": "yi2",
-    "english": "apparatus"
-  },
-  {
-    "id": 198643,
-    "owner": "default",
-    "traditional": "章",
-    "simplified": "章",
-    "pinyin": "zhang1",
-    "english": "chapter/section/clause/movement (of symphony)/seal/badge/regulation/order"
-  },
-  {
-    "id": 123439,
-    "owner": "default",
-    "traditional": "也",
-    "simplified": "也",
-    "pinyin": "ye3",
-    "english": "also/too/(in Classical Chinese) final particle implying affirmation"
-  },
-  {
     "id": 223332,
     "owner": "default",
     "traditional": "過",
     "simplified": "过",
     "pinyin": "guo4",
     "english": "to cross/to go over/to pass (time)/to celebrate (a holiday)/to live/to get along/excessively/too-"
-  },
-  {
-    "id": 211997,
-    "owner": "default",
-    "traditional": "蘭",
-    "simplified": "兰",
-    "pinyin": "lan2",
-    "english": "orchid (蘭花|兰花 Cymbidium goeringii)/fragrant thoroughwort (蘭草|兰草 Eupatorium fortunei)/lily magnolia (木蘭|木兰)"
-  },
-  {
-    "id": 131644,
-    "owner": "default",
-    "traditional": "凌",
-    "simplified": "凌",
-    "pinyin": "ling2",
-    "english": "to approach/to rise high/thick ice/to insult or maltreat"
-  },
-  {
-    "id": 192794,
-    "owner": "default",
-    "traditional": "白",
-    "simplified": "白",
-    "pinyin": "bai2",
-    "english": "white/snowy/pure/bright/empty/blank/plain/clear/to make clear/in vain/gratuitous/free of charge/reactionary/anti-communist/funeral/to stare coldly/to write wrong character/to state/to explain/vernacular/spoken lines in opera"
-  },
-  {
-    "id": 176513,
-    "owner": "default",
-    "traditional": "機",
-    "simplified": "机",
-    "pinyin": "ji1",
-    "english": "machine/engine/opportunity/intention/aircraft/pivot/crucial point/flexible (quick-witted)/organic/CL:臺|台[tai2]"
-  },
-  {
-    "id": 150900,
-    "owner": "default",
-    "traditional": "家伙",
-    "simplified": "家伙",
-    "pinyin": "jia1 huo5",
-    "english": "household dish, implement or furniture/domestic animal/(coll.) guy/chap/weapon"
-  },
-  {
-    "id": 161375,
-    "owner": "default",
-    "traditional": "成",
-    "simplified": "成",
-    "pinyin": "cheng2",
-    "english": "to succeed/to finish/to complete/to accomplish/to become/to turn into/to be all right/OK!/one tenth"
-  },
-  {
-    "id": 159049,
-    "owner": "default",
-    "traditional": "念",
-    "simplified": "念",
-    "pinyin": "nian4",
-    "english": "to read/to study (a subject)/to attend (a school)/to read aloud/to give (sb) a tongue-lashing (CL:頓|顿[dun4])/to miss (sb)/idea/remembrance/twenty (banker's anti-fraud numeral corresponding to 廿[nian4])"
-  },
-  {
-    "id": 331389,
-    "owner": "default",
-    "traditional": "蕩",
-    "simplified": "荡",
-    "pinyin": "dang4",
-    "english": "to wash/to squander/to sweep away/to move/to shake/dissolute/pond"
-  },
-  {
-    "id": 317993,
-    "owner": "default",
-    "traditional": "稱",
-    "simplified": "称",
-    "pinyin": "cheng1",
-    "english": "to weigh/to state/to name/name/appellation/to praise"
-  },
-  {
-    "id": 290799,
-    "owner": "default",
-    "traditional": "時代",
-    "simplified": "时代",
-    "pinyin": "shi2 dai4",
-    "english": "age/era/epoch/period (in one's life)/CL:個|个[ge4]"
   },
   {
     "id": 317993,
@@ -541,14 +291,6 @@
     "english": "circle/ring/loop/classifier for loops, orbits, laps of race etc/CL:個|个[ge4]/to surround/to circle"
   },
   {
-    "id": 339837,
-    "owner": "default",
-    "traditional": "越",
-    "simplified": "越",
-    "pinyin": "yue4",
-    "english": "to exceed/to climb over/to surpass/the more... the more"
-  },
-  {
     "id": 276680,
     "owner": "default",
     "traditional": "廣",
@@ -557,19 +299,15 @@
     "english": "wide/numerous/to spread"
   },
   {
-    "id": 6224,
-    "owner": "default",
-    "traditional": "以",
-    "simplified": "以",
-    "pinyin": "yi3",
-    "english": "to use/by means of/according to/in order to/because of/at (a certain date or place)",
-    "priority": 500
-  },
-  {
     "traditional": "片",
     "simplified": "片",
     "pinyin": "pian4",
-    "english": "thin piece/flake/a slice/film/TV play/to slice/to carve thin/partial/incomplete/one-sided/classifier for slices, tablets, tract of land, area of water/classifier for CDs, movies, DVDs etc/used with numeral 一[yi1]: classifier for scenario, scene, feeling, atmosphere, sound etc/Kangxi radical 91",
-    "priority": 500
+    "english": "thin piece/flake/a slice/film/TV play/to slice/to carve thin/partial/incomplete/one-sided/classifier for slices, tablets, tract of land, area of water/classifier for CDs, movies, DVDs etc/used with numeral 一[yi1]: classifier for scenario, scene, feeling, atmosphere, sound etc/Kangxi radical 91"
+  },
+  {
+    "traditional": "家",
+    "simplified": "家",
+    "pinyin": "jia1",
+    "english": "home/family/(polite) my (sister, uncle etc)/classifier for families or businesses/refers to the philosophical schools of pre-Han China/noun suffix for a specialist in some activity, such as a musician or revolutionary, corresponding to English -ist, -er, -ary or -ian/CL:個|个[ge4]"
   }
 ]

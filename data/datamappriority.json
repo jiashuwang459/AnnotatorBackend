@@ -1,15 +1,4 @@
 {
-  "priority::富裕": [
-    {
-      "id": 31880,
-      "owner": "default",
-      "traditional": "富裕",
-      "simplified": "富裕",
-      "pinyin": "fu4 yu4",
-      "english": "prosperous",
-      "priority": 200
-    }
-  ],
   "priority::更": [
     {
       "id": 51973,
@@ -17,8 +6,8 @@
       "traditional": "更",
       "simplified": "更",
       "pinyin": "geng4",
-      "english": "more",
-      "priority": 200
+      "english": "more/even more/further/still/still more",
+      "priority": 300
     }
   ],
   "priority::要": [
@@ -28,41 +17,8 @@
       "traditional": "要",
       "simplified": "要",
       "pinyin": "yao4",
-      "english": "important",
-      "priority": 200
-    }
-  ],
-  "priority::那": [
-    {
-      "id": 104348,
-      "owner": "default",
-      "traditional": "那",
-      "simplified": "那",
-      "pinyin": "na4",
-      "english": "that",
-      "priority": 200
-    }
-  ],
-  "priority::比": [
-    {
-      "id": 298636,
-      "owner": "default",
-      "traditional": "比",
-      "simplified": "比",
-      "pinyin": "bi3",
-      "english": "to compare/(followed by a noun and adjective) more {adj.} than {noun}/ratio/to gesture/(Taiwan pr. [bi4] in some compounds derived from Classical Chinese)",
-      "priority": 200
-    }
-  ],
-  "priority::大众": [
-    {
-      "id": 27137,
-      "owner": "default",
-      "traditional": "大眾",
-      "simplified": "大众",
-      "pinyin": "da4 zhong4",
-      "english": "the masses",
-      "priority": 200
+      "english": "to want; to need; to ask for/will; shall; about to/need to; should/if (same as 要是[yao4 shi5])/(bound form) important",
+      "priority": 300
     }
   ],
   "priority::中": [
@@ -73,18 +29,7 @@
       "simplified": "中",
       "pinyin": "zhong1",
       "english": "within",
-      "priority": 200
-    }
-  ],
-  "priority::神": [
-    {
-      "id": 76920,
-      "owner": "default",
-      "traditional": "神",
-      "simplified": "神",
-      "pinyin": "shen2",
-      "english": "deity",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::扛": [
@@ -94,8 +39,8 @@
       "traditional": "扛",
       "simplified": "扛",
       "pinyin": "kang2",
-      "english": "to carry on one's shoulder",
-      "priority": 200
+      "english": "to carry on one's shoulder/(fig.) to take on (a burden, duty etc)",
+      "priority": 300
     }
   ],
   "priority::着": [
@@ -106,7 +51,7 @@
       "simplified": "着",
       "pinyin": "zhe5",
       "english": "aspect particle indicating action in progress",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::抹": [
@@ -117,18 +62,7 @@
       "simplified": "抹",
       "pinyin": "mo3",
       "english": "to smear",
-      "priority": 200
-    }
-  ],
-  "priority::听": [
-    {
-      "id": 85558,
-      "owner": "default",
-      "traditional": "聽",
-      "simplified": "听",
-      "pinyin": "ting1",
-      "english": "to listen",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::重": [
@@ -139,7 +73,7 @@
       "simplified": "重",
       "pinyin": "zhong4",
       "english": "heavy",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::重重": [
@@ -150,7 +84,7 @@
       "simplified": "重重",
       "pinyin": "zhong4 zhong4",
       "english": "heavily",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::并": [
@@ -160,8 +94,8 @@
       "traditional": "並",
       "simplified": "并",
       "pinyin": "bing4",
-      "english": "and",
-      "priority": 200
+      "english": "and/furthermore/also/together with/(not) at all/simultaneously/to combine/to join/to merge",
+      "priority": 300
     }
   ],
   "priority::凉": [
@@ -171,8 +105,8 @@
       "traditional": "涼",
       "simplified": "凉",
       "pinyin": "liang2",
-      "english": "cool",
-      "priority": 200
+      "english": "cool/cold",
+      "priority": 300
     }
   ],
   "priority::琢磨": [
@@ -183,7 +117,7 @@
       "simplified": "琢磨",
       "pinyin": "zuo2 mo5",
       "english": "to ponder",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::累": [
@@ -193,8 +127,8 @@
       "traditional": "累",
       "simplified": "累",
       "pinyin": "lei4",
-      "english": "tired",
-      "priority": 200
+      "english": "tired/weary/to strain/to wear out/to work hard",
+      "priority": 300
     }
   ],
   "priority::行": [
@@ -205,7 +139,7 @@
       "simplified": "行",
       "pinyin": "xing2",
       "english": "to walk",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::熬": [
@@ -215,8 +149,8 @@
       "traditional": "熬",
       "simplified": "熬",
       "pinyin": "ao2",
-      "english": "to cook on a slow fire",
-      "priority": 200
+      "english": "to cook on a slow fire; to extract by heating; to decoct/to endure",
+      "priority": 300
     }
   ],
   "priority::转": [
@@ -227,18 +161,7 @@
       "simplified": "转",
       "pinyin": "zhuan3",
       "english": "to turn",
-      "priority": 200
-    }
-  ],
-  "priority::成功": [
-    {
-      "id": 41884,
-      "owner": "default",
-      "traditional": "成功",
-      "simplified": "成功",
-      "pinyin": "cheng2 gong1",
-      "english": "success",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::说": [
@@ -248,19 +171,8 @@
       "traditional": "說",
       "simplified": "说",
       "pinyin": "shuo1",
-      "english": "to speak",
-      "priority": 200
-    }
-  ],
-  "priority::通道": [
-    {
-      "id": 102733,
-      "owner": "default",
-      "traditional": "通道",
-      "simplified": "通道",
-      "pinyin": "tong1 dao4",
-      "english": "(communications) channel",
-      "priority": 200
+      "english": "to speak; to talk; to say/to explain; to comment/to scold; to tell off/(bound form) theory; doctrine",
+      "priority": 300
     }
   ],
   "priority::肚": [
@@ -271,18 +183,7 @@
       "simplified": "肚",
       "pinyin": "du4",
       "english": "belly",
-      "priority": 200
-    }
-  ],
-  "priority::明": [
-    {
-      "id": 50616,
-      "owner": "default",
-      "traditional": "明",
-      "simplified": "明",
-      "pinyin": "ming2",
-      "english": "bright",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::正": [
@@ -292,19 +193,8 @@
       "traditional": "正",
       "simplified": "正",
       "pinyin": "zheng4",
-      "english": "straight",
-      "priority": 200
-    }
-  ],
-  "priority::联想": [
-    {
-      "id": 85371,
-      "owner": "default",
-      "traditional": "聯想",
-      "simplified": "联想",
-      "pinyin": "lian2 xiang3",
-      "english": "to associate (cognitively)",
-      "priority": 200
+      "english": "straight/upright/proper/main/principal/to correct/to rectify/exactly/just (at that time)/right (in that place)/(math.) positive",
+      "priority": 300
     }
   ],
   "priority::弄": [
@@ -314,8 +204,8 @@
       "traditional": "弄",
       "simplified": "弄",
       "pinyin": "nong4",
-      "english": "to do",
-      "priority": 200
+      "english": "to do/to manage/to handle/to play with/to fool with/to mess with/to fix/to toy with",
+      "priority": 300
     }
   ],
   "priority::吐": [
@@ -326,7 +216,7 @@
       "simplified": "吐",
       "pinyin": "tu4",
       "english": "to vomit",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::场": [
@@ -336,19 +226,8 @@
       "traditional": "場",
       "simplified": "场",
       "pinyin": "chang3",
-      "english": "large place used for a specific purpose",
-      "priority": 200
-    }
-  ],
-  "priority::打": [
-    {
-      "id": 42680,
-      "owner": "default",
-      "traditional": "打",
-      "simplified": "打",
-      "pinyin": "da3",
-      "english": "to beat",
-      "priority": 200
+      "english": "large place used for a specific purpose/stage/scene (of a play)/classifier for sporting or recreational activities/classifier for number of exams",
+      "priority": 300
     }
   ],
   "priority::强": [
@@ -358,19 +237,8 @@
       "traditional": "強",
       "simplified": "强",
       "pinyin": "qiang3",
-      "english": "to force",
-      "priority": 200
-    }
-  ],
-  "priority::资源": [
-    {
-      "id": 98778,
-      "owner": "default",
-      "traditional": "資源",
-      "simplified": "资源",
-      "pinyin": "zi1 yuan2",
-      "english": "natural resource (such as water or minerals)",
-      "priority": 200
+      "english": "to force/to compel/to strive/to make an effort",
+      "priority": 300
     }
   ],
   "priority::不了": [
@@ -380,20 +248,9 @@
       "traditional": "不了",
       "simplified": "不了",
       "pinyin": "bu4 liao3",
-      "english": "unable to",
+      "english": "(as a resultative verb suffix) unable to (do sth)/(pattern: {verb} + 個|个[ge5] + ~) without end; incessantly",
       "note": "temporarily prioritized, but if we can't, maybe add 做不了 as custom",
-      "priority": 200
-    }
-  ],
-  "priority::句": [
-    {
-      "id": 18210,
-      "owner": "default",
-      "traditional": "句",
-      "simplified": "句",
-      "pinyin": "ju4",
-      "english": "sentence",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::吓": [
@@ -403,20 +260,8 @@
       "traditional": "嚇",
       "simplified": "吓",
       "pinyin": "xia4",
-      "english": "to frighten",
-      "priority": 200
-    }
-  ],
-  "priority::清": [
-    {
-      "id": 63535,
-      "owner": "default",
-      "traditional": "清",
-      "simplified": "清",
-      "pinyin": "qing1",
-      "english": "clear",
-      "note": "consider adding 清清楚楚 as a pharse",
-      "priority": 200
+      "english": "to frighten/to scare",
+      "priority": 300
     }
   ],
   "priority::万": [
@@ -426,8 +271,8 @@
       "traditional": "萬",
       "simplified": "万",
       "pinyin": "wan4",
-      "english": "ten thousand",
-      "priority": 200
+      "english": "ten thousand/a great number",
+      "priority": 300
     }
   ],
   "priority::率": [
@@ -439,18 +284,7 @@
       "pinyin": "shuai4",
       "english": "to lead",
       "note": "for following your gender 率性",
-      "priority": 200
-    }
-  ],
-  "priority::意": [
-    {
-      "id": 40786,
-      "owner": "default",
-      "traditional": "意",
-      "simplified": "意",
-      "pinyin": "yi4",
-      "english": "idea",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::勒": [
@@ -461,7 +295,7 @@
       "simplified": "勒",
       "pinyin": "lei1",
       "english": "to strap tightly",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::号": [
@@ -471,8 +305,8 @@
       "traditional": "號",
       "simplified": "号",
       "pinyin": "hao4",
-      "english": "ordinal number",
-      "priority": 200
+      "english": "ordinal number/day of a month/mark/sign/business establishment/size/ship suffix/horn (wind instrument)/bugle call/assumed name/to take a pulse/classifier used to indicate number of people",
+      "priority": 300
     }
   ],
   "priority::结果": [
@@ -483,7 +317,7 @@
       "simplified": "结果",
       "pinyin": "jie2 guo3",
       "english": "outcome",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::跑": [
@@ -494,7 +328,7 @@
       "simplified": "跑",
       "pinyin": "pao3",
       "english": "to run",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::落": [
@@ -505,7 +339,7 @@
       "simplified": "落",
       "pinyin": "luo4",
       "english": "to fall or drop",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::长": [
@@ -516,73 +350,7 @@
       "simplified": "长",
       "pinyin": "zhang3",
       "english": "chief",
-      "priority": 200
-    }
-  ],
-  "priority::美": [
-    {
-      "id": 83871,
-      "owner": "default",
-      "traditional": "美",
-      "simplified": "美",
-      "pinyin": "mei3",
-      "english": "beautiful",
-      "priority": 200
-    }
-  ],
-  "priority::天柱": [
-    {
-      "id": 27665,
-      "owner": "default",
-      "traditional": "天柱",
-      "simplified": "天柱",
-      "pinyin": "tian1 zhu4",
-      "english": "pillars supporting heaven",
-      "priority": 200
-    }
-  ],
-  "priority::尼玛": [
-    {
-      "id": 33726,
-      "owner": "default",
-      "traditional": "尼瑪",
-      "simplified": "尼玛",
-      "pinyin": "ni2 ma3",
-      "english": "(Internet slang) alternative for 你媽|你妈[ni3 ma1]",
-      "priority": 200
-    }
-  ],
-  "priority::仪": [
-    {
-      "id": 9743,
-      "owner": "default",
-      "traditional": "儀",
-      "simplified": "仪",
-      "pinyin": "yi2",
-      "english": "apparatus",
-      "priority": 200
-    }
-  ],
-  "priority::章": [
-    {
-      "id": 198643,
-      "owner": "default",
-      "traditional": "章",
-      "simplified": "章",
-      "pinyin": "zhang1",
-      "english": "chapter/section/clause/movement (of symphony)/seal/badge/regulation/order",
-      "priority": 200
-    }
-  ],
-  "priority::也": [
-    {
-      "id": 123439,
-      "owner": "default",
-      "traditional": "也",
-      "simplified": "也",
-      "pinyin": "ye3",
-      "english": "also/too/(in Classical Chinese) final particle implying affirmation",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::过": [
@@ -593,95 +361,7 @@
       "simplified": "过",
       "pinyin": "guo4",
       "english": "to cross/to go over/to pass (time)/to celebrate (a holiday)/to live/to get along/excessively/too-",
-      "priority": 200
-    }
-  ],
-  "priority::兰": [
-    {
-      "id": 211997,
-      "owner": "default",
-      "traditional": "蘭",
-      "simplified": "兰",
-      "pinyin": "lan2",
-      "english": "orchid (蘭花|兰花 Cymbidium goeringii)/fragrant thoroughwort (蘭草|兰草 Eupatorium fortunei)/lily magnolia (木蘭|木兰)",
-      "priority": 200
-    }
-  ],
-  "priority::凌": [
-    {
-      "id": 131644,
-      "owner": "default",
-      "traditional": "凌",
-      "simplified": "凌",
-      "pinyin": "ling2",
-      "english": "to approach/to rise high/thick ice/to insult or maltreat",
-      "priority": 200
-    }
-  ],
-  "priority::白": [
-    {
-      "id": 192794,
-      "owner": "default",
-      "traditional": "白",
-      "simplified": "白",
-      "pinyin": "bai2",
-      "english": "white/snowy/pure/bright/empty/blank/plain/clear/to make clear/in vain/gratuitous/free of charge/reactionary/anti-communist/funeral/to stare coldly/to write wrong character/to state/to explain/vernacular/spoken lines in opera",
-      "priority": 200
-    }
-  ],
-  "priority::机": [
-    {
-      "id": 176513,
-      "owner": "default",
-      "traditional": "機",
-      "simplified": "机",
-      "pinyin": "ji1",
-      "english": "machine/engine/opportunity/intention/aircraft/pivot/crucial point/flexible (quick-witted)/organic/CL:臺|台[tai2]",
-      "priority": 200
-    }
-  ],
-  "priority::家伙": [
-    {
-      "id": 150900,
-      "owner": "default",
-      "traditional": "家伙",
-      "simplified": "家伙",
-      "pinyin": "jia1 huo5",
-      "english": "household dish, implement or furniture/domestic animal/(coll.) guy/chap/weapon",
-      "priority": 200
-    }
-  ],
-  "priority::成": [
-    {
-      "id": 161375,
-      "owner": "default",
-      "traditional": "成",
-      "simplified": "成",
-      "pinyin": "cheng2",
-      "english": "to succeed/to finish/to complete/to accomplish/to become/to turn into/to be all right/OK!/one tenth",
-      "priority": 200
-    }
-  ],
-  "priority::念": [
-    {
-      "id": 159049,
-      "owner": "default",
-      "traditional": "念",
-      "simplified": "念",
-      "pinyin": "nian4",
-      "english": "to read/to study (a subject)/to attend (a school)/to read aloud/to give (sb) a tongue-lashing (CL:頓|顿[dun4])/to miss (sb)/idea/remembrance/twenty (banker's anti-fraud numeral corresponding to 廿[nian4])",
-      "priority": 200
-    }
-  ],
-  "priority::荡": [
-    {
-      "id": 331389,
-      "owner": "default",
-      "traditional": "蕩",
-      "simplified": "荡",
-      "pinyin": "dang4",
-      "english": "to wash/to squander/to sweep away/to move/to shake/dissolute/pond",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::称": [
@@ -692,27 +372,7 @@
       "simplified": "称",
       "pinyin": "cheng1",
       "english": "to weigh/to state/to name/name/appellation/to praise",
-      "priority": 200
-    },
-    {
-      "id": 317993,
-      "owner": "default",
-      "traditional": "稱",
-      "simplified": "称",
-      "pinyin": "cheng1",
-      "english": "to weigh/to state/to name/name/appellation/to praise",
-      "priority": 200
-    }
-  ],
-  "priority::时代": [
-    {
-      "id": 290799,
-      "owner": "default",
-      "traditional": "時代",
-      "simplified": "时代",
-      "pinyin": "shi2 dai4",
-      "english": "age/era/epoch/period (in one's life)/CL:個|个[ge4]",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::合": [
@@ -723,7 +383,7 @@
       "simplified": "合",
       "pinyin": "he2",
       "english": "to close/to join/to fit/to be equal to/whole/together/round (in battle)/conjunction (astronomy)/1st note of pentatonic scale/old variant of 盒[he2]",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::圈": [
@@ -734,18 +394,7 @@
       "simplified": "圈",
       "pinyin": "quan1",
       "english": "circle/ring/loop/classifier for loops, orbits, laps of race etc/CL:個|个[ge4]/to surround/to circle",
-      "priority": 200
-    }
-  ],
-  "priority::越": [
-    {
-      "id": 339837,
-      "owner": "default",
-      "traditional": "越",
-      "simplified": "越",
-      "pinyin": "yue4",
-      "english": "to exceed/to climb over/to surpass/the more... the more",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::广": [
@@ -756,18 +405,7 @@
       "simplified": "广",
       "pinyin": "guang3",
       "english": "wide/numerous/to spread",
-      "priority": 200
-    }
-  ],
-  "priority::以": [
-    {
-      "id": 6224,
-      "owner": "default",
-      "traditional": "以",
-      "simplified": "以",
-      "pinyin": "yi3",
-      "english": "to use/by means of/according to/in order to/because of/at (a certain date or place)",
-      "priority": 200
+      "priority": 300
     }
   ],
   "priority::片": [
@@ -776,7 +414,16 @@
       "simplified": "片",
       "pinyin": "pian4",
       "english": "thin piece/flake/a slice/film/TV play/to slice/to carve thin/partial/incomplete/one-sided/classifier for slices, tablets, tract of land, area of water/classifier for CDs, movies, DVDs etc/used with numeral 一[yi1]: classifier for scenario, scene, feeling, atmosphere, sound etc/Kangxi radical 91",
-      "priority": 200
+      "priority": 300
+    }
+  ],
+  "priority::家": [
+    {
+      "traditional": "家",
+      "simplified": "家",
+      "pinyin": "jia1",
+      "english": "home/family/(polite) my (sister, uncle etc)/classifier for families or businesses/refers to the philosophical schools of pre-Han China/noun suffix for a specialist in some activity, such as a musician or revolutionary, corresponding to English -ist, -er, -ary or -ian/CL:個|个[ge4]",
+      "priority": 300
     }
   ]
 }

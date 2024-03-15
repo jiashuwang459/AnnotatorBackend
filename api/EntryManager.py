@@ -434,16 +434,28 @@ class EntryManagerSingleton(object):
         #     return caches['default'].get(entryKey(BLACKLIST, entry)) is not None
 
         if blacklistEntries:
-            entries = [entry for entry in entries if entry not in blacklistEntries]
+            for entry in entries:
+                for blacklistEntry in blacklistEntries:
+                    if(blacklistEntry['traditional'] == entry['traditional'] and
+                        blacklistEntry['simplified'] == entry['simplified'] and
+                        blacklistEntry['pinyin'] == entry['pinyin']):
+                        entry['priority'] = INVALID_PRIORITY
 
         if priorityEntries:
-            entries = [entry for entry in entries if entry not in priorityEntries]
-            entries.extend(priorityEntries)
+            for entry in entries:
+                for priorityEntry in priorityEntries:
+                    if(priorityEntry['traditional'] == entry['traditional'] and
+                        priorityEntry['simplified'] == entry['simplified'] and
+                        priorityEntry['pinyin'] == entry['pinyin']):
+                        entry['priority'] = priorityEntry['priority']
+            # entries = [entry for entry in entries if entry not in priorityEntries]
+            # entries.extend(priorityEntries)
 
         if not entries:
             return None
 
         entries.sort(key=lambda x: x['priority'])
+        entries = [entry for entry in entries if entry['priority'] != INVALID_PRIORITY]
         # print(f"other:{timeit.default_timer() - start_time}")
 
         return entries
