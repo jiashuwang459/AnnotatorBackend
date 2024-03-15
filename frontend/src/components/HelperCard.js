@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import { Button, CardActionArea, CardActions } from "@mui/material";
 import MyButton from "react-bootstrap/Button";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -152,11 +153,11 @@ const HelperCard = (props) => {
     };
   }, [phrase]);
 
+  // TODO march 14, 2024 : pre-parse pinyin into the dictionary itself.
   function parsePinyin(pinyin) {
     if (pinyin == undefined || pinyin == "") {
       return "";
     }
-
     //special case with no vowel
     if (pinyin == "r5") {
       return "r";
@@ -226,7 +227,7 @@ const HelperCard = (props) => {
 
   function entryDefinition(entry) {
     return entry ? (
-      <CardContent sx={{ height: "282px" }}>
+      <CardContent variant="helpercard">
         <CardHeader>
           <Typography gutterBottom variant="h5" component="span">
             {entry.simplified}
@@ -258,7 +259,7 @@ const HelperCard = (props) => {
         </CardBody>
       </CardContent>
     ) : (
-      <div style={{ height: "282px" }}></div>
+      <CardContent variant="helpercard" />
     );
   }
 
@@ -277,17 +278,9 @@ const HelperCard = (props) => {
   let entry = entries?.length ? entries[activeStep] : undefined;
 
   return (
-    <Card
-      variant="helpercard"
-    >
+    <Card variant="helpercard">
       {entryDefinition(entry)}
-      <CardActions
-        sx={{
-          borderTopStyle: "solid",
-          borderTopWidth: "thin",
-          borderTopColor: "dimgrey",
-        }}
-      >
+      <CardActions variant="helpercard">
         <MobileStepper
           variant="dots"
           steps={maxSteps}
@@ -302,11 +295,7 @@ const HelperCard = (props) => {
           }}
           nextButton={
             <IconButton
-              sx={{
-                borderStyle: "solid",
-                borderWidth: "thin",
-                borderColor: "dimgrey",
-              }}
+              variant="helpercard"
               size="small"
               onClick={handleNext}
               disabled={activeStep === maxSteps - 1}
@@ -316,16 +305,12 @@ const HelperCard = (props) => {
           }
           backButton={
             <IconButton
+              variant="helpercard"
               size="small"
               onClick={handleBack}
-              sx={{
-                borderStyle: "solid",
-                borderWidth: "thin",
-                borderColor: "dimgrey",
-              }}
               disabled={activeStep === 0}
             >
-              <KeyboardArrowLeftIcon />
+              <ChevronLeftIcon />
             </IconButton>
           }
         />

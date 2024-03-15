@@ -204,6 +204,40 @@ const MyTheme = {
         },
       ],
     },
+    MuiCardActions: {
+      variants: [
+        {
+          props: { variant: "helpercard" },
+          style: {
+            borderTopStyle: "solid",
+            borderTopWidth: "thin",
+            borderTopColor: "dimgrey",
+          },
+        },
+      ],
+    },
+    MuiIconButton: {
+      variants: [
+        {
+          props: { variant: "helpercard" },
+          style: {
+            borderStyle: "solid",
+            borderWidth: "thin",
+            borderColor: "dimgrey",
+          },
+        },
+      ],
+    },
+    MuiCardContent: {
+      variants: [
+        {
+          props: { variant: "helpercard" },
+          style: {
+            height: "282px",
+          },
+        },
+      ],
+    },
   },
 };
 

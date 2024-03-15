@@ -18,31 +18,21 @@ const Paragraph = (props) => {
   const dictMode = mode.dictMode;
 
   if (paragraph.length == 0) {
+    return <Paper variant="paragraph" {...props} />;
+  } else {
     return (
       <Paper variant="paragraph" {...props}>
-        nothing to see here
+        {paragraph.map((entry, phraseIndex) => {
+          // Only make it a controlled phrase if dictmode is on.
+          // And if so, only add control if it's actually a cchar.
+          if (dictMode && entry.cchars) {
+            return <ControlledPhrase key={phraseIndex} phrase={entry} />;
+          } else {
+            return <Phrase key={phraseIndex} phrase={entry} />;
+          }
+        })}
       </Paper>
     );
-  } else {
-    // Only make it a controlled phrase if dictmode is on.
-    // And if so, only add control if it's actually a cchar.
-    if (dictMode && phrase.cchars) {
-      return (
-        <Paper variant="paragraph" {...props}>
-          {paragraph.map((entry, phraseIndex) => {
-            return <ControlledPhrase key={phraseIndex} phrase={entry} />;
-          })}
-        </Paper>
-      );
-    } else {
-      return (
-        <Paper variant="paragraph" {...props}>
-          {paragraph.map((entry, phraseIndex) => {
-            return <Phrase key={phraseIndex} phrase={entry} />;
-          })}
-        </Paper>
-      );
-    }
   }
 };
 

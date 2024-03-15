@@ -15,8 +15,7 @@ import Stack from "@mui/material/Stack";
 import Item from "@mui/material/ListItem";
 import Divider from '@mui/material/Divider';
 
-// march 8. 2024 TODO:
-// Using a stack isn't bad, but probably go back to what we had before, and use a card. See HelperCard.js.
+// march 14. 2024 TODO: add arrow!
 
 
 function ControlledPhrase(props) {
@@ -29,21 +28,6 @@ function ControlledPhrase(props) {
       </PopoverTrigger>
       <PopoverContent>
         <HelperCard phrase={phrase} {...props}/>
-        {/* <Stack sx={{ height: "100%", backgroundColor: "transparent", }}>
-          <Item>
-            <Paper>
-              {phrase.cchars
-                ? phrase.cchars.map((fchar) => {
-                    return fchar.cchar == "\n" ? "" : fchar.cchar;
-                  })
-                : "Nothing"}
-            </Paper>
-          </Item>
-          <Divider/>
-          <Item sx={{ height: "100%" }}>
-            <Paper>Body</Paper>
-          </Item>
-        </Stack> */}
       </PopoverContent>
     </Popover>
   );
