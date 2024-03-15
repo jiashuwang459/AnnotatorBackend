@@ -340,8 +340,9 @@ def reloadCEDict():
     # hashmap = {}
     halfmapA = {}
     halfmapB = {}
-    keys = set()
-    cnt = 0;
+    keylistA = set()
+    keylistB = set()
+    cnt = 0
     with open(os.path.join(DATA_DIR, 'cedict_ts.u8')) as f:
         text = f.read()
         lines = text.split('\n')
@@ -389,23 +390,26 @@ def reloadCEDict():
             if key in halfmapA:
                 halfmapA[key].append(entry)
                 halfmapA[key].sort(key=lambda x: x['priority'])
+            elif key in halfmapB:
+                halfmapB[key].append(entry)
+                halfmapB[key].sort(key=lambda x: x['priority'])
             else:
+                # Normally, we would simply do dict.keys(), but here, 'key' isn't the actual key we want
                 if cnt < 60000:
-                    keys.add(simplified)
+                    keylistA.add(simplified)
                     halfmapA[key] = [entry]
                 else:
-                    if key in halfmapB:
-                        halfmapB[key].append(entry)
-                        halfmapB[key].sort(key=lambda x: x['priority'])
-                    else:
-                        halfmapB[key] = [entry]
-            cnt += 1;
+                    keylistB.add(simplified)
+                    halfmapB[key] = [entry]
+            cnt += 1
                 
+
 
     print('Done!')
     # writeDataToFile(hashmap, "datamap.json")
     print('Done!Done!')
-    writeDataToFile(list(keys), "keylistA.json")
+    writeDataToFile(list(keylistA), "keylistA.json")
+    writeDataToFile(list(keylistB), "keylistA.json")
     print('Done!Done!Done!')
     
 

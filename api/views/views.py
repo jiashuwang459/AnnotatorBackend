@@ -102,7 +102,7 @@ def getEntry(request):
     #     "fragment": FragmentSerializer(Memory.objects.get(code=code).fragments.all(), many=True).data
     # }
 
-    entries = EntryManager.getDict(phrase)
+    entries = EntryManager.get(phrase)
 
     if entries is None:
         return Response({'Not Found': f'phrase {phrase} not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -364,6 +364,7 @@ class AnnotationView(APIView):
         print("===============================")
         print(text)
         # TODO: return only simplified?
+        # TODO: march 14, 2024 - Currently there's no support for 'phrases' with latin alphabet: etc: X光
         owner = "default"
         trie = Trie.getTrie(owner)
         if not trie.contains('你'):
@@ -686,91 +687,92 @@ class ReloadCEDictView(APIView):
         return Response({"OK": "Done reloaded CEDict", "lenA": lenA, "lenB": lenB}, status=status.HTTP_200_OK)
 
 
-class CacheView(APIView):
+# class CacheView(APIView):
 
-    # def get(self, request, format=None):
-    # count = len([x for x in cache.iter_keys("*")])
-    # dictCount = len([x for x in cache.iter_keys("dict::*")])
-    # blacklistCount = len([x for x in cache.iter_keys("black::*")])
-    # customCount = len([x for x in cache.iter_keys("custom::*")])
-    # priorityCount = len([x for x in cache.iter_keys("priority::*")])
+#     # def get(self, request, format=None):
+#     # count = len([x for x in cache.iter_keys("*")])
+#     # dictCount = len([x for x in cache.iter_keys("dict::*")])
+#     # blacklistCount = len([x for x in cache.iter_keys("black::*")])
+#     # customCount = len([x for x in cache.iter_keys("custom::*")])
+#     # priorityCount = len([x for x in cache.iter_keys("priority::*")])
 
-    # return Response({"OK": "Fetched count", "count": count, "dictCount": dictCount,
-    #  "blacklistCount": blacklistCount,
-    #  "customCount": customCount,
-    #  "priorityCount": priorityCount, }, status=status.HTTP_200_OK)
+#     # return Response({"OK": "Fetched count", "count": count, "dictCount": dictCount,
+#     #  "blacklistCount": blacklistCount,
+#     #  "customCount": customCount,
+#     #  "priorityCount": priorityCount, }, status=status.HTTP_200_OK)
 
-    def post(self, request, format=None):
+#     def post(self, request, format=None):
 
-        rType = None
-        method = None
-        id = None
+#         rType = None
+#         method = None
+#         id = None
 
-        if 'type' in request.data:
-            rType = request.data['type']
+#         if 'type' in request.data:
+#             rType = request.data['type']
 
-        if 'id' in request.data:
-            id = request.data['id']
+#         if 'id' in request.data:
+#             id = request.data['id']
 
-        if 'method' in request.data:
-            method = request.data['method']
+#         if 'method' in request.data:
+#             method = request.data['method']
 
-        if method == 'reload':
-            if(rType):
-                if(rType == DICT):
-                    EntryManager.reloadDictionary()
-                elif(rType == CUSTOM):
-                    EntryManager.reloadCustom()
-                elif(rType == PRIORITY):
-                    EntryManager.reloadPriorities()
-                elif(rType == BLACKLIST):
-                    EntryManager.reloadBlacklist()
-                else:
-                    return Response({"Bad Request": "Invalid Type", "type": rType, "method": method, "id": id}, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                EntryManager.reload()
-            Trie.clearTries()
-        else:
-            if(rType):
-                if(rType == DICT):
-                    EntryManager.loadDictionary(id)
-                    # Trie.loadTrie(id)
-                elif(rType == CUSTOM):
-                    EntryManager.loadCustom()
-                elif(rType == PRIORITY):
-                    EntryManager.loadPriorities()
-                elif(rType == BLACKLIST):
-                    EntryManager.loadBlacklist()
-                else:
-                    return Response({"Bad Request": "Invalid Type", "type": rType, "method": method, "id": id}, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                EntryManager.load()
+#         if method == 'reload':
+#             print("we got inside")
+#             if(rType):
+#                 if(rType == DICT):
+#                     EntryManager.reloadDictionary()
+#                 elif(rType == CUSTOM):
+#                     EntryManager.reloadCustom()
+#                 elif(rType == PRIORITY):
+#                     EntryManager.reloadPriorities()
+#                 elif(rType == BLACKLIST):
+#                     EntryManager.reloadBlacklist()
+#                 else:
+#                     return Response({"Bad Request": "Invalid Type", "type": rType, "method": method, "id": id}, status=status.HTTP_400_BAD_REQUEST)
+#             else:
+#                 EntryManager.reload()
+#             Trie.clearTries()
+#         else:
+#             if(rType):
+#                 if(rType == DICT):
+#                     EntryManager.loadDictionary(id)
+#                     # Trie.loadTrie(id)
+#                 elif(rType == CUSTOM):
+#                     EntryManager.loadCustom()
+#                 elif(rType == PRIORITY):
+#                     EntryManager.loadPriorities()
+#                 elif(rType == BLACKLIST):
+#                     EntryManager.loadBlacklist()
+#                 else:
+#                     return Response({"Bad Request": "Invalid Type", "type": rType, "method": method, "id": id}, status=status.HTTP_400_BAD_REQUEST)
+#             else:
+#                 EntryManager.load()
 
-        return Response({"OK": "Reloaded Entries", "type": rType, "method": method, "id": id}, status=status.HTTP_200_OK)
+#         return Response({"OK": "Reloaded Entries", "type": rType, "method": method, "id": id}, status=status.HTTP_200_OK)
 
-    def delete(self, request, format=None):
+#     def delete(self, request, format=None):
 
-        rType = None
+#         rType = None
 
-        if 'type' in request.data:
-            rType = request.data['type']
+#         if 'type' in request.data:
+#             rType = request.data['type']
 
-        if(rType):
-            if(rType == DICT):
-                EntryManager.clearDictionary()
-            elif(rType == CUSTOM):
-                EntryManager.clearCustom()
-            elif(rType == PRIORITY):
-                EntryManager.clearPriorities()
-            elif(rType == BLACKLIST):
-                EntryManager.clearBlacklist()
-            else:
-                return Response({"Bad Request": "Invalid Type", "type": rType, "method": method, "id": id}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            EntryManager.clear()
+#         if(rType):
+#             if(rType == DICT):
+#                 EntryManager.clearDictionary()
+#             elif(rType == CUSTOM):
+#                 EntryManager.clearCustom()
+#             elif(rType == PRIORITY):
+#                 EntryManager.clearPriorities()
+#             elif(rType == BLACKLIST):
+#                 EntryManager.clearBlacklist()
+#             else:
+#                 return Response({"Bad Request": "Invalid Type", "type": rType, "method": method, "id": id}, status=status.HTTP_400_BAD_REQUEST)
+#         else:
+#             EntryManager.clear()
 
-        Trie.clearTries()
-        return Response({"OK": "Deleted Entries", "type": rType}, status=status.HTTP_200_OK)
+#         Trie.clearTries()
+#         return Response({"OK": "Deleted Entries", "type": rType}, status=status.HTTP_200_OK)
 
 
 # class PriorityView(APIView):
