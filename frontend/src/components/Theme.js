@@ -163,8 +163,10 @@ const MyTheme = {
           style: {
             // textTransform: "none",
             backgroundColor: "greenyellow",
+            backgroundColor: "transparent",
             border: `1px dashed`,
             borderColor: "green",
+            borderColor: "transparent",
             margin: "1px",
             padding: "2px",
             gap: "4px",
@@ -185,6 +187,19 @@ const MyTheme = {
             // margin: "2px",
             gap: "4px",
             display: "flex",
+          },
+        },
+      ],
+    },
+    MuiCard: {
+      variants: [
+        {
+          props: { variant: "helpercard" },
+          style: {
+            width: 270,
+            borderStyle: "solid",
+            borderColor: "dimgrey",
+            backgroundColor: "antiquewhite",
           },
         },
       ],

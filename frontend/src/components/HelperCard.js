@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import { List } from "semantic-ui-react";
 import styled from "styled-components";
 import { MemoryRouter } from "react-router-dom";
@@ -116,112 +116,43 @@ const MemoryButton = styled.button`
 // const NBSP = "\u00a0";
 // const HIDDEN = { visibility: "hidden" };
 
-export default class HelperCard extends React.Component {
-  constructor(props) {
-    super(props);
+const HelperCard = (props) => {
+  const [entries, setEntries] = useState([]);
+  const [maxSteps, setMaxSteps] = useState(0);
+  const [activeStep, setActiveStep] = useState(0);
+  // const [individual, setIndividual] = useState([]);
+  // const [cchars, setCchars] = useState("");
+  const phrase = props.phrase;
+  const vowels = require("../../../data/vowels.json");
 
-    this.state = {
-      entries: [],
-      maxSteps: 0,
-      curStep: 0,
-    };
-
-    this.setPhrase = this.setPhrase.bind(this);
-    this.parsePinyin = this.parsePinyin.bind(this);
-    this.handleBack = this.handleBack.bind(this);
-    this.handleNext = this.handleNext.bind(this);
-
-    this.setPhrase(props.phrase);
-
-    this.vowels = require("../../../data/vowels.json");
-
-    // this.updateDisplay = this.updateDisplay.bind(this);
-    // this.resetDisplay = this.resetDisplay.bind(this);
-  }
-
-  // updateDisplay(paragraph) {
-  //   console.log("updateDisplay");
-  //   console.log(paragraph);
-  //   this.setState((state) => {
-  //     return {
-  //       paragraphs: [...state.paragraphs, paragraph],
-  //     };
-  //   });
-  // }
-
-  // resetDisplay() {
-  //   console.log("resetDisplay");
-  //   this.setState({
-  //     paragraphs: [],
-  //   });
-  // }
-
-  setPhrase(phrase) {
-    console.log("setPhrase");
-    console.log(phrase);
-
-    // alert("You are submitting " + this.state.cchars);
-
-    // const requestOptions = {
-    //   method: "GET",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    // };
+  const loadPhrase = async (phrase) => {
+    console.log("loadPhrase", phrase);
 
     var params = new URLSearchParams({
       phrase: phrase.cchars.map((item) => item.cchar).join(""),
     });
 
-    // fetch("/api/entry?" + params.toString(), requestOptions)
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     this.setState(
-    //       {
-    //         entries: data,
-    //         maxSteps: data.length,
-    //       },
-    //       () => {
-    //         console.log(data);
-    //       }
-    //     );
-    //   });
+    const response = await axios.get("/api/entry?" + params.toString());
+    const data = response.data;
+    console.log(data);
+    return data;
+  };
 
-    axios
-      .get("/api/entry?" + params.toString())
-      .then((response) => response.data)
-      .then((data) => {
-        this.setState(
-          {
-            entries: data,
-            maxSteps: data.length,
-          },
-          () => {
-            console.log(data);
-          }
-        );
-      });
-  }
-
-  handleNext() {
-    this.setState((state) => {
-      return { curStep: state.curStep + 1 };
+  useEffect(() => {
+    let ignore = false;
+    setEntries(null);
+    loadPhrase(phrase).then((result) => {
+      if (!ignore) {
+        setEntries(result);
+        setMaxSteps(result.length);
+      }
     });
-  }
+    return () => {
+      ignore = true;
+    };
+  }, [phrase]);
 
-  handleBack() {
-    this.setState((state) => {
-      return { curStep: state.curStep - 1 };
-    });
-  }
-
-  /**
-   * Parses pinyin from ascii to utf-8
-   *  i.e. from 'san1' into 'sān'
-   * @param {*} pinyin in ascii, ex. san1
-   * @returns the proper pinyin, ready to display, ex. sān
-   */
-  parsePinyin(pinyin) {
+  function parsePinyin(pinyin) {
     if (pinyin == undefined || pinyin == "") {
       return "";
     }
@@ -283,17 +214,17 @@ export default class HelperCard extends React.Component {
       console.error("found pinyin with no vowel: " + pinyin);
     }
 
-    if (this.vowels[char]) {
+    if (vowels[char]) {
       return word
-        .replace(char, this.vowels[char][accent], 1)
-        .replace("u:", this.vowels["u:"]["5"], 1)
-        .replace("U:", this.vowels["U:"]["5"], 1);
+        .replace(char, vowels[char][accent], 1)
+        .replace("u:", vowels["u:"]["5"], 1)
+        .replace("U:", vowels["U:"]["5"], 1);
     }
 
     return word;
   }
 
-  entryDefinition(entry) {
+  function entryDefinition(entry) {
     return entry ? (
       <CardContent sx={{ height: "282px" }}>
         <CardHeader>
@@ -304,7 +235,7 @@ export default class HelperCard extends React.Component {
           <Typography gutterBottom variant="subtitle1" component="span">
             {entry.pinyin
               .split(" ")
-              .map((pinyin) => this.parsePinyin(pinyin))
+              .map((pinyin) => parsePinyin(pinyin))
               .join(" ")}
           </Typography>
         </CardHeader>
@@ -313,7 +244,11 @@ export default class HelperCard extends React.Component {
             {entry.english.split("/").map((item, englishIdx) => {
               return (
                 <li key={englishIdx}>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    textAlign="left"
+                  >
                     {item}
                   </Typography>
                 </li>
@@ -327,147 +262,76 @@ export default class HelperCard extends React.Component {
     );
   }
 
-  render() {
-    // const paragraphs = this.state.paragraphs;
-    // if (!paragraphs?.length) {
-    //   return (
-    //     <Container>
-    //       <Display style={{ textAlign: "initial" }}>
-    //         <p>
-    //           Welcome! Click on the <RiQuillPenFill></RiQuillPenFill> in the top
-    //           right to get started!
-    //         </p>
-    //         <br />
-    //         <br />
-    //         <p>
-    //           A Memory Code is something you can use to keep track of your
-    //           'Knowledge' and the words that you know. Once you've sent in some
-    //           text to be annotated, you will be able to click on each of the
-    //           characters. When you click on a character, I will add it to your
-    //           memory bank. Remember to save your memory bank before you leave!
-    //           Your code will change everytime you save!
-    //         </p>
-    //       </Display>
-    //     </Container>
-    //   );
-    // }
-    console.log("render");
+  function handleNext() {
+    setActiveStep((prevStep) => prevStep + 1);
+  }
 
-    const step = this.state.curStep;
-    const maxSteps = this.state.maxSteps;
-    const entries = this.state.entries;
+  function handleBack() {
+    setActiveStep((prevStep) => prevStep - 1);
+  }
 
-    let entry = undefined;
-    if (entries?.length) {
-      entry = entries[step];
-    }
+  // const step = this.state.activeStep;
+  // const maxSteps = this.state.maxSteps;
+  // const entries = this.state.entries;
 
-    return (
-      <Card
+  let entry = entries?.length ? entries[activeStep] : undefined;
+
+  return (
+    <Card
+      variant="helpercard"
+    >
+      {entryDefinition(entry)}
+      <CardActions
         sx={{
-          width: 270,
-          borderStyle: "solid",
-          borderColor: "dimgrey",
-          backgroundColor: "antiquewhite",
+          borderTopStyle: "solid",
+          borderTopWidth: "thin",
+          borderTopColor: "dimgrey",
         }}
       >
-        {this.entryDefinition(entry)}
-        <CardActions
+        <MobileStepper
+          variant="dots"
+          steps={maxSteps}
+          position="static"
+          activeStep={activeStep}
           sx={{
-            borderTopStyle: "solid",
-            borderTopWidth: "thin",
-            borderTopColor: "dimgrey",
+            maxWidth: 345,
+            flexGrow: 1,
+            backgroundColor: "inherit",
+            marginRight: "8px",
+            marginLeft: "8px",
           }}
-        >
-          <ToggleButton
-            value="check"
-            selected={this.state.popperPinned}
-            onChange={() => {
-              this.setState(
-                (state) => {
-                  return { popperPinned: !state.popperPinned };
-                },
-                () => {
-                  this.props.onPinned(this.state.popperPinned);
-                }
-              );
-            }}
-          >
-            {this.state.popperPinned ? (
-              <PushPinIcon />
-            ) : (
-              <PushPinOutlinedIcon />
-            )}
-          </ToggleButton>
+          nextButton={
+            <IconButton
+              sx={{
+                borderStyle: "solid",
+                borderWidth: "thin",
+                borderColor: "dimgrey",
+              }}
+              size="small"
+              onClick={handleNext}
+              disabled={activeStep === maxSteps - 1}
+            >
+              <ChevronRightIcon />
+            </IconButton>
+          }
+          backButton={
+            <IconButton
+              size="small"
+              onClick={handleBack}
+              sx={{
+                borderStyle: "solid",
+                borderWidth: "thin",
+                borderColor: "dimgrey",
+              }}
+              disabled={activeStep === 0}
+            >
+              <KeyboardArrowLeftIcon />
+            </IconButton>
+          }
+        />
+      </CardActions>
+    </Card>
+  );
+};
 
-          <MobileStepper
-            variant="dots"
-            steps={maxSteps}
-            position="static"
-            activeStep={step}
-            sx={{
-              maxWidth: 345,
-              flexGrow: 1,
-              backgroundColor: "inherit",
-              marginRight: "8px",
-              marginLeft: "8px",
-            }}
-            nextButton={
-              <IconButton
-                sx={{
-                  borderStyle: "solid",
-                  borderWidth: "thin",
-                  borderColor: "dimgrey",
-                }}
-                size="small"
-                onClick={this.handleNext}
-                disabled={step === maxSteps - 1}
-              >
-                <ChevronRightIcon />
-              </IconButton>
-            }
-            backButton={
-              <IconButton
-                size="small"
-                onClick={this.handleBack}
-                sx={{
-                  borderStyle: "solid",
-                  borderWidth: "thin",
-                  borderColor: "dimgrey",
-                }}
-                disabled={step === 0}
-              >
-                <KeyboardArrowLeftIcon />
-              </IconButton>
-            }
-          />
-          {/* <IconButton
-            sx={{
-              borderStyle: "solid",
-              borderWidth: "thin",
-              borderColor: "dimgrey",
-            }}
-            size="small"
-          >
-            <KeyboardArrowLeftIcon />
-          </IconButton>
-          <IconButton
-            sx={{
-              borderStyle: "solid",
-              borderWidth: "thin",
-              borderColor: "dimgrey",
-            }}
-            size="small"
-          >
-            <ChevronRightIcon />
-          </IconButton> */}
-        </CardActions>
-      </Card>
-    );
-
-    //TODO: figure out popper arrow (not really worth it for me.)
-    // popper iterate through phrases.
-    // popper make a correction?
-    //
-  }
-}
+export default HelperCard;

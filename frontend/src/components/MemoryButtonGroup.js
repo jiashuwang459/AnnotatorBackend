@@ -27,7 +27,7 @@ import Tooltip from "react-bootstrap/Tooltip";
 import Popover from "react-bootstrap/Popover";
 import axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
-import ClickAwayListener from '@mui/material/ClickAwayListener';
+import ClickAwayListener from "@mui/material/ClickAwayListener";
 
 import {
   MdEdit,
