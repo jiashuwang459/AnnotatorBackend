@@ -116,7 +116,7 @@ class CleanMemoryView(APIView):
         countEmpty = memoryEmpty.count()
         # memory.delete()
         return Response({
-            "OK": "Previewing memory status",
+            "OK": "Previewing memory status - Send POST to clean",
             "empty memories": {
                 "count": countEmpty,
                 "codes": memoryEmpty

@@ -93,7 +93,6 @@ class MemoryCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         fragments = validated_data.pop('fragments')
-        print("JIASHU")
         print(validated_data)
         memory = Memory.objects.create(**validated_data)
         for fragData in fragments:

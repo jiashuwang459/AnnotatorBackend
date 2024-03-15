@@ -463,6 +463,8 @@ class AnnotationView(APIView):
                             # english = entry[1]
 
                             pinyin = entry['pinyin'].split(" ")
+                            while (pinyin.count("-")):
+                                pinyin.remove("-") 
                             # english = entry['english']
 
                             # print(pinyin)
