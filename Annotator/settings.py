@@ -133,7 +133,7 @@ WSGI_APPLICATION = 'Annotator.wsgi.application'
 # pprint(CACHES)
 
 DATABASES = {}
-DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+# DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
 # DATABASES = {
 #     'default': {
