@@ -13,7 +13,9 @@ import {
   Placement,
   FloatingPortal,
   FloatingFocusManager,
-  useId
+  useId,
+  arrow,
+  FloatingArrow,
 } from "@floating-ui/react";
 import Paper from "@mui/material/Paper";
 
@@ -30,7 +32,7 @@ export function usePopover({
   placement = "bottom",
   modal,
   open: controlledOpen,
-  onOpenChange: setControlledOpen
+  onOpenChange: setControlledOpen,
 }) {
   const [uncontrolledOpen, setUncontrolledOpen] = React.useState(initialOpen);
   const [labelId, setLabelId] = React.useState();
@@ -38,6 +40,8 @@ export function usePopover({
 
   const open = controlledOpen ?? uncontrolledOpen;
   const setOpen = setControlledOpen ?? setUncontrolledOpen;
+
+  const arrowRef = React.useRef(null);
 
   const data = useFloating({
     placement,
@@ -49,16 +53,17 @@ export function usePopover({
       flip({
         crossAxis: placement.includes("-"),
         fallbackAxisSideDirection: "end",
-        padding: 5
+        padding: 5,
       }),
-      shift({ padding: 5 })
-    ]
+      shift({ padding: 5 }),
+      arrow({ element: arrowRef }),
+    ],
   });
 
   const context = data.context;
 
   const click = useClick(context, {
-    enabled: controlledOpen == null
+    enabled: controlledOpen == null,
   });
   const dismiss = useDismiss(context);
   const role = useRole(context);
@@ -72,12 +77,13 @@ export function usePopover({
       ...interactions,
       ...data,
       modal,
+      arrowRef,
       labelId,
       descriptionId,
       setLabelId,
-      setDescriptionId
+      setDescriptionId,
     }),
-    [open, setOpen, interactions, data, modal, labelId, descriptionId]
+    [open, setOpen, interactions, data, modal, arrowRef, labelId, descriptionId]
   );
 }
 
@@ -102,14 +108,12 @@ export const usePopoverContext = () => {
   return context;
 };
 
-export function Popover({
-  children,
-  modal = false,
-  ...restOptions
-}) {
+export function Popover({ children, modal = false, ...restOptions }) {
+  // const arrowRef = React.useRef(null);
   // This can accept any props as options, e.g. `placement`,
   // or other positioning options.
   const popover = usePopover({ modal, ...restOptions });
+  // const context = usePopoverContext();
   return (
     <PopoverContext.Provider value={popover}>
       {children}
@@ -117,7 +121,10 @@ export function Popover({
   );
 }
 
-export const PopoverTrigger = React.forwardRef(function PopoverTrigger({ children, asChild = false, ...props }, propRef) {
+export const PopoverTrigger = React.forwardRef(function PopoverTrigger(
+  { children, asChild = false, ...props },
+  propRef
+) {
   const context = usePopoverContext();
   const childrenRef = children.ref;
   const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
@@ -130,7 +137,7 @@ export const PopoverTrigger = React.forwardRef(function PopoverTrigger({ childre
         ref,
         ...props,
         ...children.props,
-        "data-state": context.open ? "open" : "closed"
+        "data-state": context.open ? "open" : "closed",
       })
     );
   }
@@ -148,7 +155,10 @@ export const PopoverTrigger = React.forwardRef(function PopoverTrigger({ childre
   );
 });
 
-export const PopoverContent = React.forwardRef(function PopoverContent({ style, ...props }, propRef) {
+export const PopoverContent = React.forwardRef(function PopoverContent(
+  { style, ...props },
+  propRef
+) {
   const { context: floatingContext, ...context } = usePopoverContext();
   const ref = useMergeRefs([context.refs.setFloating, propRef]);
 
@@ -166,11 +176,22 @@ export const PopoverContent = React.forwardRef(function PopoverContent({ style, 
           {...context.getFloatingProps(props)}
         >
           {props.children}
+          <FloatingArrow ref={context.arrowRef} context={context} />
         </Paper>
       </FloatingFocusManager>
     </FloatingPortal>
   );
 });
+
+// export const PopoverArrow = React.forwardRef(function PopoverContent({ style, ...props }, ref) {
+//   const { context: floatingContext, ...context } = usePopoverContext();
+//   // const ref = propRef;
+
+//   // if (!floatingContext.open) return null;
+
+//   return (
+//   );
+// });
 
 // export const PopoverHeading = React.forwardRef(function PopoverHeading(props, ref) {
 //   const { setLabelId } = usePopoverContext();
