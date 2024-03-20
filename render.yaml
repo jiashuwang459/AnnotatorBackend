@@ -10,7 +10,7 @@ services:
     name: annotator
     runtime: python
     buildCommand: "./build.sh"
-    startCommand: "python -m gunicorn Annotator.asgi:application -k uvicorn.workers.UvicornWorker"
+    startCommand: "python -m gunicorn Annotator.asgi:application --workers 1 -k uvicorn.workers.UvicornWorker --timeout 600"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
