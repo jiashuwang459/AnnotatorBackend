@@ -42,7 +42,7 @@ if DEBUG:
 else:
     ALLOWED_HOSTS = ['https://chinese-annotator.herokuapp.com',
                      'https://chinese-annotator.netlify.app',
-                     'https://annotatorbackend.onrender.com',
+                     'https://annotator.onrender.com',
                      'localhost']
 
 
