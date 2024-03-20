@@ -82,6 +82,18 @@ npm install
 ### Common Commands
 
 ``` bash
+# Add dependencies to requirements.txt file:
+pip freeze > requirements.txt
+```
+
+
+``` bash
+# Run the backend deployment. Note - make sure to run build.sh first, and to set debug to false.
+python -m gunicorn Annotator.asgi:application -k uvicorn.workers.UvicornWorker
+```
+
+
+``` bash
 cd ./Annotator/frontend
 
 # runs the frontend with dev configurations
