@@ -170,14 +170,23 @@ DATABASES = {}
 
 
 
-MY_POSTGRES_URL = os.environ.get('DATABASE_PRIVATE_URL', 'postgresql://postgres:postgres@localhost:5432/annotator')
-
+# MY_POSTGRES_URL = os.environ.get('DATABASE_PRIVATE_URL', 'postgresql://postgres:postgres@localhost:5432/annotator')
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         # Replace this value with your local database's connection string.
+#         default=MY_POSTGRES_URL,
+#         conn_max_age=600
+#     )
+# }
 DATABASES = {
-    'default': dj_database_url.config(
-        # Replace this value with your local database's connection string.
-        default=MY_POSTGRES_URL,
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ["PGDATABASE"],
+        'USER': os.environ["PGUSER"],
+        'PASSWORD': os.environ["PGPASSWORD"],
+        'HOST': os.environ["PGHOST"],
+        'PORT': os.environ["PGPORT"],
+    }
 }
 
 
