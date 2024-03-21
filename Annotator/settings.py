@@ -47,7 +47,6 @@ else:
                      'annotator.up.railway.app',
                      'localhost',]
 
-
 # Application definition
 
 INSTALLED_APPS = [
