@@ -485,7 +485,7 @@ class AnnotationView(APIView):
                                 )
                             lst.append(PhraseEntry(phraselst))
                         else:
-                            print(f"Unable to find entry {phrase}")
+                            print(f"ERROR: Unable to find entry {phrase}")
         return lst
 
     def post(self, request, format=None):

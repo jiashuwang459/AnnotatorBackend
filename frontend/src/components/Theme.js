@@ -91,6 +91,7 @@ const MyTheme = {
             height: "50%",
             width: "50%",
             backgroundColor: "transparent",
+            // backgroundColor: "blueviolet",
             transform: "translate(50%,50%)",
           },
         },

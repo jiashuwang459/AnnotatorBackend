@@ -2,7 +2,6 @@ import React, { useState } from "react";
 
 import Grid from "@mui/material/Unstable_Grid2";
 import Box from "@mui/material/Box";
-import { MenuItem } from "@mui/material";
 
 import { green, purple } from "@mui/material/colors";
 //import { Button } from "@mui/material";
@@ -45,8 +44,15 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Spinner from "react-bootstrap/Spinner";
 import axios from "axios";
+import NativeSelect from "@mui/material/NativeSelect";
+import Select from "@mui/material/Select";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl2 from "@mui/material/FormControl";
+import FormHelperText from "@mui/material/FormHelperText";
 
 import { useAnnotationDispatch, useAnnotations } from "./AnnotationContext";
+
 const Item = styled(Box)(({ theme }) => ({
   padding: theme.spacing(1),
   maxWidth: 400,
@@ -57,7 +63,58 @@ const AnnotationButtonGroup = () => {
   const [showManualEntry, setShowManualEntry] = useState(false);
   //const [loading, setLoading] = useState(false);
   const [text, setText] = useState("");
+  const [novelName, setNovelName] = useState("");
+  const [chapter, setChapter] = useState("");
+  const [test, setTest] = useState("");
 
+  const novels = {
+    CYWLZNRBHD: [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+      "7",
+    ],
+    "N/A": ["6", "7", "8", "9"],
+  };
   const dispatch = useAnnotationDispatch();
   const annotations = useAnnotations();
 
@@ -95,12 +152,7 @@ const AnnotationButtonGroup = () => {
     setText(e.target.value);
   };
 
-  const handleManualAnnotationSubmit = async () => {
-    if (loading) {
-      return;
-    }
-    //setLoading(true);
-    setShowManualEntry(false);
+  const handleAnnotation = async (text) => {
     dispatch({ type: "fetch", sourceText: text });
 
     //notify parent loading with current text;
@@ -123,6 +175,34 @@ const AnnotationButtonGroup = () => {
     } finally {
       dispatch({ type: "done" });
     }
+  };
+
+  const handleManualAnnotationSubmit = async () => {
+    if (loading) {
+      return;
+    }
+    setShowManualEntry(false);
+    handleAnnotation(text);
+  };
+
+  const handleNovelUpdate = (e) => {
+    setNovelName(e.target.value);
+    setChapter("");
+  };
+
+  const handleChapterUpdate = (e) => {
+    setChapter(e.target.value);
+  };
+
+  const handleBookSubmit = async () => {
+    if (loading) {
+      return;
+    }
+    setShowBookshelf(false);
+    dispatch({ type: "fetch_book" });
+    // TOOD: fetch book from backend.
+    book_text = "大家好！";
+    handleAnnotation(book_text);
   };
 
   return (
@@ -158,7 +238,151 @@ const AnnotationButtonGroup = () => {
           <Offcanvas.Title>Bookshelf</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
-          Here, you can see your books or past articles you have saved.
+          <Stack
+            spacing={2}
+            divider={<Divider orientation="horizontal" flexItem />}
+            style={{ height: "100%" }}
+          >
+            <Item>
+              Here, you can see books or saved articles or snippets. You can
+              select one of them and we will open it and annotate pinyin onto
+              them! Select the text into the list below and press annotate to
+              get started!
+            </Item>
+            <Item>
+              <Stack spacing={1}>
+                <Item>
+                  <FormControl2 variant="standard" fullWidth>
+                    <InputLabel id="novel-select-label">Novel</InputLabel>
+                    <Select
+                      labelId="novel-select-label"
+                      id="novel-select"
+                      value={novelName}
+                      label="Novel"
+                      onChange={handleNovelUpdate}
+                      disabled={loading}
+                      native
+                    >
+                      <option aria-label="None" value="" />
+                      {Object.entries(novels).map(([novelName, chapters]) => (
+                        <option key={novelName} value={novelName}>
+                          {novelName}
+                          {"["}
+                          {chapters.length}
+                          {"]"}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormControl2>
+                </Item>
+                <Item>
+                  <FormControl2 variant="filled" fullWidth>
+                    <InputLabel id="chapter-select-label">Chapter</InputLabel>
+                    <Select
+                      labelId="chapter-select-label"
+                      id="chapter-select"
+                      value={chapter}
+                      label="Chapter"
+                      onChange={handleChapterUpdate}
+                      disabled={!novelName || loading}
+                      native
+                    >
+                      <option aria-label="None" value="" />
+                      {novelName
+                        ? novels[novelName]?.map((chapter) => (
+                            <option key={chapter} value={chapter}>
+                              {chapter}
+                            </option>
+                          ))
+                        : ""}
+                    </Select>
+                    <FormHelperText hidden={novelName}>
+                      Select Novel First
+                    </FormHelperText>
+                  </FormControl2>
+                </Item>
+                <Item>
+                  <FormControl2 variant="filled" fullWidth>
+                    <InputLabel id="filled-select-label">Test</InputLabel>
+                    <Select
+                      labelId="filled-select-label"
+                      id="filled-select"
+                      value={test}
+                      label="Filled Test"
+                      onChange={handleChapterUpdate}
+                      autoWidth
+                    >
+                      <MenuItem key="Test" value="test">
+                        test
+                      </MenuItem>
+                      <MenuItem key="Test2" value="test2">
+                        test2
+                      </MenuItem>
+                    </Select>
+                    <FormHelperText>Test filled non native</FormHelperText>
+                  </FormControl2>
+                </Item>
+                <Item>
+                  <FormControl2 variant="standard" fullWidth>
+                    <InputLabel id="standard-select-label">Test</InputLabel>
+                    <Select
+                      labelId="standard-select-label"
+                      id="standard-select"
+                      value={test}
+                      label="Standard Test"
+                      onChange={handleChapterUpdate}
+                      autoWidth
+                    >
+                      <MenuItem key="Test" value="test">
+                        test
+                      </MenuItem>
+                      <MenuItem key="Test2" value="test2">
+                        test2
+                      </MenuItem>
+                    </Select>
+                    <FormHelperText>Test standard non native</FormHelperText>
+                  </FormControl2>
+                </Item>
+                <Item>
+                  <FormControl2 variant="outlined" fullWidth>
+                    <InputLabel id="outlined-select-label">Test</InputLabel>
+                    <Select
+                      labelId="outlined-select-label"
+                      id="outlined-select"
+                      value={test}
+                      label="Outlined Test"
+                      onChange={handleChapterUpdate}
+                      autoWidth
+                    >
+                      <MenuItem key="Test" value="test">
+                        test
+                      </MenuItem>
+                      <MenuItem key="Test2" value="test2">
+                        test2
+                      </MenuItem>
+                    </Select>
+                    <FormHelperText>Test outlined non native</FormHelperText>
+                  </FormControl2>
+                </Item>
+              </Stack>
+            </Item>
+            <Item
+              style={{
+                alignSelf: "end",
+              }}
+            >
+              <Button
+                id="toggle_bookshelf_submit"
+                variant="primary"
+                onClick={handleBookSubmit}
+                disabled={!novelName || !chapter || loading}
+                sx={{ ml: 1 }}
+                type="submit"
+              >
+                Fetch Novel
+              </Button>
+            </Item>
+          </Stack>
         </Offcanvas.Body>
       </Offcanvas>
 

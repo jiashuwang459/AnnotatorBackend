@@ -34,6 +34,12 @@ function annotationReducer(annotations, action) {
 
 
   switch (action.type) {
+    case 'fetch_book': {
+      return {
+        ...annotations,
+        loading: true
+      };
+    }
     case 'fetch': {
       return {
         ...annotations,
