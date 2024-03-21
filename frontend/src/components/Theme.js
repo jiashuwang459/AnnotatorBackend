@@ -79,8 +79,19 @@ const MyTheme = {
           style: {
             // textTransform: "none",
             // border: `2px dashed ${blue[500]}`,
+            position: "relative",
             margin: "2px",
             backgroundColor: "transparent",
+          },
+        },
+        {
+          props: {variant: "clickcharacter"},
+          style: {
+            position: "absolute",
+            height: "50%",
+            width: "50%",
+            backgroundColor: "transparent",
+            transform: "translate(50%,50%)",
           },
         },
         {

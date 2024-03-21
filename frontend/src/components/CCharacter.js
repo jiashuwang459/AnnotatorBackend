@@ -75,7 +75,8 @@ const CCharacter = (props) => {
 
   if (fchar) {
     return (
-      <Paper variant="character" {...props} onClick={handleCharacterClick}>
+      <Paper variant="character" {...props}>
+        <Paper variant="clickcharacter" onClick={handleCharacterClick}/>
         <Paper variant={annotationVarient()}>{fchar.pinyin}</Paper>
         <Paper variant="cchar">{fchar.cchar}</Paper>
       </Paper>
