@@ -35,8 +35,28 @@
 # sleep 1
 # done
 
-
-# for i in {1..469}
+# for i in {1..1497}
 # do
 #     echo $i
+# done
+
+# for i in {1..1497}
+# do
+#     mv $i.html $i
+# done
+
+
+# for i in {1..9}
+# do
+#     mv $i 000$i
+# done
+
+# for i in {10..99}
+# do
+#     mv $i 00$i
+# done
+
+# for i in {100..999}
+# do
+#     mv $i 0$i
 # done

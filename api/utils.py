@@ -9,6 +9,31 @@ from django.db.models import Q
 from django.core.cache import cache
 
 DATA_DIR = settings.BASE_DIR / 'data/'
+NOVEL_DIR = settings.BASE_DIR / 'novels/'
+
+# NOVEL_MAP:
+# "cywlznrbhd": {
+#   "name": "穿越未来之男人不好当",
+#   "folder": "cywlznrbhd",
+#   "sumamry": "It good."
+# }
+
+# NOVEL_MAP_REV:
+# "穿越未来之男人不好当": {
+#   "name": "穿越未来之男人不好当",
+#   "folder": "cywlznrbhd",
+#   "sumamry": "It good."
+# }
+
+NOVEL_MAP = {}
+NOVEL_MAP_REV = {}
+with open(os.path.join(DATA_DIR, 'novelmap.json')) as f:
+    data = json.load(f)
+    # print(data)
+    for entry in data:
+        # print(entry)
+        NOVEL_MAP[entry["folder"]] = entry
+        NOVEL_MAP_REV[entry["name"]] = entry
 
 NBSP = '\u00a0'
 SESSIONS = False
@@ -559,7 +584,7 @@ def setupPriorityEntries():
 
 def writeDataToFile(data, filename):
     with open(os.path.join(DATA_DIR, filename), 'w') as out_file:
-            json.dump(data, out_file, ensure_ascii=False, indent=2)
+        json.dump(data, out_file, ensure_ascii=False, indent=2)
 
     # print("Removing Surnames . . .")
     # remove_surnames()
@@ -585,3 +610,22 @@ def writeDataToFile(data, filename):
 
     # list_of_dicts = []
     # parsed_dict = main()
+
+
+def listNovels():
+    novels = os.listdir(NOVEL_DIR)
+    obj = {}
+    for novel in novels:
+        chapters = os.listdir(os.path.join(NOVEL_DIR, novel))
+        name = NOVEL_MAP.get(novel, {"name": novel})["name"]
+        print(name)
+        obj[name] = sorted(chapters)
+    return obj
+        
+
+def openChapterText(novelName, chapter):
+    lines = ""
+    name = NOVEL_MAP_REV.get(novelName, {"folder": novelName})["folder"]
+    with open(os.path.join(NOVEL_DIR, name, chapter), 'r') as f:        
+        lines = "".join(f.readlines())
+    return lines

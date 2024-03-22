@@ -32,7 +32,7 @@ from api.utils import (DEFAULT_OWNER, DEFAULT_PRIORITY, MAIN_PRIORITY, MAX_PRIOR
                        OwnerOrDefault, USER_PRIORITY, isChinese, loadCustomEntries,
                        loadDefaultBlacklist, loadDefaultDictionary, parsePinyin,
                        reloadCEDict, updateBlacklistPriorities,
-                       updateCustomPriorities, updateDefaultPriorities)
+                       updateCustomPriorities, updateDefaultPriorities, openChapterText, listNovels)
 
 # CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
@@ -141,6 +141,66 @@ def getEntry(request):
 
     #     return Entry.objects.filter(id=0)
 
+
+@api_view(['GET'])
+def getNovel(request):
+    if not request.session.exists(request.session.session_key):
+        request.session.create()
+
+    novelName = request.query_params.get('novelName')
+    chapter = request.query_params.get('chapter')
+    if novelName is None:
+        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+    if chapter is None:
+        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # TODO: DNE check
+    text = openChapterText(novelName, chapter)
+
+    responseData = { "text": text }
+    return Response(responseData, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def getNovelsAndChapters(request):
+    if not request.session.exists(request.session.session_key):
+        request.session.create()
+
+    # TODO: DNE check
+    novels = listNovels()
+    # responseData = json.dumps(novels)
+    # print(responseData)
+    return Response(novels, status=status.HTTP_200_OK)
+
+    # def get_queryset(self):
+    #     """
+    #     Restricts the entries fetched by the user
+    #     by filtering against a `phrase` query parameter in the URL.
+
+    #     Ex. http://127.0.0.1:8000/api/home?phrase=您
+
+    #     If no phrase is specified, then an empty list is returned.
+    #     """
+    #     queryset = Entry.objects.all()
+    #     phrase = self.request.query_params.get('phrase')
+    #     # individualChars = self.request.query_params.get('individualChars')
+    #     if phrase is not None:
+    #         queryset = queryset.filter(
+    #             Q(simplified=phrase) | Q(traditional=phrase)).order_by("priority")
+    #         # if individualChars is not None:
+    #         #     # queryset = None
+    #         #     unionset = None
+    #         #     item = queryset.first()
+    #         #     for cchar in phrase:
+    #         #         subset = queryset.filter(
+    #         #             Q(simplified=cchar) | Q(traditional=cchar)).order_by("priority")
+    #         #     unionset = subset if unionset is None else unionset.union(subset)
+    #         #     return unionset
+
+    #         return queryset
+    #     if self.request.query_params.get('search') is not None:
+    #         return queryset
+
+    #     return Entry.objects.filter(id=0)
 
 # class CreateEntryView(APIView):
 #     serializer_class = CreateEntrySerializer

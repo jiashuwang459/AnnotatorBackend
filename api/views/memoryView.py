@@ -34,7 +34,12 @@ class FetchMemoryView(APIView):
             code = 0
 
         # TODO: DNE check
-        memory = Memory.objects.get(code=code)
+        try:
+            memory = Memory.objects.get(code=code)
+        except Memory.DoesNotExist:
+            return Response({'Not Found': f'memory {code} not found'}, status=status.HTTP_404_NOT_FOUND)
+            
+    
         # data = {
         #     "code": code,
         #     "fragment": FragmentSerializer(Memory.objects.get(code=code).fragments.all(), many=True).data

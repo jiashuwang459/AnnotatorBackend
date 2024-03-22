@@ -24,6 +24,7 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 load_dotenv()
 
 # Quick-start development settings - unsuitable for production
@@ -33,8 +34,7 @@ load_dotenv()
 SECRET_KEY = 'y87-@d^e3gw=1*yf2-gjf#q2a5r-&d00d(ih6xb*mh%-v%lyp7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-# DEBUG = True
+DEBUG = os.environ.get('DEBUG', 0)
 
 # SECRET_KEY = '' # Change to empty string
 
