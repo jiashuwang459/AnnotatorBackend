@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import Grid from "@mui/material/Unstable_Grid2";
 import Box from "@mui/material/Box";
@@ -58,6 +58,8 @@ const Item = styled(Box)(({ theme }) => ({
   maxWidth: 400,
 }));
 
+// TODO: Change chapter/novel dropdowns to be searchable dropdowns. see https://www.digitalocean.com/community/tutorials/react-react-select
+
 const AnnotationButtonGroup = () => {
   const [showBookshelf, setShowBookshelf] = useState(false);
   const [showManualEntry, setShowManualEntry] = useState(false);
@@ -65,56 +67,19 @@ const AnnotationButtonGroup = () => {
   const [text, setText] = useState("");
   const [novelName, setNovelName] = useState("");
   const [chapter, setChapter] = useState("");
-  const [test, setTest] = useState("");
+  const [novels, setNovels] = useState({});
 
-  const novels = {
-    CYWLZNRBHD: [
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-      "7",
-    ],
-    "N/A": ["6", "7", "8", "9"],
-  };
+  function loadChapterList() {
+    console.log("loadChapterList");
+    setNovels({});
+    axios
+      .get("/api/novel/list")
+      .then((response) => response.data)
+      .then((data) => {
+        setNovels(data);
+      });
+  }
+
   const dispatch = useAnnotationDispatch();
   const annotations = useAnnotations();
 
@@ -124,6 +89,7 @@ const AnnotationButtonGroup = () => {
   const handleShowBookshelf = () => {
     setShowManualEntry(false);
     setShowBookshelf(true);
+    loadChapterList();
   };
 
   const handleToggleBookshelf = () => {
@@ -200,9 +166,14 @@ const AnnotationButtonGroup = () => {
     }
     setShowBookshelf(false);
     dispatch({ type: "fetch_book" });
-    // TOOD: fetch book from backend.
-    book_text = "大家好！";
-    handleAnnotation(book_text);
+    var params = new URLSearchParams({
+      novelName: novelName,
+      chapter: chapter,
+    });
+    const response = await axios.get(`/api/novel?${params.toString()}`);
+    const json = response.data;
+    const bookText = json["text"];
+    handleAnnotation(bookText);
   };
 
   return (
@@ -252,7 +223,7 @@ const AnnotationButtonGroup = () => {
             <Item>
               <Stack spacing={1}>
                 <Item>
-                  <FormControl2 variant="standard" fullWidth>
+                  <FormControl2 variant="outlined" fullWidth>
                     <InputLabel id="novel-select-label">Novel</InputLabel>
                     <Select
                       labelId="novel-select-label"
@@ -266,17 +237,14 @@ const AnnotationButtonGroup = () => {
                       <option aria-label="None" value="" />
                       {Object.entries(novels).map(([novelName, chapters]) => (
                         <option key={novelName} value={novelName}>
-                          {novelName}
-                          {"["}
-                          {chapters.length}
-                          {"]"}
+                          {`${novelName} [${chapters.length}]`}
                         </option>
                       ))}
                     </Select>
                   </FormControl2>
                 </Item>
                 <Item>
-                  <FormControl2 variant="filled" fullWidth>
+                  <FormControl2 variant="outlined" fullWidth>
                     <InputLabel id="chapter-select-label">Chapter</InputLabel>
                     <Select
                       labelId="chapter-select-label"
@@ -299,69 +267,6 @@ const AnnotationButtonGroup = () => {
                     <FormHelperText hidden={novelName}>
                       Select Novel First
                     </FormHelperText>
-                  </FormControl2>
-                </Item>
-                <Item>
-                  <FormControl2 variant="filled" fullWidth>
-                    <InputLabel id="filled-select-label">Test</InputLabel>
-                    <Select
-                      labelId="filled-select-label"
-                      id="filled-select"
-                      value={test}
-                      label="Filled Test"
-                      onChange={handleChapterUpdate}
-                      autoWidth
-                    >
-                      <MenuItem key="Test" value="test">
-                        test
-                      </MenuItem>
-                      <MenuItem key="Test2" value="test2">
-                        test2
-                      </MenuItem>
-                    </Select>
-                    <FormHelperText>Test filled non native</FormHelperText>
-                  </FormControl2>
-                </Item>
-                <Item>
-                  <FormControl2 variant="standard" fullWidth>
-                    <InputLabel id="standard-select-label">Test</InputLabel>
-                    <Select
-                      labelId="standard-select-label"
-                      id="standard-select"
-                      value={test}
-                      label="Standard Test"
-                      onChange={handleChapterUpdate}
-                      autoWidth
-                    >
-                      <MenuItem key="Test" value="test">
-                        test
-                      </MenuItem>
-                      <MenuItem key="Test2" value="test2">
-                        test2
-                      </MenuItem>
-                    </Select>
-                    <FormHelperText>Test standard non native</FormHelperText>
-                  </FormControl2>
-                </Item>
-                <Item>
-                  <FormControl2 variant="outlined" fullWidth>
-                    <InputLabel id="outlined-select-label">Test</InputLabel>
-                    <Select
-                      labelId="outlined-select-label"
-                      id="outlined-select"
-                      value={test}
-                      label="Outlined Test"
-                      onChange={handleChapterUpdate}
-                      autoWidth
-                    >
-                      <MenuItem key="Test" value="test">
-                        test
-                      </MenuItem>
-                      <MenuItem key="Test2" value="test2">
-                        test2
-                      </MenuItem>
-                    </Select>
-                    <FormHelperText>Test outlined non native</FormHelperText>
                   </FormControl2>
                 </Item>
               </Stack>

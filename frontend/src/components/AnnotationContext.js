@@ -66,7 +66,6 @@ function annotationReducer(annotations, action) {
         loading: false
       };
     }
-    //TODO: add more cases.
     default: {
       throw Error('Unknown action: ' + action.type);
     }
