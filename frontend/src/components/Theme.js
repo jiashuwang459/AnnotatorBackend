@@ -223,6 +223,7 @@ const MyTheme = {
             borderStyle: "solid",
             borderColor: "dimgrey",
             backgroundColor: "antiquewhite",
+            overflowY: "scroll"
           },
         },
       ],
@@ -235,6 +236,7 @@ const MyTheme = {
             borderTopStyle: "solid",
             borderTopWidth: "thin",
             borderTopColor: "dimgrey",
+            overflowY: "auto"
           },
         },
       ],
@@ -256,7 +258,7 @@ const MyTheme = {
         {
           props: { variant: "helpercard" },
           style: {
-            height: "282px",
+            maxHeight: "282px",
           },
         },
       ],

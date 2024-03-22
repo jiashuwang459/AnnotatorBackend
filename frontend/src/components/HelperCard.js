@@ -48,7 +48,7 @@ const CardHeader = styled.div`
 const CardBody = styled.div`
   display: flex;
   flex-direction: column;
-  max-height: 180px;
+  max-height: 100px;
   overflow-y: auto;
   padding: 5px;
 `;
