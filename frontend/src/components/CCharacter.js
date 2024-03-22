@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo, useMemo } from "react";
 
 import Grid from "@mui/material/Unstable_Grid2";
 import Box from "@mui/material/Box";
@@ -21,15 +21,17 @@ const emptyFCHAR = (fchar) => {
   return fchar.pinyin == NBSP || fchar.pinyin == " " || fchar.cchar.length != 1;
 };
 
-const CCharacter = (props) => {
+const CCharacter = memo(function CCharacter(props) {
   const [view, setView] = useState(true);
   const fchar = props.fchar;
+  const annotate = props.annotate === "show";
 
   const dispatch = useMemoryDispatch();
   const memory = useMemory();
 
   const mode = useMode();
   const readMode = mode.readMode;
+  const editMode = mode.editMode;
 
   function handleCharacterClick(e) {
     //console.log("click char", fchar);
@@ -56,28 +58,25 @@ const CCharacter = (props) => {
     }
   }
 
-  function annotationVarient() {
-    //console.log(fchar, memory);
-    if (fchar && memory) {
-      if (emptyFCHAR(fchar)) {
-        return "annotation_hidden";
-      }
+  // function annotationVarient() {
+  //   //console.log(fchar, memory);
+  //   if(annotates) {
+  //     return "annotation"
+  //   } else {
+  //     return "annotation_hidden"
+  //   }
+  // }
 
-      // TODO: maybe change this to a hash, so no need to loop lookup.
-      for (const entry of memory.fragments) {
-        if (entry.pinyin == fchar.pinyin && entry.cchar == fchar.cchar) {
-          return "annotation_hidden";
-        }
-      }
-    }
-    return "annotation";
-  }
+  const annotationVarient = annotate ? "annotation" : "annotation_hidden";
 
   if (fchar) {
     return (
       <Paper variant="character" {...props}>
-        <Paper variant="clickcharacter" onClick={handleCharacterClick}/>
-        <Paper variant={annotationVarient()}>{fchar.pinyin}</Paper>
+        <Paper
+          variant={editMode ? "clickcharacter_debug" : "clickcharacter"}
+          onClick={handleCharacterClick}
+        />
+        <Paper variant={annotationVarient}>{fchar.pinyin}</Paper>
         <Paper variant="cchar">{fchar.cchar}</Paper>
       </Paper>
     );
@@ -89,6 +88,6 @@ const CCharacter = (props) => {
       </Paper>
     );
   }
-};
+});
 
 export default CCharacter;

@@ -88,11 +88,22 @@ const MyTheme = {
           props: {variant: "clickcharacter"},
           style: {
             position: "absolute",
-            height: "50%",
+            height: "90%",
             width: "50%",
             backgroundColor: "transparent",
             // backgroundColor: "blueviolet",
-            transform: "translate(50%,50%)",
+            transform: "translate(50%,5%)",
+          },
+        },
+        {
+          props: {variant: "clickcharacter_debug"},
+          style: {
+            position: "absolute",
+            height: "90%",
+            width: "50%",
+            // backgroundColor: "transparent",
+            backgroundColor: "blueviolet",
+            transform: "translate(50%,5%)",
           },
         },
         {

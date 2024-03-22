@@ -126,28 +126,26 @@ const HelperCard = (props) => {
   const phrase = props.phrase;
   const vowels = require("../../../data/vowels.json");
 
-  const loadPhrase = async (phrase) => {
-    console.log("loadPhrase", phrase);
-
-    var params = new URLSearchParams({
-      phrase: phrase.cchars.map((item) => item.cchar).join(""),
-    });
-
-    const response = await axios.get("/api/entry?" + params.toString());
-    const data = response.data;
-    console.log(data);
-    return data;
-  };
-
   useEffect(() => {
+    async function loadPhrase(phrase) {
+      console.log("loadPhrase", phrase);
+
+      var params = new URLSearchParams({
+        phrase: phrase.cchars.map((item) => item.cchar).join(""),
+      });
+
+      const response = await axios.get("/api/entry?" + params.toString());
+      const data = response.data;
+      console.log(data);
+      if (!ignore) {
+        setEntries(data);
+        setMaxSteps(data.length);
+      }
+    }
+
     let ignore = false;
     setEntries(null);
-    loadPhrase(phrase).then((result) => {
-      if (!ignore) {
-        setEntries(result);
-        setMaxSteps(result.length);
-      }
-    });
+    loadPhrase(phrase);
     return () => {
       ignore = true;
     };

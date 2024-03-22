@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 
 import Grid from "@mui/material/Unstable_Grid2";
 import Box from "@mui/material/Box";
@@ -9,6 +9,7 @@ import Paper from "@mui/material/Paper";
 import CCharacter from "./CCharacter";
 import ControlledPhrase from "./ControlledPhrase";
 import { useMode } from "./ModeContext";
+import { useMemory } from "./MemoryContext";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
@@ -21,6 +22,19 @@ import {
   autoUpdate,
 } from "@floating-ui/react";
 import { computePosition, autoPlacement, arrow } from "@floating-ui/dom";
+import NBSP from "./Utils";
+
+// TODO: doublecheck if this is sufficient in preventing random things
+// from being added to memory.
+// TODO: might need to cchar length check, to accomodate pharses in the future???
+const emptyFCHAR = (fchar) => {
+  return (
+    fchar.pinyin == NBSP ||
+    fchar.pinyin == " " ||
+    fchar.cchar == "\n" ||
+    fchar.cchar.length != 1
+  );
+};
 
 // TODO: maybe change the returned pharse.cchars to return phrase.fchars
 const Phrase = React.forwardRef((props, ref) => {
@@ -59,12 +73,31 @@ const Phrase = React.forwardRef((props, ref) => {
   const mode = useMode();
   const dictMode = mode.dictMode;
 
-  function phraseVarient() {
-    if (dictMode) {
-      return "phrase_outlined";
-    } else {
-      return "phrase";
+  const memory = useMemory();
+
+  const phraseVarient = useMemo(
+    () => (dictMode ? "phrase_outlined" : "phrase"),
+    [dictMode]
+  );
+
+  function showAnnotation(fchar) {
+    if (!fchar) {
+      return "show";
     }
+
+    if (emptyFCHAR(fchar)) {
+      return "hide";
+    }
+
+    if (fchar && memory) {
+      // TODO: maybe change this to a hash, so no need to loop lookup.
+      for (const entry of memory.fragments) {
+        if (entry.pinyin == fchar.pinyin && entry.cchar == fchar.cchar) {
+          return "hide";
+        }
+      }
+    }
+    return "show";
   }
 
   // function handleClickPhrase() {
@@ -78,7 +111,7 @@ const Phrase = React.forwardRef((props, ref) => {
       // <div>
       <Paper
         // ref={refs.setReference}
-        variant={phraseVarient()}
+        variant={phraseVarient}
         // onClick={handleClickPhrase}
         // {...getReferenceProps()}
         {...props}
@@ -89,6 +122,7 @@ const Phrase = React.forwardRef((props, ref) => {
             <CCharacter
               key={ccharIndex}
               fchar={fchar.cchar == "\n" ? "" : fchar}
+              annotate={showAnnotation(fchar)}
             />
           );
         })}
@@ -110,7 +144,11 @@ const Phrase = React.forwardRef((props, ref) => {
     const fchar = phrase;
     return (
       <Paper variant="phrase" {...props} ref={ref}>
-        <CCharacter key={0} fchar={fchar.cchar == "\n" ? "" : fchar} />
+        <CCharacter
+          key={0}
+          fchar={fchar.cchar == "\n" ? "" : fchar}
+          annotate={showAnnotation(fchar)}
+        />
       </Paper>
     );
   }
