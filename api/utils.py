@@ -615,7 +615,8 @@ def writeDataToFile(data, filename):
 def listNovels():
     novels = os.listdir(NOVEL_DIR)
     obj = {}
-    for novel in novels:
+    # TODO: march 22, 2024 maybe add some other order rather than just basic sort to the book list. maybe allow favorites?
+    for novel in sorted(novels):
         chapters = os.listdir(os.path.join(NOVEL_DIR, novel))
         name = NOVEL_MAP.get(novel, {"name": novel})["name"]
         print(name)

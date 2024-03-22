@@ -166,6 +166,8 @@ def getNovelsAndChapters(request):
         request.session.create()
 
     # TODO: DNE check
+    
+    # TODO: march 22, 2024: surface the summary stored in the dictionary.
     novels = listNovels()
     # responseData = json.dumps(novels)
     # print(responseData)
