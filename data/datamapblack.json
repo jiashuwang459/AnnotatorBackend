@@ -94,5 +94,15 @@
       "reason": "We don't really care about tones, a single sound seems more common",
       "priority": 200
     }
+  ],
+  "black::明治": [
+    {
+      "traditional": "明治",
+      "simplified": "明治",
+      "pinyin": "Ming2 zhi4",
+      "english": "Meiji, Japanese era name, corresponding to the reign (1868-1912) of the Meiji emperor",
+      "reason": "We want it separate probably.",
+      "priority": 200
+    }
   ]
 }
