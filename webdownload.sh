@@ -60,3 +60,15 @@
 # do
 #     mv $i 0$i
 # done
+
+
+# lazy matching
+# 第[0-9]+部[\s\S]*?
+
+
+# match with anything as long as no closing bracket
+# “(?!.*(”))
+
+# match with anything as long as next char isn't in list
+# 凌(?!(蘭|兰|霄|秦|家|肃|宅|零|。|乱|天|太|逸|虐|厉|夫|南|华|宇|泽|晨|氏|？|队|团|大|老|伯|学|，|中|式|空|爸|妈|这个姓|两可|迟|…|辱|人|将|王|驾|指挥官|少|军|、|姓|兄弟))
+
