@@ -342,5 +342,50 @@
       "english": "galaxy",
       "priority": 200
     }
+  ],
+  "tradcustom::王晋康": [
+    {
+      "traditional": "王晋康",
+      "simplified": "王晋康",
+      "pinyin": "Wang1 Jin2 Kang1",
+      "english": "Wang JinKang, Chinese science ficiton writer",
+      "priority": 200
+    }
+  ],
+  "tradcustom::何宏伟": [
+    {
+      "traditional": "何宏伟",
+      "simplified": "何宏伟",
+      "pinyin": "He2 Hong2 Wei3",
+      "english": "He HongWei, Chinese science ficiton writer... probably. Couldn't find anything online, but context from 三体",
+      "priority": 200
+    }
+  ],
+  "tradcustom::韩松": [
+    {
+      "traditional": "韩松",
+      "simplified": "韩松",
+      "pinyin": "Han2 Song1",
+      "english": "Han Song, Chinese science ficiton writer",
+      "priority": 200
+    }
+  ],
+  "tradcustom::汪淼": [
+    {
+      "traditional": "汪淼",
+      "simplified": "汪淼",
+      "pinyin": "Wang1 Miao3",
+      "english": "Wang Miao, Protagonist in 三体",
+      "priority": 200
+    }
+  ],
+  "tradcustom::汪教授": [
+    {
+      "traditional": "汪教授",
+      "simplified": "汪教授",
+      "pinyin": "Wang1 jiao4 shou4",
+      "english": "Professor Wang, Likely refering to 汪淼[Wang1 Miao3], Protagonist in 三体",
+      "priority": 200
+    }
   ]
 }
