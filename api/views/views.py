@@ -16,7 +16,7 @@ from rest_framework import filters, generics, serializers, status
 from rest_framework.exceptions import bad_request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from api.EntryManager import BLACKLIST, CUSTOM, DICT, PRIORITY, EntryManager
+from api.EntryManager import BLACKLIST, CUSTOM, DICT, PRIORITY, EntryManager, TradEntryManager
 
 
 from api.models import (BlacklistEntry, ChineseEntry, Entry, Fragment, Memory,
@@ -27,12 +27,10 @@ from api.serializers import (AnnotationSerializer, BlacklistEntrySerializer,
                              MemoryCreateSerializer, MemorySerializer,
                              PhraseEntrySerializer, ReloadEntrySerializer,
                              UpdateEntrySerializer)
-from api.Trie import Trie
+from api.Trie import (Trie, TradTrie)
 from api.utils import (DEFAULT_OWNER, DEFAULT_PRIORITY, MAIN_PRIORITY, MAX_PRIORITY, NBSP, SESSIONS,
-                       OwnerOrDefault, USER_PRIORITY, isChinese, loadCustomEntries,
-                       loadDefaultBlacklist, loadDefaultDictionary, parsePinyin,
-                       reloadCEDict, updateBlacklistPriorities,
-                       updateCustomPriorities, updateDefaultPriorities, openChapterText, listNovels)
+                       OwnerOrDefault, USER_PRIORITY, isChinese, parsePinyin,
+                       reloadCEDict, openChapterText, listNovels)
 
 # CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
@@ -103,6 +101,33 @@ def getEntry(request):
     # }
 
     entries = EntryManager.get(phrase)
+
+    if entries is None:
+        entries = TradEntryManager.get(phrase)
+    
+    if entries is None:    
+        return Response({'Not Found': f'phrase {phrase} not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    responseData = [EntrySerializer(entry).data for entry in entries if entry['priority'] < MAX_PRIORITY]
+    return Response(responseData, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def getTradEntry(request):
+    if not request.session.exists(request.session.session_key):
+        request.session.create()
+
+    phrase = request.query_params.get('phrase')
+    if phrase is None:
+        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # TODO: DNE check
+    # memory = Memory.objects.get(code=code)
+    # data = {
+    #     "code": code,
+    #     "fragment": FragmentSerializer(Memory.objects.get(code=code).fragments.all(), many=True).data
+    # }
+
+    entries = TradEntryManager.get(phrase)
 
     if entries is None:
         return Response({'Not Found': f'phrase {phrase} not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -428,53 +453,35 @@ class AnnotationView(APIView):
         # TODO: march 14, 2024 - Currently there's no support for 'phrases' with latin alphabet: etc: X光
         owner = "default"
         trie = Trie.getTrie(owner)
+        tradTrie = TradTrie.getTrie(owner)
         if not trie.contains('你'):
-            # blacklistQuerySet = BlacklistEntry.objects.filter(OwnerOrDefault(owner)).values_list(
-            #     'simplified', 'traditional')
-            # blacklist = [
-            #     item for sublist in blacklistQuerySet for item in sublist]
-            # print(blacklist)
-            # entryQuerySet = Entry.objects.filter(OwnerOrDefault(owner), Q(priority__lt=MAX_PRIORITY)).values_list(
-            #     'simplified', 'traditional')
-
             test = EntryManager.get("你")
-
             if not test:
-                # print("Annotate, but no cache, so reload cache")
-
-                # loadDefaultDictionary()
-                # updateDefaultPriorities()
-
-                # print("created new default")
-
-                # loadCustomEntries()
-                # updateCustomPriorities()
-
-                # print("created new custom")
-
-                # loadDefaultBlacklist()
-                # updateBlacklistPriorities()
-
-                # print("created new blacklist")
                 EntryManager.reload()
 
-            Trie.loadTrie()
-            # words = EntryManager.getValidKeyList()
-
-            # print(len(words))
-            # trie = Trie.createTrie(owner, words)
+            Trie.loadTrie(owner)
 
         print(trie)
+        
+        if not tradTrie.contains('妳'):
+            test = TradEntryManager.get("妳")
+            if not test:
+                TradEntryManager.reload()
+
+            TradTrie.loadTrie(owner)
+
+        print(tradTrie)
 
         fragments = [text]
-        separators = "。：？,、“”，）（ )(?:.,\"\'\n"
+        separators = "。：？!,、“”，）（ )(!?:.,\"\'\n"
         for separator in separators:
             fragments = self.split(fragments, separator)
 
         print(fragments)
-
+        
         lst = list()
         for fragment in fragments:
+            
             remaining = fragment
             # print(remaining)
             while remaining:
@@ -501,9 +508,16 @@ class AnnotationView(APIView):
                     # findBest is simply greedy algo, find the longest
                     phrase = trie.findBest(remaining)
                     # print("phrase: '" + phrase + "'")
+                    trad = False
                     if not phrase:
-                        # print("Unable to find best phrase from '" + remaining + "'.")
-                        return []  # tentatively return cause error
+                        # unable to find phrase, so check to see if can find traditional.
+                        phrase = tradTrie.findBest(remaining)
+                        trad = True
+                    if not phrase:
+                        remaining = remaining[1:]
+                        # Unknown, so put dummy entry.
+                        phraselst = [ChineseEntry("zzz", "@")]
+                        lst.append(PhraseEntry(phraselst))
                     else:
                         # found something in trie, remove phrase from remaining
                         remaining = remaining[len(phrase):]
@@ -511,8 +525,11 @@ class AnnotationView(APIView):
                         # TODO: fetch pinyin
                         # entry = ownerQueryset.filter(
                         #     Q(simplified=phrase)
-                        #     | Q(traditional=phrase), Q(priority__lte=MAX_PRIORITY)).order_by("priority").values_list("pinyin", "english").first()
-                        entries = EntryManager.get(phrase)
+                        #     | Q(traditional=phrase), Q(priority__lte=MAX_PRIORITY)).order_by("priority").values_list("pinyin", "english").first()    
+                        # print(trad)
+                        # print(phrase)
+                        entries = EntryManager.get(phrase) if not trad else TradEntryManager.get(phrase) 
+                        # print(entries)
                         if(entries):
                             entry = entries[0]
                             # print("entry: '" +  + "'")
@@ -542,11 +559,11 @@ class AnnotationView(APIView):
                             phraselst = []
                             for i in range(len(phrase)):
                                 phraselst.append(
-                                    ChineseEntry(parsePinyin(
-                                        pinyin[i]), phrase[i])
+                                    ChineseEntry(parsePinyin(pinyin[i]), phrase[i])
                                 )
                             lst.append(PhraseEntry(phraselst))
                         else:
+                            #Note: If this appears, it means Trie and EntryManagers are out of sync. Probablyj ust need to reloadCEDict
                             print(f"ERROR: Unable to find entry {phrase}")
         return lst
 
@@ -748,6 +765,7 @@ class ReloadCEDictView(APIView):
 
         lenA, lenB = reloadCEDict()
         EntryManager.reload()
+        TradEntryManager.reload()
         return Response({"OK": "Done reloaded CEDict", "lenA": lenA, "lenB": lenB}, status=status.HTTP_200_OK)
 
 

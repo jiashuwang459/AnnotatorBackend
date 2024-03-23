@@ -1,0 +1,475 @@
+{
+  "tradpriority::更": [
+    {
+      "id": 51973,
+      "owner": "default",
+      "traditional": "更",
+      "simplified": "更",
+      "pinyin": "geng4",
+      "english": "more/even more/further/still/still more",
+      "priority": 300
+    }
+  ],
+  "tradpriority::要": [
+    {
+      "id": 94904,
+      "owner": "default",
+      "traditional": "要",
+      "simplified": "要",
+      "pinyin": "yao4",
+      "english": "to want; to need; to ask for/will; shall; about to/need to; should/if (same as 要是[yao4 shi5])/(bound form) important",
+      "priority": 300
+    }
+  ],
+  "tradpriority::中": [
+    {
+      "id": 3102,
+      "owner": "default",
+      "traditional": "中",
+      "simplified": "中",
+      "pinyin": "zhong1",
+      "english": "within",
+      "priority": 300
+    }
+  ],
+  "tradpriority::扛": [
+    {
+      "id": 43046,
+      "owner": "default",
+      "traditional": "扛",
+      "simplified": "扛",
+      "pinyin": "kang2",
+      "english": "to carry on one's shoulder/(fig.) to take on (a burden, duty etc)",
+      "priority": 300
+    }
+  ],
+  "tradpriority::著": [
+    {
+      "id": 90691,
+      "owner": "default",
+      "traditional": "著",
+      "simplified": "着",
+      "pinyin": "zhe5",
+      "english": "aspect particle indicating action in progress",
+      "priority": 300
+    }
+  ],
+  "tradpriority::抹": [
+    {
+      "id": 43843,
+      "owner": "default",
+      "traditional": "抹",
+      "simplified": "抹",
+      "pinyin": "mo3",
+      "english": "to smear",
+      "priority": 300
+    }
+  ],
+  "tradpriority::重": [
+    {
+      "id": 105460,
+      "owner": "default",
+      "traditional": "重",
+      "simplified": "重",
+      "pinyin": "zhong4",
+      "english": "heavy",
+      "priority": 300
+    }
+  ],
+  "tradpriority::重重": [
+    {
+      "id": 105672,
+      "owner": "default",
+      "traditional": "重重",
+      "simplified": "重重",
+      "pinyin": "zhong4 zhong4",
+      "english": "heavily",
+      "priority": 300
+    }
+  ],
+  "tradpriority::並": [
+    {
+      "id": 3057,
+      "owner": "default",
+      "traditional": "並",
+      "simplified": "并",
+      "pinyin": "bing4",
+      "english": "and/furthermore/also/together with/(not) at all/simultaneously/to combine/to join/to merge",
+      "priority": 300
+    }
+  ],
+  "tradpriority::涼": [
+    {
+      "id": 62993,
+      "owner": "default",
+      "traditional": "涼",
+      "simplified": "凉",
+      "pinyin": "liang2",
+      "english": "cool/cold",
+      "priority": 300
+    }
+  ],
+  "tradpriority::琢磨": [
+    {
+      "id": 70374,
+      "owner": "default",
+      "traditional": "琢磨",
+      "simplified": "琢磨",
+      "pinyin": "zuo2 mo5",
+      "english": "to ponder",
+      "priority": 300
+    }
+  ],
+  "tradpriority::累": [
+    {
+      "id": 81401,
+      "owner": "default",
+      "traditional": "累",
+      "simplified": "累",
+      "pinyin": "lei4",
+      "english": "tired/weary/to strain/to wear out/to work hard",
+      "priority": 300
+    }
+  ],
+  "tradpriority::行": [
+    {
+      "id": 93426,
+      "owner": "default",
+      "traditional": "行",
+      "simplified": "行",
+      "pinyin": "xing2",
+      "english": "to walk",
+      "priority": 300
+    }
+  ],
+  "tradpriority::熬": [
+    {
+      "id": 67610,
+      "owner": "default",
+      "traditional": "熬",
+      "simplified": "熬",
+      "pinyin": "ao2",
+      "english": "to cook on a slow fire; to extract by heating; to decoct/to endure",
+      "priority": 300
+    }
+  ],
+  "tradpriority::轉": [
+    {
+      "id": 101407,
+      "owner": "default",
+      "traditional": "轉",
+      "simplified": "转",
+      "pinyin": "zhuan3",
+      "english": "to turn",
+      "priority": 300
+    }
+  ],
+  "tradpriority::說": [
+    {
+      "id": 96633,
+      "owner": "default",
+      "traditional": "說",
+      "simplified": "说",
+      "pinyin": "shuo1",
+      "english": "to speak; to talk; to say/to explain; to comment/to scold; to tell off/(bound form) theory; doctrine",
+      "priority": 300
+    }
+  ],
+  "tradpriority::肚": [
+    {
+      "id": 85802,
+      "owner": "default",
+      "traditional": "肚",
+      "simplified": "肚",
+      "pinyin": "du4",
+      "english": "belly",
+      "priority": 300
+    }
+  ],
+  "tradpriority::正": [
+    {
+      "id": 57775,
+      "owner": "default",
+      "traditional": "正",
+      "simplified": "正",
+      "pinyin": "zheng4",
+      "english": "straight/upright/proper/main/principal/to correct/to rectify/exactly/just (at that time)/right (in that place)/(math.) positive",
+      "priority": 300
+    }
+  ],
+  "tradpriority::弄": [
+    {
+      "id": 37325,
+      "owner": "default",
+      "traditional": "弄",
+      "simplified": "弄",
+      "pinyin": "nong4",
+      "english": "to do/to manage/to handle/to play with/to fool with/to mess with/to fix/to toy with",
+      "priority": 300
+    }
+  ],
+  "tradpriority::吐": [
+    {
+      "id": 19523,
+      "owner": "default",
+      "traditional": "吐",
+      "simplified": "吐",
+      "pinyin": "tu4",
+      "english": "to vomit",
+      "priority": 300
+    }
+  ],
+  "tradpriority::場": [
+    {
+      "id": 25119,
+      "owner": "default",
+      "traditional": "場",
+      "simplified": "场",
+      "pinyin": "chang3",
+      "english": "large place used for a specific purpose/stage/scene (of a play)/classifier for sporting or recreational activities/classifier for number of exams",
+      "priority": 300
+    }
+  ],
+  "tradpriority::強": [
+    {
+      "id": 37730,
+      "owner": "default",
+      "traditional": "強",
+      "simplified": "强",
+      "pinyin": "qiang3",
+      "english": "to force/to compel/to strive/to make an effort",
+      "priority": 300
+    }
+  ],
+  "tradpriority::不了": [
+    {
+      "id": 2002,
+      "owner": "default",
+      "traditional": "不了",
+      "simplified": "不了",
+      "pinyin": "bu4 liao3",
+      "english": "(as a resultative verb suffix) unable to (do sth)/(pattern: {verb} + 個|个[ge5] + ~) without end; incessantly",
+      "note": "temporarily prioritized, but if we can't, maybe add 做不了 as custom",
+      "priority": 300
+    }
+  ],
+  "tradpriority::嚇": [
+    {
+      "id": 22572,
+      "owner": "default",
+      "traditional": "嚇",
+      "simplified": "吓",
+      "pinyin": "xia4",
+      "english": "to frighten/to scare",
+      "priority": 300
+    }
+  ],
+  "tradpriority::萬": [
+    {
+      "id": 90367,
+      "owner": "default",
+      "traditional": "萬",
+      "simplified": "万",
+      "pinyin": "wan4",
+      "english": "ten thousand/a great number",
+      "priority": 300
+    }
+  ],
+  "tradpriority::率": [
+    {
+      "id": 69661,
+      "owner": "default",
+      "traditional": "率",
+      "simplified": "率",
+      "pinyin": "shuai4",
+      "english": "to lead",
+      "note": "for following your gender 率性",
+      "priority": 300
+    }
+  ],
+  "tradpriority::勒": [
+    {
+      "id": 14874,
+      "owner": "default",
+      "traditional": "勒",
+      "simplified": "勒",
+      "pinyin": "lei1",
+      "english": "to strap tightly",
+      "priority": 300
+    }
+  ],
+  "tradpriority::號": [
+    {
+      "id": 92382,
+      "owner": "default",
+      "traditional": "號",
+      "simplified": "号",
+      "pinyin": "hao4",
+      "english": "ordinal number/day of a month/mark/sign/business establishment/size/ship suffix/horn (wind instrument)/bugle call/assumed name/to take a pulse/classifier used to indicate number of people",
+      "priority": 300
+    }
+  ],
+  "tradpriority::結果": [
+    {
+      "id": 81669,
+      "owner": "default",
+      "traditional": "結果",
+      "simplified": "结果",
+      "pinyin": "jie2 guo3",
+      "english": "outcome",
+      "priority": 300
+    }
+  ],
+  "tradpriority::跑": [
+    {
+      "id": 100017,
+      "owner": "default",
+      "traditional": "跑",
+      "simplified": "跑",
+      "pinyin": "pao3",
+      "english": "to run",
+      "priority": 300
+    }
+  ],
+  "tradpriority::落": [
+    {
+      "id": 90549,
+      "owner": "default",
+      "traditional": "落",
+      "simplified": "落",
+      "pinyin": "luo4",
+      "english": "to fall or drop",
+      "priority": 300
+    }
+  ],
+  "tradpriority::長": [
+    {
+      "id": 107605,
+      "owner": "default",
+      "traditional": "長",
+      "simplified": "长",
+      "pinyin": "zhang3",
+      "english": "chief",
+      "priority": 300
+    },
+    {
+      "traditional": "長",
+      "simplified": "长",
+      "pinyin": "chang2",
+      "english": "length/long/forever/always/constantly",
+      "note": "Idk what to do with this :').",
+      "priority": 300
+    }
+  ],
+  "tradpriority::過": [
+    {
+      "id": 223332,
+      "owner": "default",
+      "traditional": "過",
+      "simplified": "过",
+      "pinyin": "guo4",
+      "english": "to cross/to go over/to pass (time)/to celebrate (a holiday)/to live/to get along/excessively/too-",
+      "priority": 300
+    }
+  ],
+  "tradpriority::稱": [
+    {
+      "id": 317993,
+      "owner": "default",
+      "traditional": "稱",
+      "simplified": "称",
+      "pinyin": "cheng1",
+      "english": "to weigh/to state/to name/name/appellation/to praise",
+      "priority": 300
+    }
+  ],
+  "tradpriority::合": [
+    {
+      "id": 258403,
+      "owner": "default",
+      "traditional": "合",
+      "simplified": "合",
+      "pinyin": "he2",
+      "english": "to close/to join/to fit/to be equal to/whole/together/round (in battle)/conjunction (astronomy)/1st note of pentatonic scale/old variant of 盒[he2]",
+      "priority": 300
+    }
+  ],
+  "tradpriority::圈": [
+    {
+      "id": 262750,
+      "owner": "default",
+      "traditional": "圈",
+      "simplified": "圈",
+      "pinyin": "quan1",
+      "english": "circle/ring/loop/classifier for loops, orbits, laps of race etc/CL:個|个[ge4]/to surround/to circle",
+      "priority": 300
+    }
+  ],
+  "tradpriority::廣": [
+    {
+      "id": 276680,
+      "owner": "default",
+      "traditional": "廣",
+      "simplified": "广",
+      "pinyin": "guang3",
+      "english": "wide/numerous/to spread",
+      "priority": 300
+    }
+  ],
+  "tradpriority::片": [
+    {
+      "traditional": "片",
+      "simplified": "片",
+      "pinyin": "pian4",
+      "english": "thin piece/flake/a slice/film/TV play/to slice/to carve thin/partial/incomplete/one-sided/classifier for slices, tablets, tract of land, area of water/classifier for CDs, movies, DVDs etc/used with numeral 一[yi1]: classifier for scenario, scene, feeling, atmosphere, sound etc/Kangxi radical 91",
+      "priority": 300
+    }
+  ],
+  "tradpriority::家": [
+    {
+      "traditional": "家",
+      "simplified": "家",
+      "pinyin": "jia1",
+      "english": "home/family/(polite) my (sister, uncle etc)/classifier for families or businesses/refers to the philosophical schools of pre-Han China/noun suffix for a specialist in some activity, such as a musician or revolutionary, corresponding to English -ist, -er, -ary or -ian/CL:個|个[ge4]",
+      "priority": 300
+    }
+  ],
+  "tradpriority::拽": [
+    {
+      "traditional": "拽",
+      "simplified": "拽",
+      "pinyin": "zhuai4",
+      "english": "to pull/to tug at (sth)",
+      "priority": 300
+    }
+  ],
+  "tradpriority::嗎": [
+    {
+      "traditional": "嗎",
+      "simplified": "吗",
+      "pinyin": "ma5",
+      "english": "(question particle for \"yes-no\" questions)",
+      "priority": 300
+    }
+  ],
+  "tradpriority::坐": [
+    {
+      "traditional": "坐",
+      "simplified": "坐",
+      "pinyin": "zuo4",
+      "english": "to sit/to take a seat/to take (a bus, airplane etc)/to bear fruit/variant of 座[zuo4]",
+      "note": "for some reason, there's a variant in this word... which puts it behind the surname zuo.",
+      "priority": 300
+    }
+  ],
+  "tradpriority::溫": [
+    {
+      "traditional": "溫",
+      "simplified": "温",
+      "pinyin": "wen1",
+      "english": "warm; lukewarm/to warm up/(bound form) temperature/(bound form) mild; soft; tender/to review (a lesson etc)/(TCM) fever/epidemic; pestilence (old variant of 瘟[wen1])",
+      "note": "there's an old variant, but should be infront of surname.",
+      "priority": 300
+    }
+  ]
+}

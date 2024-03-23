@@ -38,8 +38,7 @@
 import json
 import os
 
-from api.utils import DATA_DIR
-
+from api.utils import DATA_DIR, TRAD, CUSTOM, BLACKLIST
 
 class Trie(object):
     _TrieCache = dict()
@@ -67,6 +66,10 @@ class Trie(object):
     def insertMany(self, words):
         for word in words:
             self.insert(word)
+
+    def removeMany(self, words):
+        for word in words:
+            self.remove(word)
 
     def remove(self, word):
         seen = list()
@@ -191,23 +194,25 @@ class Trie(object):
         return Trie._TrieCache[owner]
     
     @staticmethod
-    def loadTrie():
-        trie: Trie = Trie.getTrie("default")
-        filename = f"keylist.json"
+    def loadTrie(owner):
+        trie: Trie = Trie.getTrie(owner)
+        filename = f"keylistA.json"
         with open(os.path.join(DATA_DIR, filename)) as f:
             data = json.load(f)
             trie.insertMany(data)
             
-        with open(os.path.join(DATA_DIR, "custom.json")) as f:
+        filename = f"keylistB.json"
+        with open(os.path.join(DATA_DIR, filename)) as f:
             data = json.load(f)
-            for item in data:
-                trie.insert(item['simplified'])
+            trie.insertMany(data)
+            
+        with open(os.path.join(DATA_DIR, f"keylist{CUSTOM}.json")) as f:
+            data = json.load(f)
+            trie.insertMany(data)
 
-        with open(os.path.join(DATA_DIR, 'blacklist.json')) as f:
+        with open(os.path.join(DATA_DIR, f"keylist{BLACKLIST}.json")) as f:
             data = json.load(f)
-            # print(data)
-            for item in data:
-                trie.remove(item['simplified'])
+            trie.removeMany(data)
 
     @staticmethod
     def createTrie(owner, words):
@@ -318,3 +323,61 @@ class Trie(object):
     #     # And also the counter of the last node. This indicates how many words have this
     #     # prefix
     #     return True, node.counter
+
+
+class TradTrie(Trie):
+    _TradTrieCache = dict()
+    
+    def __init__(self, owner):
+        super().__init__(owner)
+        
+    @staticmethod
+    def getTrie(owner):
+        print(f"trying to get trie for owner:{owner}")
+        print("currentTries:")
+
+        for key in TradTrie._TradTrieCache.keys():
+            print(f" {key}")
+
+        if owner not in TradTrie._TradTrieCache:
+            return TradTrie.createTrie(owner,[])
+        return TradTrie._TradTrieCache[owner]
+
+    @staticmethod
+    def loadTrie(owner):
+        trie: TradTrie = TradTrie.getTrie(owner)
+        filename = f"{TRAD}keylistA.json"
+        with open(os.path.join(DATA_DIR, filename)) as f:
+            data = json.load(f)
+            trie.insertMany(data)
+            
+        filename = f"{TRAD}keylistB.json"
+        with open(os.path.join(DATA_DIR, filename)) as f:
+            data = json.load(f)
+            trie.insertMany(data)
+            
+        with open(os.path.join(DATA_DIR, f"{TRAD}keylist{CUSTOM}.json")) as f:
+            data = json.load(f)
+            trie.insertMany(data)
+
+        with open(os.path.join(DATA_DIR, f"{TRAD}keylist{BLACKLIST}.json")) as f:
+            data = json.load(f)
+            trie.removeMany(data)
+    
+    @staticmethod
+    def createTrie(owner, words):
+        if owner not in TradTrie._TradTrieCache:
+            print("owner not in cache")
+            newTrie = TradTrie(owner)
+            newTrie.insertMany(words)
+            TradTrie._TradTrieCache[owner] = newTrie
+        return TradTrie._TradTrieCache[owner]
+
+    @staticmethod
+    def clearTries():
+        print("clearing all tradTries")
+        TradTrie._TradTrieCache = dict()
+        print([trie for trie in TradTrie._TradTrieCache])
+                
+    def __str__(self):
+        return f"TradTrie({self.owner})"

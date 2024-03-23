@@ -44,6 +44,13 @@ BLACKLIST = "black"
 PRIORITY = "priority"
 CUSTOM = "custom"
 
+
+TRAD = "trad"
+TRADDICT = f"{TRAD}{DICT}"
+TRADBLACKLIST = f"{TRAD}{BLACKLIST}"
+TRADPRIORITY = f"{TRAD}{PRIORITY}"
+TRADCUSTOM = f"{TRAD}{CUSTOM}"
+
 # TODO: find a better term for priority... cause 'low priority' should be bad ^_^"
 # Priority is lower the better, anything over MAX_PRIORITY will be skipped and has been blacklisted
 MAIN_PRIORITY = 100
@@ -64,131 +71,131 @@ DEFAULT_OWNER = "default"
 
 
 # @transaction.atomic
-def loadDefaultDictionary():
-    # f = open('./data/data.json', 'r')
-    with open(os.path.join(DATA_DIR, 'data2.json')) as f:
-        data = json.load(f)
-        # print(data)
-        for item in data:
-            if("surname" in item['english']):
-                item['priority'] = SURNAME_PRIORITY
-            elif(item['pinyin'][0].isupper()):
-                item['priority'] = PRONOUN_PRIORITY
-            elif("(archaic)" in item['english']):
-                item['priority'] = OLD_PRIORITY
-            elif("(loanword)" in item['english']):
-                item['priority'] = LOANWORD_PRIORITY
-            elif("oldvariant of" in item['english']):
-                item['priority'] = OLD_VARIANT_PRIORITY
-            elif("variant of" in item['english']):
-                item['priority'] = VARIANT_PRIORITY
-            else:
-                item['priority'] = DEFAULT_PRIORITY
+# def loadDefaultDictionary():
+#     # f = open('./data/data.json', 'r')
+#     with open(os.path.join(DATA_DIR, 'data2.json')) as f:
+#         data = json.load(f)
+#         # print(data)
+#         for item in data:
+#             if("surname" in item['english']):
+#                 item['priority'] = SURNAME_PRIORITY
+#             elif(item['pinyin'][0].isupper()):
+#                 item['priority'] = PRONOUN_PRIORITY
+#             elif("(archaic)" in item['english']):
+#                 item['priority'] = OLD_PRIORITY
+#             elif("(loanword)" in item['english']):
+#                 item['priority'] = LOANWORD_PRIORITY
+#             elif("oldvariant of" in item['english']):
+#                 item['priority'] = OLD_VARIANT_PRIORITY
+#             elif("variant of" in item['english']):
+#                 item['priority'] = VARIANT_PRIORITY
+#             else:
+#                 item['priority'] = DEFAULT_PRIORITY
 
-            values = cache.get(item['simplified'])
-            if(values):
-                values.append(item)
-                values.sort(key=lambda x: x['priority'])
-                cache.set(item['simplified'], values)
-            else:
-                cache.set(item['simplified'], [item])
-            # entry = Entry(owner=DEFAULT_OWNER, traditional=item['traditional'],
-            #               simplified=item['simplified'], pinyin=item['pinyin'], english=item['english'], priority=priority)
-            # entry.save()
+#             values = cache.get(item['simplified'])
+#             if(values):
+#                 values.append(item)
+#                 values.sort(key=lambda x: x['priority'])
+#                 cache.set(item['simplified'], values)
+#             else:
+#                 cache.set(item['simplified'], [item])
+#             # entry = Entry(owner=DEFAULT_OWNER, traditional=item['traditional'],
+#             #               simplified=item['simplified'], pinyin=item['pinyin'], english=item['english'], priority=priority)
+#             # entry.save()
 
+
+# # @transaction.atomic
+# def loadCustomEntries():
+#     # f = open('./data/data.json', 'r')
+#     with open(os.path.join(DATA_DIR, 'custom.json')) as f:
+#         data = json.load(f)
+#         # print(data)
+#         for item in data:
+#             item['priority'] = CUSTOM_PRIORITY
+            
+#             values = cache.get(item['simplified'])
+#             if(values):
+#                 values.append(item)
+#                 values.sort(key=lambda x: x['priority'])
+#                 cache.set(item['simplified'], values)
+#             else:
+#                 cache.set(item['simplified'], [item])
+#             # entry = Entry(owner="custom", traditional=item['traditional'],
+#             #               simplified=item['simplified'], pinyin=item['pinyin'], english=item['english'], priority=CUSTOM_PRIORITY)
+#             # entry.save()
+            
 
 # @transaction.atomic
-def loadCustomEntries():
-    # f = open('./data/data.json', 'r')
-    with open(os.path.join(DATA_DIR, 'custom.json')) as f:
-        data = json.load(f)
-        # print(data)
-        for item in data:
-            item['priority'] = CUSTOM_PRIORITY
-            
-            values = cache.get(item['simplified'])
-            if(values):
-                values.append(item)
-                values.sort(key=lambda x: x['priority'])
-                cache.set(item['simplified'], values)
-            else:
-                cache.set(item['simplified'], [item])
-            # entry = Entry(owner="custom", traditional=item['traditional'],
-            #               simplified=item['simplified'], pinyin=item['pinyin'], english=item['english'], priority=CUSTOM_PRIORITY)
-            # entry.save()
-            
-
-@transaction.atomic
-def loadDefaultBlacklist():
-    # f = open('./data/data.json', 'r')
-    with open(os.path.join(DATA_DIR, 'blacklist.json')) as f:
-        data = json.load(f)
-        # print(data)
-        for item in data:
-            entry = BlacklistEntry(owner=DEFAULT_OWNER, traditional=item['traditional'],
-                                   simplified=item['simplified'], pinyin=item['pinyin'], english=item['english'], reason=item['reason'])
-            entry.save()
+# def loadDefaultBlacklist():
+#     # f = open('./data/data.json', 'r')
+#     with open(os.path.join(DATA_DIR, 'blacklist.json')) as f:
+#         data = json.load(f)
+#         # print(data)
+#         for item in data:
+#             entry = BlacklistEntry(owner=DEFAULT_OWNER, traditional=item['traditional'],
+#                                    simplified=item['simplified'], pinyin=item['pinyin'], english=item['english'], reason=item['reason'])
+#             entry.save()
 
 
-# @transaction.atomic
-def updatePriorities(data, priority):
-    for item in data:
-        # queryset = Entry.objects.filter(traditional=item['traditional'],
-        #                                 simplified=item['simplified'], pinyin=item['pinyin'])
+# # @transaction.atomic
+# def updatePriorities(data, priority):
+#     for item in data:
+#         # queryset = Entry.objects.filter(traditional=item['traditional'],
+#         #                                 simplified=item['simplified'], pinyin=item['pinyin'])
 
-        values = cache.get(item['simplified'])
+#         values = cache.get(item['simplified'])
         
-        if not values:
-            return (False, "Unable to find matching item", item)
+#         if not values:
+#             return (False, "Unable to find matching item", item)
             
         
-        found = False
-        for value in values:
-            if(value['traditional'] == item['traditional'] and value['pinyin'] == item['pinyin']):
-                value['priority'] = priority
-                found = True
+#         found = False
+#         for value in values:
+#             if(value['traditional'] == item['traditional'] and value['pinyin'] == item['pinyin']):
+#                 value['priority'] = priority
+#                 found = True
             
         
-        if found:
-            # values.sort(key=priorityKey)
-            values.sort(key=lambda x: x['priority'])
-            cache.set(item['simplified'], values)
-        else:
-            return (False, "Found key, but unable to find matching traditional and pinyin", item)
-        # cache.set(item['simplified'], values)
-        # else:
-            # cache.set(item['simplified'], [item])
+#         if found:
+#             # values.sort(key=priorityKey)
+#             values.sort(key=lambda x: x['priority'])
+#             cache.set(item['simplified'], values)
+#         else:
+#             return (False, "Found key, but unable to find matching traditional and pinyin", item)
+#         # cache.set(item['simplified'], values)
+#         # else:
+#             # cache.set(item['simplified'], [item])
         
-        # if not queryset.exists():
+#         # if not queryset.exists():
 
-        # if not queryset.count() == 1:
-            # return (False, "multiple matching items for", item)
+#         # if not queryset.count() == 1:
+#             # return (False, "multiple matching items for", item)
 
-        # entry = queryset.first()
-        # entry.priority = priority
-        # entry.save()
-    return (True, "All Priorities loaded", None)
+#         # entry = queryset.first()
+#         # entry.priority = priority
+#         # entry.save()
+#     return (True, "All Priorities loaded", None)
 
-
+# TODO: revisit using this as comparisons
 def entryKey(type, entry):
     return cacheKey(type, f"{entry['traditional']}::{entry['simplified']}::{entry['pinyin']}")
 
-def updateDefaultPriorities():
-    with open(os.path.join(DATA_DIR, 'priority.json')) as f:
-        data = json.load(f)
-        return updatePriorities(data, MAIN_PRIORITY)
+# def updateDefaultPriorities():
+#     with open(os.path.join(DATA_DIR, 'priority.json')) as f:
+#         data = json.load(f)
+#         return updatePriorities(data, MAIN_PRIORITY)
 
 
-def updateBlacklistPriorities():
-    with open(os.path.join(DATA_DIR, 'blacklist.json')) as f:
-        data = json.load(f)
-        return updatePriorities(data, INVALID_PRIORITY)
+# def updateBlacklistPriorities():
+#     with open(os.path.join(DATA_DIR, 'blacklist.json')) as f:
+#         data = json.load(f)
+#         return updatePriorities(data, INVALID_PRIORITY)
 
 
-def updateCustomPriorities():
-    with open(os.path.join(DATA_DIR, 'custom.json')) as f:
-        data = json.load(f)
-        return updatePriorities(data, CUSTOM_PRIORITY)
+# def updateCustomPriorities():
+#     with open(os.path.join(DATA_DIR, 'custom.json')) as f:
+#         data = json.load(f)
+#         return updatePriorities(data, CUSTOM_PRIORITY)
 
 
 def OwnerOrDefault(owner):
@@ -377,8 +384,12 @@ def reloadCEDict():
     # hashmap = {}
     halfmapA = {}
     halfmapB = {}
+    tradhalfmapA = {}
+    tradhalfmapB = {}
     keylistA = set()
     keylistB = set()
+    tradkeylistA = set()
+    tradkeylistB = set()
     cnt = 0
     with open(os.path.join(DATA_DIR, 'cedict_ts.u8')) as f:
         text = f.read()
@@ -430,7 +441,8 @@ def reloadCEDict():
                 'english': english,
                 'priority': priority
             }
-            key = cacheKey("dict", simplified)
+            key = cacheKey(DICT, simplified)
+            tradkey = cacheKey(TRADDICT, traditional)
             # if key in hashmap:
             #     try:
             #         hashmap[key].append(entry)
@@ -454,6 +466,21 @@ def reloadCEDict():
                 else:
                     keylistB.add(simplified)
                     halfmapB[key] = [entry]
+            
+            if tradkey in tradhalfmapA:
+                tradhalfmapA[tradkey].append(entry)
+                tradhalfmapA[tradkey].sort(key=lambda x: x['priority'])
+            elif tradkey in tradhalfmapB:
+                tradhalfmapB[tradkey].append(entry)
+                tradhalfmapB[tradkey].sort(key=lambda x: x['priority'])
+            else:
+                # Normally, we would simply do dict.keys(), but here, 'key' isn't the actual key we want
+                if cnt < 60000:
+                    tradkeylistA.add(traditional)
+                    tradhalfmapA[tradkey] = [entry]
+                else:
+                    tradkeylistB.add(traditional)
+                    tradhalfmapB[tradkey] = [entry]
             cnt += 1
                 
 
@@ -462,7 +489,9 @@ def reloadCEDict():
     # writeDataToFile(hashmap, "datamap.json")
     print('Done!Done!')
     writeDataToFile(list(keylistA), "keylistA.json")
-    writeDataToFile(list(keylistB), "keylistA.json")
+    writeDataToFile(list(keylistB), "keylistB.json")
+    writeDataToFile(list(tradkeylistA), f"{TRAD}keylistA.json")
+    writeDataToFile(list(tradkeylistB), f"{TRAD}keylistB.json")
     print('Done!Done!Done!')
     
 
@@ -476,6 +505,8 @@ def reloadCEDict():
     
     writeDataToFile(halfmapA, "datamapA.json")
     writeDataToFile(halfmapB, "datamapB.json")
+    writeDataToFile(tradhalfmapA, f"{TRAD}datamapA.json")
+    writeDataToFile(tradhalfmapB, f"{TRAD}datamapB.json")
     
     print('Done!Done!Done!Done!')
     setupCustomEntries()
@@ -490,7 +521,9 @@ def setupCustomEntries():
     # f = open('./data/data.json', 'r')
     
     keys = set()
+    tradkeys = set()
     hashmap = {}
+    tradhashmap = {}
     with open(os.path.join(DATA_DIR, 'custom.json')) as f:
         data = json.load(f)
         # print(data)
@@ -498,8 +531,10 @@ def setupCustomEntries():
             entry['priority'] = CUSTOM_PRIORITY
             
             simplified = entry['simplified']
+            traditional = entry['traditional']
             
             key = cacheKey(CUSTOM, simplified)
+            tradkey = cacheKey(TRADCUSTOM, traditional)
             
             if key in hashmap:
                 hashmap[key].append(entry)
@@ -507,18 +542,29 @@ def setupCustomEntries():
             else:
                 keys.add(simplified)
                 hashmap[key] = [entry]
+            
+            if tradkey in tradhashmap:
+                tradhashmap[tradkey].append(entry)
+                tradhashmap[tradkey].sort(key=lambda x: x['priority'])
+            else:
+                tradkeys.add(traditional)
+                tradhashmap[tradkey] = [entry]
                 
     print('Done!')
     writeDataToFile(list(keys), f"keylist{CUSTOM}.json")
+    writeDataToFile(list(tradkeys), f"{TRAD}keylist{CUSTOM}.json")
     print('Done!Done!')
     writeDataToFile(hashmap, f"datamap{CUSTOM}.json")
+    writeDataToFile(tradhashmap, f"{TRAD}datamap{CUSTOM}.json")
     print('Done!Done!Done!')
 
 def setupBlacklistEntries():
     # f = open('./data/data.json', 'r')
     
     keys = set()
+    tradkeys = set()
     hashmap = {}
+    tradhashmap = {}
     with open(os.path.join(DATA_DIR, 'blacklist.json')) as f:
         data = json.load(f)
         # print(data)
@@ -526,8 +572,10 @@ def setupBlacklistEntries():
             entry['priority'] = CUSTOM_PRIORITY
             
             simplified = entry['simplified']
+            traditional = entry['traditional']
             
             key = cacheKey(BLACKLIST, simplified)
+            tradkey = cacheKey(TRADBLACKLIST, traditional)
             
             if key in hashmap:
                 hashmap[key].append(entry)
@@ -535,18 +583,29 @@ def setupBlacklistEntries():
             else:
                 keys.add(simplified)
                 hashmap[key] = [entry]
+            
+            if tradkey in tradhashmap:
+                tradhashmap[tradkey].append(entry)
+                tradhashmap[tradkey].sort(key=lambda x: x['priority'])
+            else:
+                tradkeys.add(traditional)
+                tradhashmap[tradkey] = [entry]
                 
     print('Done!')
     writeDataToFile(list(keys), f"keylist{BLACKLIST}.json")
+    writeDataToFile(list(tradkeys), f"{TRAD}keylist{BLACKLIST}.json")
     print('Done!Done!')
     writeDataToFile(hashmap, f"datamap{BLACKLIST}.json")
+    writeDataToFile(tradhashmap, f"{TRAD}datamap{BLACKLIST}.json")
     print('Done!Done!Done!')
 
 def setupPriorityEntries():
     # f = open('./data/data.json', 'r')
     
     keys = set()
+    tradkeys = set()
     hashmap = {}
+    tradhashmap = {}
     with open(os.path.join(DATA_DIR, 'priority.json')) as f:
         data = json.load(f)
         # print(data)
@@ -554,8 +613,10 @@ def setupPriorityEntries():
             entry['priority'] = USER_PRIORITY
             
             simplified = entry['simplified']
+            traditional = entry['traditional']
             
             key = cacheKey(PRIORITY, simplified)
+            tradkey = cacheKey(TRADPRIORITY, traditional)
             
             if key in hashmap:
                 hashmap[key].append(entry)
@@ -563,11 +624,20 @@ def setupPriorityEntries():
             else:
                 keys.add(simplified)
                 hashmap[key] = [entry]
+            
+            if tradkey in tradhashmap:
+                tradhashmap[tradkey].append(entry)
+                tradhashmap[tradkey].sort(key=lambda x: x['priority'])
+            else:
+                tradkeys.add(traditional)
+                tradhashmap[tradkey] = [entry]
                 
     print('Done!')
     writeDataToFile(list(keys), f"keylist{PRIORITY}.json")
+    writeDataToFile(list(tradkeys), f"{TRAD}keylist{PRIORITY}.json")
     print('Done!Done!')
     writeDataToFile(hashmap, f"datamap{PRIORITY}.json")
+    writeDataToFile(tradhashmap, f"{TRAD}datamap{PRIORITY}.json")
     print('Done!Done!Done!')
     
     # writeDataToFile(hashmap, "datamap.json")

@@ -42,7 +42,7 @@ from django.core.cache import caches
 from api.Trie import Trie
 from api.models import BlacklistEntry
 
-from api.utils import CUSTOM_PRIORITY, DATA_DIR, DEFAULT_PRIORITY, INVALID_PRIORITY, MAIN_PRIORITY, SURNAME_PRIORITY, VARIANT_PRIORITY, DICT, CUSTOM, BLACKLIST, PRIORITY, cacheKey, entryKey, loadCustomEntries, loadDefaultBlacklist, loadDefaultDictionary, updateBlacklistPriorities, updateCustomPriorities, updateDefaultPriorities
+from api.utils import CUSTOM_PRIORITY, DATA_DIR, DEFAULT_PRIORITY, INVALID_PRIORITY, MAIN_PRIORITY, SURNAME_PRIORITY, VARIANT_PRIORITY, TRAD, DICT, CUSTOM, BLACKLIST, PRIORITY, TRADDICT, TRADCUSTOM, TRADBLACKLIST, TRADPRIORITY, cacheKey, entryKey
 
 
 class EntryManagerSingleton(object):
@@ -57,11 +57,11 @@ class EntryManagerSingleton(object):
         # }
         self.owner = owner
 
-        self.keylistA = []
-        self.keylistB = []
-        self.customkeylist = []
-        self.blacklistkeylist = []
-        self.prioritykeylist = []
+        # self.keylistA = []
+        # self.keylistB = []
+        # self.customkeylist = []
+        # self.blacklistkeylist = []
+        # self.prioritykeylist = []
         
         
         self.dictA = {}
@@ -260,7 +260,6 @@ class EntryManagerSingleton(object):
     #     if(caches['extra']):
     #         print("clearing extra")
     #         caches['extra'].clear()
-
     def load(self) :
         with open(os.path.join(DATA_DIR, "datamapA.json")) as f:
             data = json.load(f)
@@ -282,33 +281,36 @@ class EntryManagerSingleton(object):
             data = json.load(f)
             self.dictPriority = data
             
-        with open(os.path.join(DATA_DIR, "keylistA.json")) as f:
-            data = json.load(f)
-            self.keylistA = set(data)
+        # with open(os.path.join(DATA_DIR, "keylistA.json")) as f:
+        #     data = json.load(f)
+        #     self.keylistA = set(data)
             
-        with open(os.path.join(DATA_DIR, "keylistB.json")) as f:
-            data = json.load(f)
-            self.keylistB = set(data)
+        # with open(os.path.join(DATA_DIR, "keylistB.json")) as f:
+        #     data = json.load(f)
+        #     self.keylistB = set(data)
 
-        with open(os.path.join(DATA_DIR, f"keylist{CUSTOM}.json")) as f:
-            data = json.load(f)
-            self.customkeylist = set(data)
+        # with open(os.path.join(DATA_DIR, f"keylist{CUSTOM}.json")) as f:
+        #     data = json.load(f)
+        #     self.customkeylist = set(data)
             
-        with open(os.path.join(DATA_DIR, f"keylist{BLACKLIST}.json")) as f:
-            data = json.load(f)
-            self.blacklistkeylist = set(data)
+        # with open(os.path.join(DATA_DIR, f"keylist{BLACKLIST}.json")) as f:
+        #     data = json.load(f)
+        #     self.blacklistkeylist = set(data)
             
-        with open(os.path.join(DATA_DIR, f"keylist{PRIORITY}.json")) as f:
-            data = json.load(f)
-            self.prioritykeylist = set(data)
+        # with open(os.path.join(DATA_DIR, f"keylist{PRIORITY}.json")) as f:
+        #     data = json.load(f)
+        #     self.prioritykeylist = set(data)
+        
+
+            
 
             
     def clear(self):
-        self.keylistA = []
-        self.keylistB = []
-        self.customkeylist = []
-        self.blacklistkeylist = []
-        self.prioritykeylist = []
+        # self.keylistA = []
+        # self.keylistB = []
+        # self.customkeylist = []
+        # self.blacklistkeylist = []
+        # self.prioritykeylist = []
         
         
         self.dictA = {}
@@ -461,4 +463,81 @@ class EntryManagerSingleton(object):
         return entries
 
 
-EntryManager = EntryManagerSingleton("me")
+class TradEntryManagerSingleton(EntryManagerSingleton):
+    def __init__(self, owner):
+        super().__init__(owner)
+    
+
+    def getDictEntries(self, phrase):
+        # start_time = timeit.default_timer()
+        key = cacheKey(TRADDICT, phrase)
+        
+        if key in self.dictA:
+            return self.dictA[key]
+        elif key in self.dictB:
+            return self.dictB[key]
+        else:
+            return []
+        # print(f"A:{timeit.default_timer() - start_time}")
+        
+
+    def getCustomEntries(self, phrase):
+        # start_time = timeit.default_timer()
+        key = cacheKey(TRADCUSTOM, phrase)
+        
+        if key in self.dictCustom:
+            return self.dictCustom[key]
+        else:
+            return []
+
+        # print(f"A:{timeit.default_timer() - start_time}")
+
+
+    def getBlacklistEntries(self, phrase):
+        # start_time = timeit.default_timer()
+        key = cacheKey(TRADBLACKLIST, phrase)
+        
+        if key in self.dictBlacklist:
+            return self.dictBlacklist[key]
+        else:
+            return []
+
+        # print(f"A:{timeit.default_timer() - start_time}")
+
+
+    def getPriorityEntries(self, phrase):
+        # start_time = timeit.default_timer()
+        key = cacheKey(TRADPRIORITY, phrase)
+        
+        if key in self.dictPriority:
+            return self.dictPriority[key]
+        else:
+            return []
+
+        # print(f"A:{timeit.default_timer() - start_time}")
+
+
+    def load(self) :
+        print("loaded trad entry manager")
+        with open(os.path.join(DATA_DIR, f"{TRAD}datamapA.json")) as f:
+            data = json.load(f)
+            self.dictA = data
+            
+        with open(os.path.join(DATA_DIR, f"{TRAD}datamapB.json")) as f:
+            data = json.load(f)
+            self.dictB = data
+            
+        with open(os.path.join(DATA_DIR, f"{TRAD}datamap{CUSTOM}.json")) as f:
+            data = json.load(f)
+            self.dictCustom = data
+            
+        with open(os.path.join(DATA_DIR, f"{TRAD}datamap{BLACKLIST}.json")) as f:
+            data = json.load(f)
+            self.dictBlacklist = data
+            
+        with open(os.path.join(DATA_DIR, f"{TRAD}datamap{PRIORITY}.json")) as f:
+            data = json.load(f)
+            self.dictPriority = data
+
+EntryManager = EntryManagerSingleton("default")
+TradEntryManager = TradEntryManagerSingleton("default")
