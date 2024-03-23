@@ -54,6 +54,12 @@
     "english": "A star called AnTa in '穿越未来之男人不好当'"
   },
   {
+    "traditional": "夢多啦星系",
+    "simplified": "梦多啦星系",
+    "pinyin": "Meng4 Duo1 La1 Xing1 Xi4",
+    "english": "The MengDuoLa galaxy in '穿越未来之男人不好当'. Home of 小四"
+  },
+  {
     "traditional": "母舰",
     "simplified": "母舰",
     "pinyin": "mu3 jian4",
@@ -216,5 +222,46 @@
     "simplified": "保护国家",
     "pinyin": "bao3 hu4 guo2 jia1",
     "english": "protect the country!"
+  },
+  {
+    "traditional": "星系",
+    "simplified": "星系",
+    "pinyin": "xing1 xi4",
+    "english": "galaxy"
+  },
+  {
+    "traditional": "王晋康",
+    "simplified": "王晋康",
+    "pinyin": "Wang1 Jin2 Kang1",
+    "english": "Wang JinKang, Chinese science ficiton writer"
+  },
+  {
+    "traditional": "何宏伟",
+    "simplified": "何宏伟",
+    "pinyin": "He2 Hong2 Wei3",
+    "english": "He HongWei, Chinese science ficiton writer... probably. Couldn't find anything online, but context from 三体"
+  },
+  {
+    "traditional": "韩松",
+    "simplified": "韩松",
+    "pinyin": "Han2 Song1",
+    "english": "Han Song, Chinese science ficiton writer"
+  },
+  {
+    "traditional": "汪淼",
+    "simplified": "汪淼",
+    "pinyin": "Wang1 Miao3",
+    "english": "Wang Miao, Protagonist in 三体"
+  },
+  {
+    "traditional": "汪教授",
+    "simplified": "汪教授",
+    "pinyin": "Wang1 jiao4 shou4",
+    "english": "Professor Wang, Likely refering to 汪淼[Wang1 Miao3], Protagonist in 三体"
   }
+
+  
+  
+
+  
 ]

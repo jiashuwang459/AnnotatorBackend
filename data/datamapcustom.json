@@ -80,6 +80,15 @@
       "priority": 200
     }
   ],
+  "custom::梦多啦星系": [
+    {
+      "traditional": "夢多啦星系",
+      "simplified": "梦多啦星系",
+      "pinyin": "Meng4 Duo1 La1 Xing1 Xi4",
+      "english": "The MengDuoLa galaxy in '穿越未来之男人不好当'. Home of 小四",
+      "priority": 200
+    }
+  ],
   "custom::母舰": [
     {
       "traditional": "母舰",
@@ -322,6 +331,15 @@
       "simplified": "保护国家",
       "pinyin": "bao3 hu4 guo2 jia1",
       "english": "protect the country!",
+      "priority": 200
+    }
+  ],
+  "custom::星系": [
+    {
+      "traditional": "星系",
+      "simplified": "星系",
+      "pinyin": "xing1 xi4",
+      "english": "galaxy",
       "priority": 200
     }
   ]

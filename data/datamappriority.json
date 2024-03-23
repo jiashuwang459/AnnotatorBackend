@@ -471,5 +471,24 @@
       "note": "there's an old variant, but should be infront of surname.",
       "priority": 300
     }
+  ],
+  "priority::汗": [
+    {
+      "traditional": "汗",
+      "simplified": "汗",
+      "pinyin": "han4",
+      "english": "perspiration/sweat/CL:滴[di1],頭|头[tou2],身[shen1]/to be speechless (out of helplessness, embarrassment etc) (Internet slang used as an interjection)",
+      "priority": 300
+    }
+  ],
+  "priority::派": [
+    {
+      "traditional": "派",
+      "simplified": "派",
+      "pinyin": "pai4",
+      "english": "clique/school/group/faction/to dispatch/to send/to assign/to appoint/pi (Greek letter Ππ)/the circular ratio pi = 3.1415926/(loanword) pie",
+      "note": "used more often than the other.",
+      "priority": 300
+    }
   ]
 }

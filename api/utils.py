@@ -57,8 +57,9 @@ MAIN_PRIORITY = 100
 CUSTOM_PRIORITY = 200
 USER_PRIORITY = 300
 DEFAULT_PRIORITY = 500
-PRONOUN_PRIORITY = 600
-LOANWORD_PRIORITY = 700
+LOANWORD_PRIORITY = 600
+PRONOUN_PRIORITY = 700
+USED_IN_PRIORITY = 750
 SURNAME_PRIORITY = 800
 OLD_PRIORITY = 850
 VARIANT_PRIORITY = 900
@@ -419,12 +420,14 @@ def reloadCEDict():
             priority = INVALID_PRIORITY
             if("surname" in english):
                 priority = SURNAME_PRIORITY
-            elif(pinyin[0].isupper()):
-                priority = PRONOUN_PRIORITY
-            elif("(archaic)" in english):
-                priority = OLD_PRIORITY
+            elif(english.startswith("used in")):
+                priority = USED_IN_PRIORITY
             elif("(loanword)" in english):
                 priority = LOANWORD_PRIORITY
+            elif("(archaic)" in english):
+                priority = OLD_PRIORITY
+            elif(pinyin[0].isupper()):
+                priority = PRONOUN_PRIORITY
             elif("old variant of" in english):
                 priority = OLD_VARIANT_PRIORITY
             elif("variant of" in english):
