@@ -387,5 +387,14 @@
       "english": "Professor Wang, Likely refering to 汪淼[Wang1 Miao3], Protagonist in 三体",
       "priority": 200
     }
+  ],
+  "tradcustom::追兇": [
+    {
+      "traditional": "追兇",
+      "simplified": "追凶",
+      "pinyin": "zhui1 xiong1",
+      "english": "To pursue a criminal",
+      "priority": 200
+    }
   ]
 }

@@ -77,5 +77,12 @@
     "pinyin": "Ming2 zhi4",
     "english": "Meiji, Japanese era name, corresponding to the reign (1868-1912) of the Meiji emperor",
     "reason": "We want it separate probably."
+  },
+  {
+    "traditional": "在野",
+    "simplified": "在野",
+    "pinyin": "zai4 ye3",
+    "english": "to be out of (political) office/to be out of power",
+    "reason": "don't think we see this often, so we want it to be separate"
   }
 ]
