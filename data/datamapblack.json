@@ -114,5 +114,25 @@
       "reason": "don't think we see this often, so we want it to be separate",
       "priority": 200
     }
+  ],
+  "black::地质": [
+    {
+      "traditional": "地質",
+      "simplified": "地质",
+      "pinyin": "di4 zhi4",
+      "english": "geology",
+      "reason": "地质问 is more common, so... separate until further notice. Used in 三体",
+      "priority": 200
+    }
+  ],
+  "black::人居": [
+    {
+      "traditional": "人居",
+      "simplified": "人居",
+      "pinyin": "ren2 ju1",
+      "english": "human habitat",
+      "reason": "两人居然 is possible, so... separate would be better. Human habitat is also a bit weird.",
+      "priority": 200
+    }
   ]
 }

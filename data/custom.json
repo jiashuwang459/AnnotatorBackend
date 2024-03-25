@@ -251,7 +251,7 @@
     "traditional": "汪淼",
     "simplified": "汪淼",
     "pinyin": "Wang1 Miao3",
-    "english": "Wang Miao, Protagonist in 三体"
+    "english": "Protagonist in 三体, Nanomaterials Researcher"
   },
   {
     "traditional": "汪教授",
@@ -260,9 +260,34 @@
     "english": "Professor Wang, Likely refering to 汪淼[Wang1 Miao3], Protagonist in 三体"
   },
   {
+    "traditional": "史強",
+    "simplified": "史强",
+    "pinyin": "Shi3 Qiang2",
+    "english": "Police Detective in 三体, nicknamed 大史[Da4 Shi3]"
+  },
+  {
+    "traditional": "大史",
+    "simplified": "大史",
+    "pinyin": "Da4 Shi3",
+    "english": "Nickname of 史强[Shi3 Qiang2], Police Detective in 三体"
+  },
+  {
+    "traditional": "常偉思",
+    "simplified": "常伟思",
+    "pinyin": "Chang2 Wei3 Si1",
+    "english": "Major-general of the People's Liberation Army in 三体. 陆军少将."
+  },
+  {
     "traditional": "追兇",
     "simplified": "追凶",
     "pinyin": "zhui1 xiong1",
-    "english": "To pursue a criminal" 
+    "english": "To pursue a criminal"
+  },
+  {
+    "traditional": "皮夾克",
+    "simplified": "皮夹克",
+    "pinyin": "pi2 jia2 ke4",
+    "english": "leather jacket",
+    "note": "since 皮夹[pi2 jia2] is a wallet."
   }
 ]

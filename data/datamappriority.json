@@ -490,5 +490,25 @@
       "note": "used more often than the other.",
       "priority": 300
     }
+  ],
+  "priority::哦": [
+    {
+      "traditional": "哦",
+      "simplified": "哦",
+      "pinyin": "o4",
+      "english": "oh (interjection indicating that one has just learned sth)",
+      "note": "just cause.",
+      "priority": 300
+    }
+  ],
+  "priority::拾": [
+    {
+      "traditional": "拾",
+      "simplified": "拾",
+      "pinyin": "shi2",
+      "english": "to pick up/to collate or arrange/ten (banker's anti-fraud numeral)",
+      "note": "The other one... seems less likely.",
+      "priority": 300
+    }
   ]
 }
