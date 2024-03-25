@@ -501,6 +501,26 @@
       "priority": 300
     }
   ],
+  "priority::嗯": [
+    {
+      "traditional": "嗯",
+      "simplified": "嗯",
+      "pinyin": "en4",
+      "english": "(nonverbal grunt as interjection)/OK, yeah/what?",
+      "note": "also just cause.",
+      "priority": 300
+    }
+  ],
+  "priority::呗": [
+    {
+      "traditional": "唄",
+      "simplified": "呗",
+      "pinyin": "bei5",
+      "english": "modal particle indicating lack of enthusiasm/modal particle indicating that things should only or can only be done a certain way",
+      "note": "yus.",
+      "priority": 300
+    }
+  ],
   "priority::拾": [
     {
       "traditional": "拾",
@@ -508,6 +528,196 @@
       "pinyin": "shi2",
       "english": "to pick up/to collate or arrange/ten (banker's anti-fraud numeral)",
       "note": "The other one... seems less likely.",
+      "priority": 300
+    }
+  ],
+  "priority::令": [
+    {
+      "traditional": "令",
+      "simplified": "令",
+      "pinyin": "ling4",
+      "english": "to order/to command/an order/warrant/writ/to cause/to make sth happen/virtuous/honorific title/season/government position (old)/type of short song or poem",
+      "note": "We don't care for paper.",
+      "priority": 300
+    }
+  ],
+  "priority::载": [
+    {
+      "traditional": "載",
+      "simplified": "载",
+      "pinyin": "zai4",
+      "english": "to carry/to convey/to load/to hold/to fill up/and/also/as well as/simultaneously",
+      "note": "This one's probably more popular?",
+      "priority": 300
+    }
+  ],
+  "priority::作": [
+    {
+      "traditional": "作",
+      "simplified": "作",
+      "pinyin": "zuo4",
+      "english": "to do; to engage in/to write; to compose/to pretend; to feign/to regard as; to consider to be/to be; to act the part of/to feel (itchy, nauseous etc)/writings; works",
+      "note": "This one is more common",
+      "priority": 300
+    }
+  ],
+  "priority::当": [
+    {
+      "traditional": "當",
+      "simplified": "当",
+      "pinyin": "dang1",
+      "english": "to be/to act as/manage/withstand/when/during/ought/should/match equally/equal/same/obstruct/just at (a time or place)/on the spot/right/just at",
+      "note": "This one is more common",
+      "priority": 300
+    }
+  ],
+  "priority::折": [
+    {
+      "traditional": "折",
+      "simplified": "折",
+      "pinyin": "zhe2",
+      "english": "to break/to fracture/to snap/to suffer loss/to bend/to twist/to turn/to change direction/convinced/to convert into (currency)/discount/rebate/tenth (in price)/classifier for theatrical scenes/to fold/accounts book",
+      "note": "This one is more common? Hopefully.",
+      "priority": 300
+    }
+  ],
+  "priority::喽": [
+    {
+      "traditional": "嘍",
+      "simplified": "喽",
+      "pinyin": "lou5",
+      "english": "(final particle equivalent to 了[le5])/(particle calling attention to, or mildly warning of, a situation)",
+      "notes": "we don't care about bandits",
+      "priority": 300
+    }
+  ],
+  "priority::喂": [
+    {
+      "traditional": "喂",
+      "simplified": "喂",
+      "pinyin": "wei4",
+      "english": "hey/to feed (an animal, baby, invalid etc)",
+      "notes": "this one's a bit difficult...",
+      "priority": 300
+    }
+  ],
+  "priority::炸": [
+    {
+      "traditional": "炸",
+      "simplified": "炸",
+      "pinyin": "zha4",
+      "english": "to burst; to explode/to blow up; to bomb/(coll.) to fly into a rage/(coll.) to scamper off; to scatter",
+      "notes": "I think this one is more popular. If not, can add 炸开锅 as a phrase",
+      "priority": 300
+    }
+  ],
+  "priority::抢": [
+    {
+      "traditional": "搶",
+      "simplified": "抢",
+      "pinyin": "qiang3",
+      "english": "to fight over/to rush/to scramble/to grab/to rob/to snatch",
+      "notes": "definitely don't need the other one... probably",
+      "priority": 300
+    }
+  ],
+  "priority::冲": [
+    {
+      "traditional": "衝",
+      "simplified": "冲",
+      "pinyin": "chong4",
+      "english": "powerful/vigorous/pungent/towards/in view of",
+      "notes": "this one's hard too, but the other one is probably easier to make phrases.",
+      "priority": 300
+    }
+  ],
+  "priority::眉目": [
+    {
+      "traditional": "眉目",
+      "simplified": "眉目",
+      "pinyin": "mei2 mu5",
+      "english": "progress/prospect of solution/sign of positive outcome",
+      "notes": "Let's just leave this here for now.",
+      "priority": 300
+    }
+  ],
+  "priority::局": [
+    {
+      "traditional": "局",
+      "simplified": "局",
+      "pinyin": "ju2",
+      "english": "office/situation/classifier for games: match, set, round etc",
+      "notes": "Others are too narrow",
+      "priority": 300
+    }
+  ],
+  "priority::呛": [
+    {
+      "traditional": "嗆",
+      "simplified": "呛",
+      "pinyin": "qiang4",
+      "english": "to irritate the nose/to choke (of smoke, smell etc)/pungent/(coll.) (Tw) to shout at sb/to scold/to speak out against sb",
+      "notes": "The other one seems to only be used in a phrase",
+      "priority": 300
+    }
+  ],
+  "priority::蒙": [
+    {
+      "traditional": "矇",
+      "simplified": "蒙",
+      "pinyin": "meng1",
+      "english": "to deceive/to cheat/to hoodwink/to make a wild guess",
+      "notes": "There's just too many >w<'",
+      "priority": 300
+    }
+  ],
+  "priority::左": [
+    {
+      "traditional": "左",
+      "simplified": "左",
+      "pinyin": "zuo3",
+      "english": "left/the Left (politics)/east/unorthodox/queer/wrong/differing/opposite/variant of 佐[zuo3]",
+      "notes": "if this keeps happening, maybe consider changing variant to only be start of? or check number of 'fields' to be one.",
+      "priority": 300
+    }
+  ],
+  "priority::石": [
+    {
+      "traditional": "石",
+      "simplified": "石",
+      "pinyin": "shi2",
+      "english": "rock/stone/stone inscription/one of the eight categories of ancient musical instruments 八音[ba1 yin1]",
+      "notes": "yus.",
+      "priority": 300
+    }
+  ],
+  "priority::告诉": [
+    {
+      "traditional": "告訴",
+      "simplified": "告诉",
+      "pinyin": "gao4 su5",
+      "english": "to tell; to inform; to let know",
+      "notes": "we ain't reporting.",
+      "priority": 300
+    }
+  ],
+  "priority::便宜": [
+    {
+      "traditional": "便宜",
+      "simplified": "便宜",
+      "pinyin": "pian2 yi5",
+      "english": "cheap; inexpensive/a petty advantage/to let sb off lightly",
+      "notes": "other one is... interesting.",
+      "priority": 300
+    }
+  ],
+  "priority::占": [
+    {
+      "traditional": "占",
+      "simplified": "占",
+      "pinyin": "zhan4",
+      "english": "to take possession of/to occupy/to take up",
+      "notes": "we aren't that holy.",
       "priority": 300
     }
   ]

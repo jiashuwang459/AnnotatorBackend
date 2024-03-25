@@ -48,6 +48,18 @@
     "english": "凌霄[Ling2 Xiao1]'s father in '穿越未来之男人不好当'"
   },
   {
+    "traditional": "凌家",
+    "simplified": "凌家",
+    "pinyin": "Ling2 jia1",
+    "english": "凌兰[Ling2 Lan2]'s family in '穿越未来之男人不好当'"
+  },
+  {
+    "traditional": "凌肅仁",
+    "simplified": "凌肃仁",
+    "pinyin": "Ling2 Su4 Ren2",
+    "english": "凌[Ling2] branch family head in '穿越未来之男人不好当'"
+  },
+  {
     "traditional": "安塔",
     "simplified": "安塔",
     "pinyin": "An1 Ta3",
@@ -169,18 +181,6 @@
     "english": "lower-level"
   },
   {
-    "traditional": "凌家",
-    "simplified": "凌家",
-    "pinyin": "Ling2 jia1",
-    "english": "凌兰[Ling2 Lan2]'s family in '穿越未来之男人不好当'"
-  },
-  {
-    "traditional": "凌肅仁",
-    "simplified": "凌肃仁",
-    "pinyin": "Ling2 Su4 Ren2",
-    "english": "凌[Ling2] branch family head in '穿越未来之男人不好当'"
-  },
-  {
     "traditional": "拉拉",
     "simplified": "拉拉",
     "pinyin": "la1 la5",
@@ -268,7 +268,7 @@
   {
     "traditional": "大史",
     "simplified": "大史",
-    "pinyin": "Da4 Shi3",
+    "pinyin": "da4 Shi3",
     "english": "Nickname of 史强[Shi3 Qiang2], Police Detective in 三体"
   },
   {
@@ -289,5 +289,295 @@
     "pinyin": "pi2 jia2 ke4",
     "english": "leather jacket",
     "note": "since 皮夹[pi2 jia2] is a wallet."
+  },
+  {
+    "traditional": "何樂不為",
+    "simplified": "何乐不为",
+    "pinyin": "he2 le4 bu4 wei2",
+    "english": "What can you have against it? (idiom)/We should do this./Go for it!",
+    "note": "submitted to cedict, see 何乐而不为"
+  },
+  {
+    "traditional": "人比人得死",
+    "simplified": "人比人得死",
+    "pinyin": "ren2 bi3 ren2 dei3 si3",
+    "english": "Comparisons are odious (more specifically referring to comparisons between people)",
+    "note": "submitted to cedict, see 人比人，气死人"
+  },
+  {
+    "traditional": "劍眉星目",
+    "simplified": "剑眉星目",
+    "pinyin": "jian4 mei2 xing1 mu4",
+    "english": "describes someone's appearance as having a heroic charm, full of righteousness, with a soldierly atmosphere/see also: 剑眉星眼[jian4 mei2 xing1 yan3]",
+    "note": "submitted to cedict see also: 剑眉星眼"
+  },
+  {
+    "traditional": "劍眉星眼",
+    "simplified": "剑眉星眼",
+    "pinyin": "jian4 mei2 xing1 yan3",
+    "english": "describes someone's appearance as having a heroic charm, full of righteousness, with a soldierly atmosphere/see also: 剑眉星目[jian4 mei2 xing1 mu4]",
+    "note": "submitted to cedict see also: 剑眉星目"
+  },
+  {
+    "traditional": "倒持泰阿",
+    "simplified": "倒持泰阿",
+    "pinyin": "dao4 chi2 tai4 e1",
+    "english": "give others control or power over the situation, and suffer from it yourself/giving others agency over yourself/(literal) give the handle of the sword/gun to an opponent/see 倒持太阿|倒持太阿[dao4 chi2 tai4 e1]",
+    "note": "submitted to cedict see also: 倒持太阿"
+  },
+  {
+    "traditional": "倒持太阿",
+    "simplified": "倒持太阿",
+    "pinyin": "dao4 chi2 tai4 e1",
+    "english": "give others control or power over the situation, and suffer from it yourself/giving others agency over yourself/(literal) give the handle of the sword/gun to an opponent/see 倒持泰阿|倒持泰阿[dao4 chi2 tai4 e1]",
+    "note": "submitted to cedict see also: 倒持泰阿"
+  },
+  {
+    "traditional": "星目劍眉",
+    "simplified": "星目剑眉",
+    "pinyin": "xing1 mu4 jian4 mei2",
+    "english": "describes someone's appearance as having a heroic charm, full of righteousness, with a soldierly atmosphere/see also: 剑眉星眼[jian4 mei2 xing1 yan3]",
+    "note": "submitted to cedict see also: 剑眉星眼"
+  },
+  {
+    "traditional": "粉拳",
+    "simplified": "粉拳",
+    "pinyin": "fen3 quan2",
+    "english": "a weak or fake punch/a playful punch/a coquettish punch",
+    "note": "submitted to cedict"
+  },
+  {
+    "traditional": "嫉惡如仇 ",
+    "simplified": "嫉恶如仇",
+    "pinyin": "ji2 e4 ru2 chou2",
+    "english": "to hate bad people as you do your enemies",
+    "note": "submitted to cedict"
+  },
+  {
+    "traditional": "宋朗",
+    "simplified": "宋朗",
+    "pinyin": "Song4 Lang3",
+    "english": "Character in 追凶神探, former detective, killed their own boss/friend. Should be the protagonist"
+  },
+  {
+    "traditional": "陳實",
+    "simplified": "陈实",
+    "pinyin": "Chen2 Shi2",
+    "english": "Character in 追凶神探, Taxi Driver."
+  },
+  {
+    "traditional": "后經",
+    "simplified": "后经",
+    "pinyin": "Hou4 Jing1",
+    "english": "Character in 追凶神探, Detective?"
+  },
+  {
+    "traditional": "林秋浦",
+    "simplified": "林秋浦",
+    "pinyin": "Lin2 Qiu1 Pu3",
+    "english": "Character in 追凶神探, Head Police Guy"
+  },
+  {
+    "traditional": "林大隊長",
+    "simplified": "林大队长",
+    "pinyin": "Lin2 da4 dui4 zhang3",
+    "english": "Nickname of 林秋浦[Lin2 Qiu1 Pu3], Head Police Guy in 追凶神探"
+  },
+  {
+    "traditional": "林隊",
+    "simplified": "林队",
+    "pinyin": "Lin2 dui4",
+    "english": "Nickname of 林秋浦[Lin2 Qiu1 Pu3], Head Police Guy in 追凶神探"
+  },
+  {
+    "traditional": "林冬雪",
+    "simplified": "林冬雪",
+    "pinyin": "Lin2 Dong1 Xue3",
+    "english": "Character in 追凶神探, Policewoman/林秋浦[Lin2 Qiu1 Pu3]'s little sister"
+  },
+  {
+    "traditional": "林大小姐",
+    "simplified": "林大小姐",
+    "pinyin": "Lin2 da4 xiao3 jie5",
+    "english": "Refers to 林冬雪[Lin2 Dong1 Xue3], female lead policewoman in 追凶神探"
+  },
+  {
+    "traditional": "小齊",
+    "simplified": "小齐",
+    "pinyin": "xiao3 Qi2",
+    "english": "Character in 追凶神探, Police officer person"
+  },
+  {
+    "traditional": "徐曉東",
+    "simplified": "徐晓东",
+    "pinyin": "Xu2 Xiao3 Dong1",
+    "english": "Character in 追凶神探, Police officer person"
+  },
+  {
+    "traditional": "古夢醒",
+    "simplified": "古梦醒",
+    "pinyin": "Gu3 Meng4 Xing3",
+    "english": "Character in 追凶神探, a victim"
+  },
+  {
+    "traditional": "瀋軍",
+    "simplified": "沈军",
+    "pinyin": "Shen3 Jun1",
+    "english": "Character in 追凶神探, 古梦醒[Gu3 Meng4 Xing3]'s boyfriend"
+  },
+  {
+    "traditional": "楓之林",
+    "simplified": "枫之林",
+    "pinyin": "Feng1 Zhi1 Lin2",
+    "english": "Name of a Hotel in 追凶神探"
+  },
+  {
+    "traditional": "大橋",
+    "simplified": "大桥",
+    "pinyin": "da4 qiao2",
+    "english": "Big bridge",
+    "note": "To differentiate 大桥[Da4 Qiao2], from 三国演义[San1 guo2 Yan3 yi4]"
+  },
+  {
+    "traditional": "應道",
+    "simplified": "应道",
+    "pinyin": "ying4",
+    "english": "to answer/to respond"
+  },
+  {
+    "traditional": "长不大",
+    "simplified": "长不大",
+    "pinyin": "zhang3 bu4 da4",
+    "english": "can't grow old"
+  },
+  {
+    "traditional": "不服從",
+    "simplified": "不服从",
+    "pinyin": "fu2 cong2",
+    "english": "to not obey (an order)/to comply/to defer"
+  },
+  {
+    "traditional": "警用",
+    "simplified": "警用",
+    "pinyin": "jing3 yong4",
+    "english": "item for use by police"
+  },
+  {
+    "traditional": "大隊長",
+    "simplified": "大队长",
+    "pinyin": "da4 dui4 zhang3",
+    "english": "head of the captains/captain's captain"
+  },
+  {
+    "traditional": "長安",
+    "simplified": "长安",
+    "pinyin": "Chang2 An1",
+    "english": "Changan, a Chinese Auto manufacturer"
+  },
+  {
+    "traditional": "長安",
+    "simplified": "逸动",
+    "pinyin": "Yi4 Dong4",
+    "english": "Eado, a compact car produced my 长安[Chang2 An1], Chinese Auto manufacturer (Changan)"
+  },
+  {
+    "traditional": "一长段",
+    "simplified": "一长段",
+    "pinyin": "yi1 chang2 duan4",
+    "english": "a long paragraph/a long section/a long segment/a long stage (of a process)/classifier for long stories, long periods of time, long lengths of thread etc",
+    "note": "to help differntiate chang2 and zhang3"
+  },
+  {
+    "traditional": "從犯罪嫌疑人",
+    "simplified": "从犯罪嫌疑人",
+    "pinyin": "cong2 fan4 zui4 xian2 yi2 ren2",
+    "english": "from a criminal suspect",
+    "note": "to help separate 从犯[cong2 fan4]"
+  },
+  {
+    "traditional": "犯罪嫌疑人",
+    "simplified": "犯罪嫌疑人",
+    "pinyin": "fan4 zui4 xian2 yi2 ren2",
+    "english": "criminal suspect",
+    "note": "It appears often enough."
+  },
+  {
+    "traditional": "长什麼樣",
+    "simplified": "长什么样",
+    "pinyin": "zhang3 shen2 me5 yang4",
+    "english": "what did they look like?",
+    "note": "to help differntiate chang2 and zhang3"
+  },
+  {
+    "traditional": "中點頭",
+    "simplified": "中点头",
+    "pinyin": "zhong4 dian3 tou2",
+    "english": "to nod vigorously",
+    "note": "to help differntiate zhong2 and zhong4"
+  },
+  {
+    "traditional": "雷鋒精神",
+    "simplified": "雷锋精神",
+    "pinyin": "Lei2 Feng1 jing1 shen2",
+    "english": "The spirit of Lei Feng, the spirit of selfless dedication to the struggle for communism, the spirit of selfless dedication to being loyal to the party and the people, sacrificing oneself for the public",
+    "note": "seems like it deserves it's own phrase. consider submiting to cedict."
+  },
+  {
+    "traditional": "吳彥祖",
+    "simplified": "吴彦祖",
+    "pinyin": "Wu2 Yan4 Zu3",
+    "english": "Danial Wu, an American-born and raised Hong Kong actor, director, producer and race car driver."
+  },
+  {
+    "traditional": "是真是假",
+    "simplified": "是真是假",
+    "pinyin": "shi5 zhen1 shi5 jia3",
+    "english": "could be real, could be fake, it's a 50-50/trying to determine if it's real or fake",
+    "note": "to differentiate 真是. if this doesn't work out, could add 是真 and 是假 separately."
+  },
+  {
+    "traditional": "左",
+    "simplified": "左",
+    "pinyin": "zuo3",
+    "english": "left/the Left (politics)/east/unorthodox/queer/wrong/differing/opposite/variant of 佐[zuo3]",
+    "notes": "if this keeps happening, maybe consider changing variant to only be start of? or check number of 'fields' to be one."
+  },
+  {
+    "traditional": "一個",
+    "simplified": "一个",
+    "pinyin": "yi1 ge4",
+    "english": "one of",
+    "notes": "to separate from 一（个头）等功 to （一个）（头等）功"
+  },
+  {
+    "traditional": "大概率",
+    "simplified": "大概率",
+    "pinyin": "da4 gai4 lu:4",
+    "english": "high chance"
+  },
+  {
+    "traditional": "告訴你",
+    "simplified": "告诉你",
+    "pinyin": "gao4 su5 ni3",
+    "english": "to tell you; to inform you; to let you know"
+  },
+  {
+    "traditional": "合作章成",
+    "simplified": "合作章成",
+    "pinyin": "he2 zuo4 zhang1 cheng2",
+    "english": "cooperative agreement"
+  },
+  {
+    "traditional": "為這事兒",
+    "simplified": "为这事儿",
+    "pinyin": "wei4 zhe2 shi4 r5",
+    "english": "for this issue",
+    "notes": "for differentiating wei4 and wei2"
+  },
+  {
+    "traditional": "發文件",
+    "simplified": "发文件",
+    "pinyin": "fa1 wen2 jian4",
+    "english": "to issue or send a document or file"
   }
 ]

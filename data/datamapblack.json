@@ -134,5 +134,53 @@
       "reason": "两人居然 is possible, so... separate would be better. Human habitat is also a bit weird.",
       "priority": 200
     }
+  ],
+  "black::无任": [
+    {
+      "traditional": "無任",
+      "simplified": "无任",
+      "pinyin": "wu2 ren4",
+      "english": "extremely (pleased, grateful etc)",
+      "reason": "却无任何 is more likely. Never heard of this one, so separate it is.",
+      "priority": 200
+    }
+  ],
+  "black::爱问": [
+    {
+      "traditional": "愛問",
+      "simplified": "爱问",
+      "pinyin": "Ai4 wen4",
+      "english": "iAsk.com, the search engine of Sina 新浪",
+      "reason": "don't know this website...",
+      "priority": 200
+    }
+  ],
+  "black::在行": [
+    {
+      "traditional": "在行",
+      "simplified": "在行",
+      "pinyin": "zai4 hang2",
+      "english": "to be adept at sth/to be an expert in a trade or profession",
+      "reason": "it's a valid phrase... but we want it separate most likely... 在行驶[zai4 xing2 shi3] or 在行走[zai4 xing2 zou3]",
+      "priority": 200
+    }
+  ],
+  "black::满城": [
+    {
+      "traditional": "滿城",
+      "simplified": "满城",
+      "pinyin": "Man3 cheng2",
+      "english": "Mancheng county in Baoding 保定[Bao3 ding4], Hebei",
+      "priority": 200
+    }
+  ],
+  "black::不和": [
+    {
+      "traditional": "不和",
+      "simplified": "不和",
+      "pinyin": "bu4 he2",
+      "english": "not to get along well/to be on bad terms/to be at odds/discord",
+      "priority": 200
+    }
   ]
 }
