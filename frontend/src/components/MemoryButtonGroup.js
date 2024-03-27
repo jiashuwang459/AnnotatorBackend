@@ -61,7 +61,7 @@ const UpdatingTooltip = React.forwardRef(
 const MemoryButtonGroup = () => {
   const [memoryCode, setMemoryCode] = useState(0);
   const [fetchCode, setFetchCode] = useState(0);
-  const [savingInProgress, setSavingInProgress] = useState(false);
+  const [savingInProgress, setSavingInProgress] = useState(false); //TODO: put this into the context eventually.
   const [showLoadPopup, setShowLoadPopup] = useState(false);
 
   const dispatch = useMemoryDispatch();

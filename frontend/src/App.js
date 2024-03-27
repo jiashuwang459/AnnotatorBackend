@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Annotator from "./components/Annotator";
 import DictionaryPage from "./components/DictionaryPage";
+import EditEntryPage from "./components/EditEntryPage";
 
 import Stack from "@mui/material/Stack";
 import Item from "@mui/material/ListItem";
@@ -39,7 +40,14 @@ const App = () => {
               <Item sx={{ width: "100%", textAlign: "center" }}>
                 <Link to="/dictionary" style={{ width: "100%" }}>
                   <Button variant="contained" sx={{ width: "100%" }}>
-                    Go to Dictionary
+                    Go to Dictionary Page
+                  </Button>
+                </Link>
+              </Item>
+              <Item sx={{ width: "100%", textAlign: "center" }}>
+                <Link to="/editEntry" style={{ width: "100%" }}>
+                  <Button variant="contained" sx={{ width: "100%" }}>
+                    Go to Edit Entry Page
                   </Button>
                 </Link>
               </Item>
@@ -47,6 +55,8 @@ const App = () => {
           </Route>
           <Route exact path="/annotator" component={Annotator}></Route>
           <Route exact path="/dictionary" component={DictionaryPage}></Route>
+          <Route exact path="/editEntry" component={EditEntryPage}></Route>
+          
         </Switch>
       </Router>
     </ThemeProvider>

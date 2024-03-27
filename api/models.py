@@ -2,6 +2,7 @@ import json
 # from typing_extensions import Required
 from django.db import models
 import string
+from django.utils.translation import gettext_lazy
 
 # Create your models here.
 
@@ -20,6 +21,25 @@ class Entry(models.Model):
     updatedAt = models.DateTimeField(auto_now=True)
     priority = models.IntegerField(default=999)
 
+class EditEntry(models.Model):
+    class EditEntryType(models.TextChoices):
+        CUSTOM = 'custom', gettext_lazy('Custom')
+        PRIORITY = 'priority', gettext_lazy('Priority')
+        BLACKLIST = 'blacklist', gettext_lazy('Blacklist')
+        OTHER = 'other', gettext_lazy('Other')
+
+    type = models.CharField(max_length=10, null=False, choices=EditEntryType.choices)
+    owner = models.CharField(max_length=50, default="")
+    traditional = models.CharField(max_length=20, default="")
+    simplified = models.CharField(max_length=20, null=False)
+    pinyin = models.CharField(max_length=100, null=False)
+    english = models.CharField(max_length=200, null=False)
+    reason = models.CharField(max_length=1000, default="")
+    notes = models.CharField(max_length=1000, default="")
+    
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
+    priority = models.IntegerField(default=1111)
 
 class BlacklistEntry(models.Model):
     owner = models.CharField(max_length=50)

@@ -285,7 +285,7 @@ const HelperCard = (props) => {
           position="static"
           activeStep={activeStep}
           sx={{
-            maxWidth: 345,
+            maxWidth: 365,
             flexGrow: 1,
             backgroundColor: "inherit",
             marginRight: "8px",

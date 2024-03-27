@@ -2,7 +2,7 @@ from django.db.models.fields import CharField, IntegerField
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import JSONField
-from .models import BlacklistEntry, ChineseEntry, Entry, Memory, Fragment
+from .models import BlacklistEntry, ChineseEntry, EditEntry, Entry, Memory, Fragment
 from .utils import isChinese, parsePinyin
 
 
@@ -12,6 +12,11 @@ class EntrySerializer(serializers.ModelSerializer):
         fields = ('id', 'owner', 'traditional',
                   'simplified', 'pinyin', 'english', 'priority')
 
+class EditEntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EditEntry
+        fields = ('id', 'owner', 'traditional',
+                  'simplified', 'pinyin', 'english', 'priority', 'reason', 'notes', 'type')
 
 class CreateEntrySerializer(serializers.ModelSerializer):
     class Meta:

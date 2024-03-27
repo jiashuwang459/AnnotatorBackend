@@ -117,274 +117,274 @@ const IndividualCharView = styled.div`
 
 const NBSP = "\u00a0";
 
-class X extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { cchars: "", definitions: [], individual: [] };
+// class X extends Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = { cchars: "", definitions: [], individual: [] };
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+//     this.handleChange = this.handleChange.bind(this);
+//     this.handleSubmit = this.handleSubmit.bind(this);
 
-    this.vowels = require("../../../data/vowels.json");
-  }
+//     this.vowels = require("../../../data/vowels.json");
+//   }
 
-  handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log("submit button clicked");
-    console.log(this.state.cchars);
-    // alert("You are submitting " + this.state.cchars);
+//   handleSubmit = async (e) => {
+//     e.preventDefault();
+//     console.log("submit button clicked");
+//     console.log(this.state.cchars);
+//     // alert("You are submitting " + this.state.cchars);
 
-    // const requestOptions = {
-    //   method: "GET",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    // };
+//     // const requestOptions = {
+//     //   method: "GET",
+//     //   headers: {
+//     //     "Content-Type": "application/json",
+//     //   },
+//     // };
 
-    var params = new URLSearchParams({
-      phrase: this.state.cchars,
-    });
+//     var params = new URLSearchParams({
+//       phrase: this.state.cchars,
+//     });
 
-    // fetch("/api/entry?" + params.toString(), requestOptions)
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     this.setState(
-    //       {
-    //         definitions: data,
-    //       },
-    //       () => {
-    //         console.log(data);
-    //       }
-    //     );
-    //   });
+//     // fetch("/api/entry?" + params.toString(), requestOptions)
+//     //   .then((response) => response.json())
+//     //   .then((data) => {
+//     //     this.setState(
+//     //       {
+//     //         definitions: data,
+//     //       },
+//     //       () => {
+//     //         console.log(data);
+//     //       }
+//     //     );
+//     //   });
 
-    axios
-      .get("/api/entry?" + params.toString())
-      .then((response) => response.data)
-      .then((data) => {
-        this.setState(
-          {
-            definitions: data,
-          },
-          () => {
-            console.log(data);
-          }
-        );
-      });
+//     axios
+//       .get("/api/entry?" + params.toString())
+//       .then((response) => response.data)
+//       .then((data) => {
+//         this.setState(
+//           {
+//             definitions: data,
+//           },
+//           () => {
+//             console.log(data);
+//           }
+//         );
+//       });
 
-    var manyEntries = [];
-    for (var cchar of this.state.cchars) {
-      console.log("looking at cchar: " + cchar);
-      // const requestOptions = {
-      //   method: "GET",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      // };
+//     var manyEntries = [];
+//     for (var cchar of this.state.cchars) {
+//       console.log("looking at cchar: " + cchar);
+//       // const requestOptions = {
+//       //   method: "GET",
+//       //   headers: {
+//       //     "Content-Type": "application/json",
+//       //   },
+//       // };
 
-      var params = new URLSearchParams({
-        phrase: cchar,
-      });
+//       var params = new URLSearchParams({
+//         phrase: cchar,
+//       });
 
-      // var response = await fetch(
-      //   "/api/entry?" + params.toString(),
-      //   requestOptions
-      // );
-      // const json = await response.json();
+//       // var response = await fetch(
+//       //   "/api/entry?" + params.toString(),
+//       //   requestOptions
+//       // );
+//       // const json = await response.json();
 
-      const response = await axios.get("/api/entry?" + params.toString());
-      const json = response.data;
+//       const response = await axios.get("/api/entry?" + params.toString());
+//       const json = response.data;
 
-      console.log(json);
-      manyEntries.push(json);
-    }
-    console.log(manyEntries);
+//       console.log(json);
+//       manyEntries.push(json);
+//     }
+//     console.log(manyEntries);
 
-    this.setState({ individual: manyEntries }, () => console.log(manyEntries));
-  };
+//     this.setState({ individual: manyEntries }, () => console.log(manyEntries));
+//   };
 
-  handleChange(e) {
-    let name = e.target.name;
-    let val = e.target.value;
+//   handleChange(e) {
+//     let name = e.target.name;
+//     let val = e.target.value;
 
-    this.setState({ [name]: val });
-  }
+//     this.setState({ [name]: val });
+//   }
 
-  /**
-   * Parses pinyin from ascii to utf-8
-   *  i.e. from 'san1' into 'sān'
-   * @param {*} pinyin in ascii, ex. san1
-   * @returns the proper pinyin, ready to display, ex. sān
-   */
-  parsePinyin(pinyin) {
-    if (pinyin == undefined || pinyin == "") {
-      return "";
-    }
+//   /**
+//    * Parses pinyin from ascii to utf-8
+//    *  i.e. from 'san1' into 'sān'
+//    * @param {*} pinyin in ascii, ex. san1
+//    * @returns the proper pinyin, ready to display, ex. sān
+//    */
+//   parsePinyin(pinyin) {
+//     if (pinyin == undefined || pinyin == "") {
+//       return "";
+//     }
 
-    //special case with no vowel
-    if (pinyin == "r5") {
-      return "r";
-    }
+//     //special case with no vowel
+//     if (pinyin == "r5") {
+//       return "r";
+//     }
 
-    let accent = pinyin[pinyin.length - 1];
-    var word = pinyin.substr(0, pinyin.length - 1);
+//     let accent = pinyin[pinyin.length - 1];
+//     var word = pinyin.substr(0, pinyin.length - 1);
 
-    // 5 should be 轻声, so no changes needed
-    if (accent == "5") {
-      return word;
-    }
+//     // 5 should be 轻声, so no changes needed
+//     if (accent == "5") {
+//       return word;
+//     }
 
-    // Note: accent priority should be in the order aoeiuü
-    // Note: in the case of 'iu' or 'ui', accent goes onto the terminal
-    //      Ex. liú or guǐ
-    // source: http://www.ichineselearning.com/learn/pinyin-tones.html
+//     // Note: accent priority should be in the order aoeiuü
+//     // Note: in the case of 'iu' or 'ui', accent goes onto the terminal
+//     //      Ex. liú or guǐ
+//     // source: http://www.ichineselearning.com/learn/pinyin-tones.html
 
-    var char = "";
-    if (word.includes("a")) {
-      char = "a";
-    } else if (word.includes("A")) {
-      char = "A";
-    } else if (word.includes("o")) {
-      char = "o";
-    } else if (word.includes("O")) {
-      char = "O";
-    } else if (word.includes("e")) {
-      char = "e";
-    } else if (word.includes("E")) {
-      char = "E";
-    } else if (word.includes("iu")) {
-      char = "u";
-    } else if (word.includes("Iu")) {
-      char = "u";
-    } else if (word.includes("ui")) {
-      char = "i";
-    } else if (word.includes("Ui")) {
-      char = "i";
-    } else if (word.includes("i")) {
-      char = "i";
-    } else if (word.includes("I")) {
-      char = "I";
-    } else if (word.includes("u:")) {
-      // confirmed by hand that u and u: don't appear in the same word
-      char = "u:";
-    } else if (word.includes("U:")) {
-      // confirmed by hand that u and u: don't appear in the same word
-      char = "U:";
-    } else if (word.includes("u")) {
-      char = "u";
-    } else if (word.includes("U")) {
-      char = "U";
-    } else {
-      console.error("found pinyin with no vowel: " + pinyin);
-    }
+//     var char = "";
+//     if (word.includes("a")) {
+//       char = "a";
+//     } else if (word.includes("A")) {
+//       char = "A";
+//     } else if (word.includes("o")) {
+//       char = "o";
+//     } else if (word.includes("O")) {
+//       char = "O";
+//     } else if (word.includes("e")) {
+//       char = "e";
+//     } else if (word.includes("E")) {
+//       char = "E";
+//     } else if (word.includes("iu")) {
+//       char = "u";
+//     } else if (word.includes("Iu")) {
+//       char = "u";
+//     } else if (word.includes("ui")) {
+//       char = "i";
+//     } else if (word.includes("Ui")) {
+//       char = "i";
+//     } else if (word.includes("i")) {
+//       char = "i";
+//     } else if (word.includes("I")) {
+//       char = "I";
+//     } else if (word.includes("u:")) {
+//       // confirmed by hand that u and u: don't appear in the same word
+//       char = "u:";
+//     } else if (word.includes("U:")) {
+//       // confirmed by hand that u and u: don't appear in the same word
+//       char = "U:";
+//     } else if (word.includes("u")) {
+//       char = "u";
+//     } else if (word.includes("U")) {
+//       char = "U";
+//     } else {
+//       console.error("found pinyin with no vowel: " + pinyin);
+//     }
 
-    if (this.vowels[char]) {
-      return word
-        .replace(char, this.vowels[char][accent], 1)
-        .replace("u:", this.vowels["u:"]["5"], 1)
-        .replace("U:", this.vowels["U:"]["5"], 1);
-    }
+//     if (this.vowels[char]) {
+//       return word
+//         .replace(char, this.vowels[char][accent], 1)
+//         .replace("u:", this.vowels["u:"]["5"], 1)
+//         .replace("U:", this.vowels["U:"]["5"], 1);
+//     }
 
-    return word;
-  }
+//     return word;
+//   }
 
-  createDefinitionView(entry, index) {
-    console.log("Definition view: ");
-    console.log(entry);
-    return (
-      <DefinitionView key={index}>
-        <DefinitionHeader>
-          <CCharView>{entry.simplified}</CCharView>
-          <PinyinView>
-            {entry.pinyin
-              .split(" ")
-              .map((pinyin) => this.parsePinyin(pinyin))
-              .join(" ")}
-          </PinyinView>
-        </DefinitionHeader>
-        <EnglishView>{entry.english}</EnglishView>
-      </DefinitionView>
-    );
-  }
+//   createDefinitionView(entry, index) {
+//     console.log("Definition view: ");
+//     console.log(entry);
+//     return (
+//       <DefinitionView key={index}>
+//         <DefinitionHeader>
+//           <CCharView>{entry.simplified}</CCharView>
+//           <PinyinView>
+//             {entry.pinyin
+//               .split(" ")
+//               .map((pinyin) => this.parsePinyin(pinyin))
+//               .join(" ")}
+//           </PinyinView>
+//         </DefinitionHeader>
+//         <EnglishView>{entry.english}</EnglishView>
+//       </DefinitionView>
+//     );
+//   }
 
-  createIndividualCharView = async () => {
-    if (this.state.cchars.length == 1) {
-      return "";
-    }
+//   createIndividualCharView = async () => {
+//     if (this.state.cchars.length == 1) {
+//       return "";
+//     }
 
-    // var manyEntries = [];
-    // for (var cchar of this.state.cchars) {
+//     // var manyEntries = [];
+//     // for (var cchar of this.state.cchars) {
 
-    //   manyEntries += json;
-    // }
-    return (
-      <IndividualView>
-        {this.state.cchars.map(async (cchar, idx) => {
-          console.log("looking at cchar: " + cchar);
-          // const requestOptions = {
-          //   method: "GET",
-          //   headers: {
-          //     "Content-Type": "application/json",
-          //   },
-          // };
+//     //   manyEntries += json;
+//     // }
+//     return (
+//       <IndividualView>
+//         {this.state.cchars.map(async (cchar, idx) => {
+//           console.log("looking at cchar: " + cchar);
+//           // const requestOptions = {
+//           //   method: "GET",
+//           //   headers: {
+//           //     "Content-Type": "application/json",
+//           //   },
+//           // };
 
-          var params = new URLSearchParams({
-            phrase: cchar,
-          });
+//           var params = new URLSearchParams({
+//             phrase: cchar,
+//           });
 
-          // var response = await fetch(
-          //   "/api/entry?" + params.toString(),
-          //   requestOptions
-          // );
-          const response = await axios.get("/api/entry?" + params.toString());
-          const charEntries = response.data;
-          // const charEntries = await response.json();
-          return (
-            <IndividualCharView key={idx}>
-              {charEntries.map((charEntry, idx2) =>
-                this.createDefinitionView(charEntry, idx2)
-              )}
-            </IndividualCharView>
-          );
-        })}
-      </IndividualView>
-    );
-  };
+//           // var response = await fetch(
+//           //   "/api/entry?" + params.toString(),
+//           //   requestOptions
+//           // );
+//           const response = await axios.get("/api/entry?" + params.toString());
+//           const charEntries = response.data;
+//           // const charEntries = await response.json();
+//           return (
+//             <IndividualCharView key={idx}>
+//               {charEntries.map((charEntry, idx2) =>
+//                 this.createDefinitionView(charEntry, idx2)
+//               )}
+//             </IndividualCharView>
+//           );
+//         })}
+//       </IndividualView>
+//     );
+//   };
 
-  render() {
-    let definitions = this.state.definitions;
-    return (
-      <Container>
-        <Form onSubmit={this.handleSubmit}>
-          <h1>Lookup Chinese in Dictionary</h1>
-          <p>Enter Chinese: </p>
-          <input type="text" name="cchars" onChange={this.handleChange} />
-          <input type="submit" />
-        </Form>
-        <Display>
-          {definitions.map((entry, index) =>
-            this.createDefinitionView(entry, index)
-          )}
+//   render() {
+//     let definitions = this.state.definitions;
+//     return (
+//       <Container>
+//         <Form onSubmit={this.handleSubmit}>
+//           <h1>Lookup Chinese in Dictionary</h1>
+//           <p>Enter Chinese: </p>
+//           <input type="text" name="cchars" onChange={this.handleChange} />
+//           <input type="submit" />
+//         </Form>
+//         <Display>
+//           {definitions.map((entry, index) =>
+//             this.createDefinitionView(entry, index)
+//           )}
 
-          {this.state.individual.length === 0 ? (
-            ""
-          ) : (
-            <Collapsible trigger="Individual Chars" transitionTime={200} open>
-              <IndividualView>
-                {this.state.individual.map((ccharEntries, idx) => (
-                  <IndividualCharView key={idx}>
-                    {ccharEntries.map((charEntry, idx2) =>
-                      this.createDefinitionView(charEntry, idx2)
-                    )}
-                  </IndividualCharView>
-                ))}
-              </IndividualView>
-            </Collapsible>
-          )}
-        </Display>
-      </Container>
-    );
-  }
+//           {this.state.individual.length === 0 ? (
+//             ""
+//           ) : (
+//             <Collapsible trigger="Individual Chars" transitionTime={200} open>
+//               <IndividualView>
+//                 {this.state.individual.map((ccharEntries, idx) => (
+//                   <IndividualCharView key={idx}>
+//                     {ccharEntries.map((charEntry, idx2) =>
+//                       this.createDefinitionView(charEntry, idx2)
+//                     )}
+//                   </IndividualCharView>
+//                 ))}
+//               </IndividualView>
+//             </Collapsible>
+//           )}
+//         </Display>
+//       </Container>
+//     );
+//   }
 
   //   constructor(props) {
   //     super(props);
@@ -549,7 +549,7 @@ class X extends Component {
   //       </Grid>
   //     );
   //   }
-}
+// }
 
 const DictionaryPage = (props) => {
   const [definitions, setDefinitions] = useState([]);
