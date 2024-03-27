@@ -432,17 +432,17 @@
     "english": "Name of a Hotel in 追凶神探"
   },
   {
+    "traditional": "安府大橋",
+    "simplified": "安府大桥",
+    "pinyin": "An1 Fu3 da4 diao2",
+    "english": "Name of a bridge in 追凶神探"
+  },
+  {
     "traditional": "大橋",
     "simplified": "大桥",
     "pinyin": "da4 qiao2",
     "english": "Big bridge",
     "note": "To differentiate 大桥[Da4 Qiao2], from 三国演义[San1 guo2 Yan3 yi4]"
-  },
-  {
-    "traditional": "應道",
-    "simplified": "应道",
-    "pinyin": "ying4",
-    "english": "to answer/to respond"
   },
   {
     "traditional": "长不大",
@@ -453,7 +453,7 @@
   {
     "traditional": "不服從",
     "simplified": "不服从",
-    "pinyin": "fu2 cong2",
+    "pinyin": "bu4 fu2 cong2",
     "english": "to not obey (an order)/to comply/to defer"
   },
   {
@@ -499,6 +499,20 @@
     "simplified": "犯罪嫌疑人",
     "pinyin": "fan4 zui4 xian2 yi2 ren2",
     "english": "criminal suspect",
+    "note": "It appears often enough."
+  },
+  {
+    "traditional": "從犯罪心理学",
+    "simplified": "从犯罪心理学",
+    "pinyin": "cong2 fan4 zui4 xin1 li3 xue2",
+    "english": "from criminal psychology",
+    "note": "to help separate 从犯[cong2 fan4]"
+  },
+  {
+    "traditional": "犯罪心理学",
+    "simplified": "犯罪心理学",
+    "pinyin": "fan4 zui4 xin1 li3 xue2",
+    "english": "criminal psychology",
     "note": "It appears often enough."
   },
   {
@@ -579,5 +593,29 @@
     "simplified": "发文件",
     "pinyin": "fa1 wen2 jian4",
     "english": "to issue or send a document or file"
+  },
+  {
+    "traditional": "这一行",
+    "simplified": "这一行",
+    "pinyin": "zhe4 yi1 hang2",
+    "english": "this row/this line/this commercial firm/this line of business/this profession/this to rank (first, second etc) among one's siblings (by age)/(in data tables) this row/(Tw) column"
+  },
+  {
+    "traditional": "備忘貼",
+    "simplified": "备忘贴",
+    "pinyin": "bei4 wang4 tie1",
+    "english": "sticky note/memo paper"
+  },
+  {
+    "traditional": "備忘貼紙",
+    "simplified": "备忘贴纸",
+    "pinyin": "bei4 wang4 tie1 zhi3",
+    "english": "sticky note/memo paper"
+  },
+  {
+    "traditional": "火包友",
+    "simplified": "火包友",
+    "pinyin": "huo3 pao4 you3",
+    "english": "not just good friends, but REALLY good friends ;)"
   }
 ]

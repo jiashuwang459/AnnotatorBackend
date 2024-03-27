@@ -720,5 +720,45 @@
       "notes": "we aren't that holy.",
       "priority": 300
     }
+  ],
+  "priority::约": [
+    {
+      "traditional": "約",
+      "simplified": "约",
+      "pinyin": "yue1",
+      "english": "to make an appointment/to invite/approximately/pact/treaty/to economize/to restrict/to reduce (a fraction)/concise",
+      "notes": "mhmm.",
+      "priority": 300
+    }
+  ],
+  "priority::淋": [
+    {
+      "traditional": "淋",
+      "simplified": "淋",
+      "pinyin": "lin4",
+      "english": "to filter/to strain/to drain/gonorrhea/(TCM) strangury",
+      "notes": "yup.",
+      "priority": 300
+    }
+  ],
+  "priority::摩挲": [
+    {
+      "traditional": "摩挲",
+      "simplified": "摩挲",
+      "pinyin": "mo2 suo1",
+      "english": "to stroke/to caress",
+      "notes": "ah..",
+      "priority": 300
+    }
+  ],
+  "priority::干": [
+    {
+      "traditional": "幹",
+      "simplified": "干",
+      "pinyin": "gan4",
+      "english": "tree trunk/main part of sth/to manage/to work/to do/capable/cadre/to kill (slang)/to fuck (vulgar)/(coll.) pissed off/annoyed",
+      "notes": "There's just too many... we pray!",
+      "priority": 300
+    }
   ]
 }

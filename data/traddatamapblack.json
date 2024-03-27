@@ -171,6 +171,7 @@
       "simplified": "满城",
       "pinyin": "Man3 cheng2",
       "english": "Mancheng county in Baoding 保定[Bao3 ding4], Hebei",
+      "reason": "We don't care about this place.",
       "priority": 200
     }
   ],
@@ -180,6 +181,27 @@
       "simplified": "不和",
       "pinyin": "bu4 he2",
       "english": "not to get along well/to be on bad terms/to be at odds/discord",
+      "reason": "Don't think this is common",
+      "priority": 200
+    }
+  ],
+  "tradblack::天時": [
+    {
+      "traditional": "天時",
+      "simplified": "天时",
+      "pinyin": "tian1 shi2",
+      "english": "the time/the right time/weather conditions/destiny/course of time/heaven's natural order",
+      "reason": "Don't think this is common",
+      "priority": 200
+    }
+  ],
+  "tradblack::是的": [
+    {
+      "traditional": "是的",
+      "simplified": "是的",
+      "pinyin": "shi4 de5",
+      "english": "yes, that's right/variant of 似的[shi4 de5]",
+      "reason": "是(的哥). but eh.",
       "priority": 200
     }
   ]
