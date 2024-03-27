@@ -5,11 +5,12 @@ from rest_framework.views import APIView
 
 from api.models import (Fragment, Memory)
 from api.serializers import (CleanMemorySerializer,FragmentSerializer,
-                          MemoryCreateSerializer, MemorySerializer)
+                          MemoryCreateSerializer, MemorySerializer, MemoryHistorySerializer)
 
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.response import Response
+from django.db.models import Count
 
 class FragmentView(generics.ListCreateAPIView):
     queryset = Fragment.objects.all()
@@ -63,7 +64,7 @@ class CreateMemoryView(APIView):
             fragments = serializer.data.get('fragments')
             if 'code' in request.data.keys():
                 code = request.data['code']
-                # This is for updating the Memories. it shouldn't be used by the frontend.
+                # This is for updating the Memories. it shouldn't be used by the frontend... at the moment.
                 memory = Memory.objects.get(code=code)
                 memory.fragments.clear()
                 for frag in fragments:
@@ -71,7 +72,7 @@ class CreateMemoryView(APIView):
                     fragment, created = Fragment.objects.get_or_create(
                         pinyin=frag['pinyin'],
                         cchar=frag['cchar'])
-                    memory.f.add(fragment)
+                    memory.fragments.add(fragment)
                 memory.save()
                 return Response(MemorySerializer(memory).data, status=status.HTTP_200_OK)
             else:
@@ -88,10 +89,9 @@ class CreateMemoryView(APIView):
                         cchar=frag['cchar'])
                     memory.fragments.add(fragment)
                 memory.save()
-
+                return Response(MemorySerializer(memory).data, status=status.HTTP_201_CREATED)
             # memory.fragments.add(*fragments)
 
-            return Response(MemorySerializer(memory).data, status=status.HTTP_201_CREATED)
 
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -167,3 +167,60 @@ class CleanMemoryView(APIView):
     #     memory = Memory.objects.filter(fragments=None).exclude(code=0)
     #     memory.delete()
     #     return Response({"OK": "cleaned up empty memories", "data": MemorySerializer(memory, many=True).data}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def getMemoryHistory(request):
+    if not request.session.exists(request.session.session_key):
+        request.session.create()
+        
+    # phrase = request.query_params.get('phrase')
+    # if phrase is None:
+    #     return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # TODO: DNE check
+    # memory = Memory.objects.get(code=code)
+    # data = {
+    #     "code": code,
+    #     "fragment": FragmentSerializer(Memory.objects.get(code=code).fragments.all(), many=True).data
+    # }
+    # code = self.request.query_params.get('code')
+    # if code is None:
+    #     code = 0
+    print("i don't belong")
+    # TODO: DNE check
+    # memory = Memory.objects.get(code=0)
+    memorys = {}
+    try:
+        memorys = Memory.objects.annotate(frag_count=Count("fragments"))
+        
+        
+        
+    except Memory.DoesNotExist:
+        return Response({'Not Found': f'Memories not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    
+    data = []
+    for memory in memorys:  
+        MemoryHistorySerializer(memory).data
+        data.append(
+            {
+                "code": memory.code,
+                "frag_count": memory.frag_count,
+                "createdAt": memory.createdAt
+            }
+        )
+    return Response(MemoryHistorySerializer(memorys, many=True).data, status=status.HTTP_200_OK)
+    # return Response({"text": data}, status=status.HTTP_200_OK)
+
+    # return Response(MemorySerializer(memory).data, status=status.HTTP_200_OK)
+
+    # entries = EntryManager.get(phrase)
+
+    # if entries is None:
+    #     entries = TradEntryManager.get(phrase)
+    
+    # if entries is None:    
+    #     return Response({'Not Found': f'phrase {phrase} not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    # responseData = [EntrySerializer(entry).data for entry in entries if entry['priority'] < MAX_PRIORITY]
+    # return Response(responseData, status=status.HTTP_200_OK)

@@ -1,6 +1,6 @@
 from django.urls import path, include
 
-from api.views.memoryView import CleanMemoryView, CreateMemoryView, DestroyMemoryView, FetchMemoryView, FragmentView, MemoryView
+from api.views.memoryView import CleanMemoryView, CreateMemoryView, DestroyMemoryView, FetchMemoryView, FragmentView, MemoryView, getMemoryHistory
 from api.views.views import  getEntry, getTradEntry, getNovel, getNovelsAndChapters, EditEntryView, CleanEditEntryView, AnnotationView, BlacklistEntryView, ReloadCEDictView
 
 urlpatterns = [
@@ -8,6 +8,7 @@ urlpatterns = [
     path('tradentry', getTradEntry),
     path('novel', getNovel),
     path('novel/list', getNovelsAndChapters),
+    path('memory/history', getMemoryHistory),
     # path('entry/clear', clearCache),
     # path('reload', ReloadAllView.as_view()),
     # path('entry/create', CreateEntryView.as_view()),

@@ -80,6 +80,10 @@ class MemorySerializer(serializers.ModelSerializer):
         fields = ('code', 'fragments',)
         depth = 2
 
+class MemoryHistorySerializer(serializers.Serializer):
+    code = serializers.IntegerField()
+    frag_count = serializers.IntegerField()
+    createdAt = serializers.DateTimeField()
 
 class CleanMemorySerializer(serializers.Serializer):
     codes = serializers.ListField(

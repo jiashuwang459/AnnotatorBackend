@@ -518,7 +518,6 @@ class TradEntryManagerSingleton(EntryManagerSingleton):
 
 
     def load(self) :
-        print("loaded trad entry manager")
         with open(os.path.join(DATA_DIR, f"{TRAD}datamapA.json")) as f:
             data = json.load(f)
             self.dictA = data
