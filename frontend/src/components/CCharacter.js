@@ -18,7 +18,7 @@ import { useMode } from "./ModeContext";
 // from being added to memory.
 // TODO: might need to cchar length check, to accomodate pharses in the future???
 const emptyFCHAR = (fchar) => {
-  return fchar.pinyin == NBSP || fchar.pinyin == " " || fchar.cchar.length != 1;
+  return fchar.pinyin == NBSP || fchar.pinyin == " " || fchar.pinyin == "" || fchar.cchar.length != 1;
 };
 
 const CCharacter = memo(function CCharacter(props) {

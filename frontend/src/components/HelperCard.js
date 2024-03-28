@@ -154,11 +154,16 @@ const HelperCard = (props) => {
   // TODO march 14, 2024 : pre-parse pinyin into the dictionary itself.
   function parsePinyin(pinyin) {
     if (pinyin == undefined || pinyin == "") {
-      return "";
+      return NBSP;
     }
-    //special case with no vowel
+
+    //special cases with no vowel
     if (pinyin == "r5") {
       return "r";
+    } else if (pinyin == "R5") {
+      return "R";
+    } else if (pinyin == "·") {
+      return "·";
     }
 
     let accent = pinyin[pinyin.length - 1];

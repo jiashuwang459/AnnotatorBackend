@@ -307,8 +307,8 @@ def parsePinyin(pinyin):
     vowels = json.load(f)
     # print(vowels)
 
-    if pinyin is None or pinyin == "":
-        return ""
+    if pinyin is None or pinyin == "" or pinyin == "·":
+        return NBSP
 
     if pinyin == "r5":
         return "r"
