@@ -204,5 +204,63 @@
       "reason": "是(的哥). but eh.",
       "priority": 200
     }
+  ],
+  "black::在前": [
+    {
+      "traditional": "在前",
+      "simplified": "在前",
+      "pinyin": "zai4 qian2",
+      "english": "ahead/formerly/in the past",
+      "reason": "don't think it's used much. 在（前天）is more common, so... separate",
+      "priority": 200
+    }
+  ],
+  "black::的话": [
+    {
+      "traditional": "的話",
+      "simplified": "的话",
+      "pinyin": "de5 hua4",
+      "english": "if (coming after a conditional clause)",
+      "reason": "don't think we need this. or add 的话语",
+      "priority": 200
+    }
+  ],
+  "black::一打": [
+    {
+      "traditional": "一打",
+      "simplified": "一打",
+      "pinyin": "yi1 da2",
+      "english": "dozen",
+      "reason": "don't think we care too much about this. seaparate for now. otherwise 一打听",
+      "priority": 200
+    }
+  ],
+  "black::在华": [
+    {
+      "traditional": "在華",
+      "simplified": "在华",
+      "pinyin": "zai4 Hua2",
+      "english": "within China/during one's visit to China",
+      "reason": "nope.",
+      "priority": 200
+    }
+  ],
+  "black::得了": [
+    {
+      "traditional": "得了",
+      "simplified": "得了",
+      "pinyin": "de2 le5",
+      "english": "all right!/that's enough!",
+      "reason": "let's try keeping it separate for now.",
+      "priority": 200
+    },
+    {
+      "traditional": "得了",
+      "simplified": "得了",
+      "pinyin": "de2 liao3",
+      "english": "(emphatically, in rhetorical questions) possible",
+      "reason": "it might be okay for now? Otherwise, add 得了解",
+      "priority": 200
+    }
   ]
 }

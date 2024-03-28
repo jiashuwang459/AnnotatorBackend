@@ -487,7 +487,7 @@
     "simplified": "左",
     "pinyin": "zuo3",
     "english": "left/the Left (politics)/east/unorthodox/queer/wrong/differing/opposite/variant of 佐[zuo3]",
-    "notes": "if this keeps happening, maybe consider changing variant to only be start of? or check number of 'fields' to be one."
+    "notes": "if this keeps happening...(with the 'variant of'), maybe consider changing variant to only be start of? or check number of 'fields' to be one."
   },
   {
     "traditional": "石",
@@ -544,5 +544,75 @@
     "pinyin": "gan4",
     "english": "tree trunk/main part of sth/to manage/to work/to do/capable/cadre/to kill (slang)/to fuck (vulgar)/(coll.) pissed off/annoyed",
     "notes": "There's just too many... we pray!"
+  },
+  {
+    "traditional": "東西",
+    "simplified": "东西",
+    "pinyin": "dong1 xi5",
+    "english": "thing/stuff/person/CL:個|个[ge4],件[jian4]",
+    "notes": "well. shrugs"
+  },
+  {
+    "traditional": "待",
+    "simplified": "待",
+    "pinyin": "dai4",
+    "english": "to wait/to treat/to deal with/to need/going to (do sth)/about to/intending to",
+    "notes": "we don't want to wait."
+  },
+  {
+    "traditional": "趟",
+    "simplified": "趟",
+    "pinyin": "tang4",
+    "english": "classifier for times, round trips or rows/a time/a trip",
+    "notes": "we want repeatability!"
+  },
+  {
+    "traditional": "哩",
+    "simplified": "哩",
+    "pinyin": "li5",
+    "english": "(modal final particle similar to 呢[ne5] or 啦[la5])",
+    "notes": "we aren't running around here :p"
+  },
+  {
+    "traditional": "追",
+    "simplified": "追",
+    "pinyin": "zhui1",
+    "english": "to chase/to pursue/to look into/to investigate/to reminisce/to recall/to court (one's beloved)/to binge-watch (a TV drama)/retroactively/posthumously",
+    "notes": "gotta run, can't waste time on sculpting"
+  },
+  {
+    "traditional": "適",
+    "simplified": "适",
+    "pinyin": "shi4",
+    "english": "to fit/suitable/proper/just (now)/comfortable/well/to go/to follow or pursue",
+    "notes": "of course."
+  },
+  {
+    "traditional": "湯",
+    "simplified": "汤",
+    "pinyin": "tang1",
+    "english": "soup/hot or boiling water/decoction of medicinal herbs/water in which sth has been boiled",
+    "notes": "who cares about the current."
+  },
+  {
+    "traditional": "哄",
+    "simplified": "哄",
+    "pinyin": "hong3",
+    "english": "to deceive/to coax/to amuse (a child)",
+    "notes": "haha!"
+  },
+  {
+    "traditional": "忒",
+    "simplified": "忒",
+    "pinyin": "tei1",
+    "english": "(dialect) too/very/also pr. [tui1]",
+    "notes": "change is bad."
+  },
+  {
+    "traditional": "胖",
+    "simplified": "胖",
+    "pinyin": "pang4",
+    "english": "fat/plump",
+    "notes": "healthy fat."
   }
 ]

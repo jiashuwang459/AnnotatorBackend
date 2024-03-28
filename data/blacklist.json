@@ -146,6 +146,49 @@
     "simplified": "是的",
     "pinyin": "shi4 de5",
     "english": "yes, that's right/variant of 似的[shi4 de5]",
-    "reason" : "是(的哥). but eh."
+    "reason": "是(的哥). but eh."
+  },
+  {
+    "traditional": "在前",
+    "simplified": "在前",
+    "pinyin": "zai4 qian2",
+    "english": "ahead/formerly/in the past",
+    "reason": "don't think it's used much. 在（前天）is more common, so... separate"
+  },
+
+  {
+    "traditional": "的話",
+    "simplified": "的话",
+    "pinyin": "de5 hua4",
+    "english": "if (coming after a conditional clause)",
+    "reason": "don't think we need this. or add 的话语"
+  },
+  {
+    "traditional": "一打",
+    "simplified": "一打",
+    "pinyin": "yi1 da2",
+    "english": "dozen",
+    "reason": "don't think we care too much about this. seaparate for now. otherwise 一打听"
+  },
+  {
+    "traditional": "在華",
+    "simplified": "在华",
+    "pinyin": "zai4 Hua2",
+    "english": "within China/during one's visit to China",
+    "reason": "nope."
+  },
+  {
+    "traditional": "得了",
+    "simplified": "得了",
+    "pinyin": "de2 le5",
+    "english": "all right!/that's enough!",
+    "reason": "let's try keeping it separate for now."
+  },
+  {
+    "traditional": "得了",
+    "simplified": "得了",
+    "pinyin": "de2 liao3",
+    "english": "(emphatically, in rhetorical questions) possible",
+    "reason": "it might be okay for now? Otherwise, add 得了解"
   }
 ]

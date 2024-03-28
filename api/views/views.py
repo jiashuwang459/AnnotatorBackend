@@ -266,7 +266,7 @@ class AnnotationView(APIView):
 
             Trie.loadTrie(owner)
 
-        print(trie)
+        # print(trie)
         
         if not tradTrie.contains('妳'):
             # test = TradEntryManager.get("妳")
@@ -275,7 +275,7 @@ class AnnotationView(APIView):
 
             TradTrie.loadTrie(owner)
 
-        print(tradTrie)
+        # print(tradTrie)
 
         fragments = [text]
         separators = "。：？!,、“”，）（ )(!?:.,\"\'\n"
@@ -334,7 +334,7 @@ class AnnotationView(APIView):
                         # print(trad)
                         # print(phrase)
                         entries = EntryManager.get(phrase, trad=trad)
-                        print(entries)
+                        # print(entries)
                         if(entries):
                             entry = entries[0]
                             # print("entry: '" +  + "'")

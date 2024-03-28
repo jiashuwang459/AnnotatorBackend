@@ -183,11 +183,10 @@ class Trie(object):
 
     @staticmethod
     def getTrie(owner):
-        print(f"trying to get trie for owner:{owner}")
-        print("currentTries:")
-
-        for key in Trie._TrieCache.keys():
-            print(f" {key}")
+        # print(f"trying to get trie for owner:{owner}")
+        # print("currentTries:")
+        # for key in Trie._TrieCache.keys():
+        #     print(f" {key}")
 
         if owner not in Trie._TrieCache:
             return Trie.createTrie(owner,[])
@@ -333,11 +332,10 @@ class TradTrie(Trie):
         
     @staticmethod
     def getTrie(owner):
-        print(f"trying to get trie for owner:{owner}")
-        print("currentTries:")
-
-        for key in TradTrie._TradTrieCache.keys():
-            print(f" {key}")
+        # print(f"trying to get trad trie for owner:{owner}")
+        # print("currentTradTries:")
+        # for key in TradTrie._TradTrieCache.keys():
+        #     print(f" {key}")
 
         if owner not in TradTrie._TradTrieCache:
             return TradTrie.createTrie(owner,[])

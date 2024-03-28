@@ -393,7 +393,7 @@
       "traditional": "史強",
       "simplified": "史强",
       "pinyin": "Shi3 Qiang2",
-      "english": "Police Detective in 三体, nicknamed 大史[Da4 Shi3]",
+      "english": "Character in 三体, Police Detective",
       "priority": 200
     }
   ],
@@ -402,7 +402,7 @@
       "traditional": "大史",
       "simplified": "大史",
       "pinyin": "da4 Shi3",
-      "english": "Nickname of 史强[Shi3 Qiang2], Police Detective in 三体",
+      "english": "Refers to 史强[Shi3 Qiang2], Police Detective in 三体",
       "priority": 200
     }
   ],
@@ -411,7 +411,34 @@
       "traditional": "常偉思",
       "simplified": "常伟思",
       "pinyin": "Chang2 Wei3 Si1",
-      "english": "Major-general of the People's Liberation Army in 三体. 陆军少将.",
+      "english": "Major-general of the People's Liberation Army(陆军少将) in 三体",
+      "priority": 200
+    }
+  ],
+  "custom::常将军": [
+    {
+      "traditional": "常將軍",
+      "simplified": "常将军",
+      "pinyin": "Chang2 jiang1 jun1",
+      "english": "Refers to 常伟思[Chang2 Wei3 Si1], Major-general  in 三体",
+      "priority": 200
+    }
+  ],
+  "custom::杨冬": [
+    {
+      "traditional": "楊冬",
+      "simplified": "杨冬",
+      "pinyin": "Yang2 Dong1",
+      "english": "String theorist and daughter of Ye Wenjie and Yang Weining in 三体. 丁仪[Ding1 Yi1]'s girlfriend",
+      "priority": 200
+    }
+  ],
+  "custom::丁仪": [
+    {
+      "traditional": "丁儀",
+      "simplified": "丁仪",
+      "pinyin": "Ding1 Yi1",
+      "english": "Theoretical physicist, 杨冬[Yang2 Dong1]'s Boyfriend in 三体",
       "priority": 200
     }
   ],
@@ -565,7 +592,7 @@
       "traditional": "林大隊長",
       "simplified": "林大队长",
       "pinyin": "Lin2 da4 dui4 zhang3",
-      "english": "Nickname of 林秋浦[Lin2 Qiu1 Pu3], Head Police Guy in 追凶神探",
+      "english": "Refers to 林秋浦[Lin2 Qiu1 Pu3], Head Police Guy in 追凶神探",
       "priority": 200
     }
   ],
@@ -574,7 +601,7 @@
       "traditional": "林隊",
       "simplified": "林队",
       "pinyin": "Lin2 dui4",
-      "english": "Nickname of 林秋浦[Lin2 Qiu1 Pu3], Head Police Guy in 追凶神探",
+      "english": "Refers to 林秋浦[Lin2 Qiu1 Pu3], Head Police Guy in 追凶神探",
       "priority": 200
     }
   ],
@@ -632,6 +659,60 @@
       "priority": 200
     }
   ],
+  "custom::高晓惠": [
+    {
+      "traditional": "高曉惠",
+      "simplified": "高晓惠",
+      "pinyin": "Gao1 Xiao3 Hui4",
+      "english": "Character in 追凶神探, 古梦醒[Gu3 Meng4 Xing3]'s best friend",
+      "priority": 200
+    }
+  ],
+  "custom::老许": [
+    {
+      "traditional": "老許",
+      "simplified": "老许",
+      "pinyin": "lao3 Xu3",
+      "english": "Refers to someone with the last name 许[Xu3] in 三体",
+      "priority": 200
+    }
+  ],
+  "custom::性孔": [
+    {
+      "traditional": "性孔",
+      "simplified": "性孔",
+      "pinyin": "xing4 Kong3",
+      "english": "someone with the surname 孔[Kong3]/Refers to 孔文德[Kong3 Wen2 De2] in 追凶神探",
+      "priority": 200
+    }
+  ],
+  "custom::孔文德": [
+    {
+      "traditional": "孔文德",
+      "simplified": "孔文德",
+      "pinyin": "Kong3 Wen2 De2",
+      "english": "Character in 追凶神探, a victim?",
+      "priority": 200
+    }
+  ],
+  "custom::性李": [
+    {
+      "traditional": "性李",
+      "simplified": "性李",
+      "pinyin": "xing4 Li3",
+      "english": "someone with the surname 李[Li3]/Refers to 李玉[Li3 Yu4] in 追凶神探",
+      "priority": 200
+    }
+  ],
+  "custom::李玉": [
+    {
+      "traditional": "李玉",
+      "simplified": "李玉",
+      "pinyin": "Li3 Yu4",
+      "english": "Character in 追凶神探, a victim?",
+      "priority": 200
+    }
+  ],
   "custom::枫之林": [
     {
       "traditional": "楓之林",
@@ -647,6 +728,15 @@
       "simplified": "安府大桥",
       "pinyin": "An1 Fu3 da4 diao2",
       "english": "Name of a bridge in 追凶神探",
+      "priority": 200
+    }
+  ],
+  "custom::华韵": [
+    {
+      "traditional": "華韻",
+      "simplified": "华韵",
+      "pinyin": "Hua2 Yun4",
+      "english": "Name of a commercial building in 追凶神探",
       "priority": 200
     }
   ],
@@ -803,6 +893,15 @@
       "priority": 200
     }
   ],
+  "custom::阿汤哥": [
+    {
+      "traditional": "阿湯哥",
+      "simplified": "阿汤哥",
+      "pinyin": "Ā Tāng Gē",
+      "english": "Tom Cruise, yup.",
+      "priority": 200
+    }
+  ],
   "custom::是真是假": [
     {
       "traditional": "是真是假",
@@ -810,16 +909,6 @@
       "pinyin": "shi5 zhen1 shi5 jia3",
       "english": "could be real, could be fake, it's a 50-50/trying to determine if it's real or fake",
       "note": "to differentiate 真是. if this doesn't work out, could add 是真 and 是假 separately.",
-      "priority": 200
-    }
-  ],
-  "custom::左": [
-    {
-      "traditional": "左",
-      "simplified": "左",
-      "pinyin": "zuo3",
-      "english": "left/the Left (politics)/east/unorthodox/queer/wrong/differing/opposite/variant of 佐[zuo3]",
-      "notes": "if this keeps happening, maybe consider changing variant to only be start of? or check number of 'fields' to be one.",
       "priority": 200
     }
   ],
@@ -888,6 +977,15 @@
       "priority": 200
     }
   ],
+  "custom::一行": [
+    {
+      "traditional": "一行",
+      "simplified": "一行",
+      "pinyin": "yi1 hang2",
+      "english": "a row/a line/a commercial firm/a line of business/a profession/(in data tables) a row/(Tw) column",
+      "priority": 200
+    }
+  ],
   "custom::备忘贴": [
     {
       "traditional": "備忘貼",
@@ -912,6 +1010,97 @@
       "simplified": "火包友",
       "pinyin": "huo3 pao4 you3",
       "english": "not just good friends, but REALLY good friends ;)",
+      "priority": 200
+    }
+  ],
+  "custom::女大当婚": [
+    {
+      "traditional": "女大當婚",
+      "simplified": "女大当婚",
+      "pinyin": "nu:3 da4 dang1 hun1",
+      "english": "when a girl grows up, they must get married. Play on words from the male version 男大当婚",
+      "priority": 200
+    }
+  ],
+  "custom::男大当婚": [
+    {
+      "traditional": "男大當婚",
+      "simplified": "男大当婚",
+      "pinyin": "nan2 da4 dang1 hun1",
+      "english": "when a guy grows up, they must get married",
+      "priority": 200
+    }
+  ],
+  "custom::不同意": [
+    {
+      "traditional": "不同意",
+      "simplified": "不同意",
+      "pinyin": "bu4 tong2 yi4",
+      "english": "to disagree/to not consent/to disapprove",
+      "priority": 200
+    }
+  ],
+  "custom::商厦": [
+    {
+      "traditional": "商廈",
+      "simplified": "商厦",
+      "pinyin": "shang1 sha4",
+      "english": "commercial building",
+      "priority": 200
+    }
+  ],
+  "custom::左看右看": [
+    {
+      "traditional": "左看右看",
+      "simplified": "左看右看",
+      "pinyin": "zuo3 kan2 you2 kan2",
+      "english": "looking around/shifty or timid/looking forward and backward/",
+      "priority": 200
+    }
+  ],
+  "custom::一阵阵": [
+    {
+      "traditional": "一陣陣",
+      "simplified": "一阵阵",
+      "pinyin": "yi1 zhen4 zhen4",
+      "english": "many continous bursts in waves",
+      "priority": 200
+    }
+  ],
+  "custom::光纤": [
+    {
+      "traditional": "光纖",
+      "simplified": "光纤",
+      "pinyin": "guang1 xian1",
+      "english": "sunlight or sunrays",
+      "notes": "adding on to original definition.",
+      "priority": 200
+    }
+  ],
+  "custom::很强": [
+    {
+      "traditional": "很強",
+      "simplified": "很强",
+      "pinyin": "hen3 qiang2",
+      "english": "very strong/very powerful/very vigorous/very violent",
+      "priority": 200
+    }
+  ],
+  "custom::靠背": [
+    {
+      "traditional": "靠背",
+      "simplified": "靠背",
+      "pinyin": "kao4 bei4",
+      "english": "backrest/back of a seat, Ex. chair or sofa/support in the sense of having backup",
+      "priority": 200
+    }
+  ],
+  "custom::次卧": [
+    {
+      "traditional": "次卧",
+      "simplified": "次卧",
+      "pinyin": "ci4 wo4",
+      "english": "secondary bedroom",
       "priority": 200
     }
   ]

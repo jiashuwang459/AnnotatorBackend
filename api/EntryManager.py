@@ -385,14 +385,13 @@ class EntryManagerSingleton(object):
         
         # start_time = timeit.default_timer()
         # print(f"looking for {phrase}")
-        print("get")
-        print(f"phrase: {phrase}, trad: {trad}")
+        # print(f"phrase: {phrase}, trad: {trad}")
         if trad:
             if phrase in self.tradToSimpMap:
                 # TODO: for now, we just take first one in list.
                 phrase = self.tradToSimpMap[phrase][0]
-                print("phrase changed")
-        print(f"phrase: {phrase}")
+        #         print("phrase changed")
+        # print(f"phrase: {phrase}")
         
         dictEntries = self.getDictEntries(phrase)
         customEntries = self.getCustomEntries(phrase)
@@ -470,6 +469,9 @@ class EntryManagerSingleton(object):
         if not entries:
             if not trad:
                 return self.get(phrase, trad=True)
+            else:
+                return None
+
 
         entries.sort(key=lambda x: x['priority'])
         entries = [entry for entry in entries if entry['priority'] != INVALID_PRIORITY]
