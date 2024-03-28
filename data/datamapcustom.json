@@ -173,7 +173,7 @@
   ],
   "custom::过长": [
     {
-      "traditional": "過长",
+      "traditional": "過長",
       "simplified": "过长",
       "pinyin": "guo4 chang2",
       "english": "too long",
@@ -662,7 +662,7 @@
   ],
   "custom::长不大": [
     {
-      "traditional": "长不大",
+      "traditional": "長不大",
       "simplified": "长不大",
       "pinyin": "zhang3 bu4 da4",
       "english": "can't grow old",
@@ -707,16 +707,16 @@
   ],
   "custom::逸动": [
     {
-      "traditional": "長安",
+      "traditional": "逸動",
       "simplified": "逸动",
       "pinyin": "Yi4 Dong4",
-      "english": "Eado, a compact car produced my 长安[Chang2 An1], Chinese Auto manufacturer (Changan)",
+      "english": "Eado, a compact car produced by 长安[Chang2 An1], Chinese Auto manufacturer (Changan)",
       "priority": 200
     }
   ],
   "custom::一长段": [
     {
-      "traditional": "一长段",
+      "traditional": "一長段",
       "simplified": "一长段",
       "pinyin": "yi1 chang2 duan4",
       "english": "a long paragraph/a long section/a long segment/a long stage (of a process)/classifier for long stories, long periods of time, long lengths of thread etc",
@@ -766,7 +766,7 @@
   ],
   "custom::长什么样": [
     {
-      "traditional": "长什麼樣",
+      "traditional": "長什麼樣",
       "simplified": "长什么样",
       "pinyin": "zhang3 shen2 me5 yang4",
       "english": "what did they look like?",

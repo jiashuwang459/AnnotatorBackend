@@ -385,12 +385,14 @@ def reloadCEDict():
     # hashmap = {}
     halfmapA = {}
     halfmapB = {}
-    tradhalfmapA = {}
-    tradhalfmapB = {}
+    # tradhalfmapA = {}
+    # tradhalfmapB = {}
     keylistA = set()
     keylistB = set()
-    tradkeylistA = set()
-    tradkeylistB = set()
+    # tradkeylist = set()
+    # tradkeylistB = set()
+    tradToSimpMap = {}
+    
     cnt = 0
     with open(os.path.join(DATA_DIR, 'cedict_ts.u8')) as f:
         text = f.read()
@@ -445,7 +447,7 @@ def reloadCEDict():
                 'priority': priority
             }
             key = cacheKey(DICT, simplified)
-            tradkey = cacheKey(TRADDICT, traditional)
+            # tradkey = cacheKey(TRADDICT, traditional)
             # if key in hashmap:
             #     try:
             #         hashmap[key].append(entry)
@@ -470,20 +472,14 @@ def reloadCEDict():
                     keylistB.add(simplified)
                     halfmapB[key] = [entry]
             
-            if tradkey in tradhalfmapA:
-                tradhalfmapA[tradkey].append(entry)
-                tradhalfmapA[tradkey].sort(key=lambda x: x['priority'])
-            elif tradkey in tradhalfmapB:
-                tradhalfmapB[tradkey].append(entry)
-                tradhalfmapB[tradkey].sort(key=lambda x: x['priority'])
+            if traditional in tradToSimpMap:
+                if(traditional != simplified):
+                    if(simplified not in tradToSimpMap[traditional]):
+                        tradToSimpMap[traditional].append(simplified)
             else:
-                # Normally, we would simply do dict.keys(), but here, 'key' isn't the actual key we want
-                if cnt < 60000:
-                    tradkeylistA.add(traditional)
-                    tradhalfmapA[tradkey] = [entry]
-                else:
-                    tradkeylistB.add(traditional)
-                    tradhalfmapB[tradkey] = [entry]
+                if(traditional != simplified):
+                    tradToSimpMap[traditional] = [simplified]
+                
             cnt += 1
                 
 
@@ -493,8 +489,8 @@ def reloadCEDict():
     print('Done!Done!')
     writeDataToFile(list(keylistA), "keylistA.json")
     writeDataToFile(list(keylistB), "keylistB.json")
-    writeDataToFile(list(tradkeylistA), f"{TRAD}keylistA.json")
-    writeDataToFile(list(tradkeylistB), f"{TRAD}keylistB.json")
+    # writeDataToFile(list(tradkeylistA), f"{TRAD}keylistA.json")
+    # writeDataToFile(list(tradkeylistB), f"{TRAD}keylistB.json")
     print('Done!Done!Done!')
     
 
@@ -508,25 +504,65 @@ def reloadCEDict():
     
     writeDataToFile(halfmapA, "datamapA.json")
     writeDataToFile(halfmapB, "datamapB.json")
-    writeDataToFile(tradhalfmapA, f"{TRAD}datamapA.json")
-    writeDataToFile(tradhalfmapB, f"{TRAD}datamapB.json")
+    # writeDataToFile(tradhalfmapA, f"{TRAD}datamapA.json")
+    # writeDataToFile(tradhalfmapB, f"{TRAD}datamapB.json")
     
     print('Done!Done!Done!Done!')
-    setupCustomEntries()
-    setupBlacklistEntries()
+    customTradToSimpMap = setupCustomEntries()
+    blacklistTradToSimpMap = setupBlacklistEntries()
     setupPriorityEntries()
     print('Done!Done!Done!Done!Done!')
     
-    return len(halfmapA), len(halfmapB)
+    
+    for traditional, simplifiedList in customTradToSimpMap.items():
+        # print(traditional)
+        # print(simplifiedList)
+        if traditional in tradToSimpMap:
+            # print("inside")
+            for simplified in simplifiedList:
+                # print(f"simplified: {simplified}")
+                if(traditional != simplified):
+                    if(simplified not in tradToSimpMap[traditional]):
+                        tradToSimpMap[traditional].append(simplified)
+        else:
+            tradToSimpMap[traditional] = simplifiedList
+            
+    
+    for traditional, simplifiedList in blacklistTradToSimpMap.items():
+        if traditional in tradToSimpMap:
+            for simplified in simplifiedList:
+                if(simplified in tradToSimpMap[traditional]):
+                    tradToSimpMap[traditional].remove(simplified)
+                    if tradToSimpMap[traditional] == []:
+                        tradToSimpMap.pop(traditional)
+                else:
+                    #error
+                    pass
+        else:
+            #error
+            pass
+    
+    
+    
+    # We're gonna filter through the tradToSimpMap. If there's only 1 simplified mapping and that mapping is the same as the traditional character, we remove.
+    # If there's more, we will prioritize the one that's different from the simplified character, since if it was the same, it shouldn't go through the traditional flow at all.
+    
+    
+    writeDataToFile(tradToSimpMap, f"tradToSimpMap.json")
+    writeDataToFile(list(tradToSimpMap.keys()), f"{TRAD}keylist.json")
+    print('Done!Done!Done!Done!Done!Done!')
+    
+    return len(halfmapA), len(halfmapB), len(tradToSimpMap)
     # remove entries for surnames from the data (optional):
 
 def setupCustomEntries():
     # f = open('./data/data.json', 'r')
     
     keys = set()
-    tradkeys = set()
+    # tradkeys = set()
     hashmap = {}
-    tradhashmap = {}
+    # tradhashmap = {}
+    tradToSimpMap = {}
     with open(os.path.join(DATA_DIR, 'custom.json')) as f:
         data = json.load(f)
         # print(data)
@@ -537,7 +573,7 @@ def setupCustomEntries():
             traditional = entry['traditional']
             
             key = cacheKey(CUSTOM, simplified)
-            tradkey = cacheKey(TRADCUSTOM, traditional)
+            # tradkey = cacheKey(TRADCUSTOM, traditional)
             
             if key in hashmap:
                 hashmap[key].append(entry)
@@ -546,28 +582,31 @@ def setupCustomEntries():
                 keys.add(simplified)
                 hashmap[key] = [entry]
             
-            if tradkey in tradhashmap:
-                tradhashmap[tradkey].append(entry)
-                tradhashmap[tradkey].sort(key=lambda x: x['priority'])
+            if traditional in tradToSimpMap:
+                if(traditional != simplified):
+                    if(simplified not in tradToSimpMap[traditional]):
+                        tradToSimpMap[traditional].append(simplified)
             else:
-                tradkeys.add(traditional)
-                tradhashmap[tradkey] = [entry]
+                if(traditional != simplified):
+                    tradToSimpMap[traditional] = [simplified]
                 
     print('Done!')
     writeDataToFile(list(keys), f"keylist{CUSTOM}.json")
-    writeDataToFile(list(tradkeys), f"{TRAD}keylist{CUSTOM}.json")
+    # writeDataToFile(list(tradkeys), f"{TRAD}keylist{CUSTOM}.json")
     print('Done!Done!')
     writeDataToFile(hashmap, f"datamap{CUSTOM}.json")
-    writeDataToFile(tradhashmap, f"{TRAD}datamap{CUSTOM}.json")
+    # writeDataToFile(tradhashmap, f"{TRAD}datamap{CUSTOM}.json")
     print('Done!Done!Done!')
+    return tradToSimpMap
 
 def setupBlacklistEntries():
     # f = open('./data/data.json', 'r')
     
     keys = set()
-    tradkeys = set()
+    # tradkeys = set()
     hashmap = {}
-    tradhashmap = {}
+    # tradhashmap = {}
+    tradToSimpMap = {}
     with open(os.path.join(DATA_DIR, 'blacklist.json')) as f:
         data = json.load(f)
         # print(data)
@@ -578,7 +617,7 @@ def setupBlacklistEntries():
             traditional = entry['traditional']
             
             key = cacheKey(BLACKLIST, simplified)
-            tradkey = cacheKey(TRADBLACKLIST, traditional)
+            # tradkey = cacheKey(TRADBLACKLIST, traditional)
             
             if key in hashmap:
                 hashmap[key].append(entry)
@@ -587,28 +626,30 @@ def setupBlacklistEntries():
                 keys.add(simplified)
                 hashmap[key] = [entry]
             
-            if tradkey in tradhashmap:
-                tradhashmap[tradkey].append(entry)
-                tradhashmap[tradkey].sort(key=lambda x: x['priority'])
+            if traditional in tradToSimpMap:
+                if(simplified not in tradToSimpMap[traditional]):
+                    tradToSimpMap[traditional].append(simplified)
             else:
-                tradkeys.add(traditional)
-                tradhashmap[tradkey] = [entry]
+                tradToSimpMap[traditional] = [simplified]
                 
     print('Done!')
     writeDataToFile(list(keys), f"keylist{BLACKLIST}.json")
-    writeDataToFile(list(tradkeys), f"{TRAD}keylist{BLACKLIST}.json")
+    # writeDataToFile(list(tradkeys), f"{TRAD}keylist{BLACKLIST}.json")
     print('Done!Done!')
     writeDataToFile(hashmap, f"datamap{BLACKLIST}.json")
-    writeDataToFile(tradhashmap, f"{TRAD}datamap{BLACKLIST}.json")
+    # writeDataToFile(tradToSimpMap, f"{CUSTOM}tradToSimpMap.json")
+    # writeDataToFile(tradhashmap, f"{TRAD}datamap{BLACKLIST}.json")
     print('Done!Done!Done!')
+    
+    return tradToSimpMap
 
 def setupPriorityEntries():
     # f = open('./data/data.json', 'r')
     
     keys = set()
-    tradkeys = set()
+    # tradkeys = set()
     hashmap = {}
-    tradhashmap = {}
+    # tradhashmap = {}
     with open(os.path.join(DATA_DIR, 'priority.json')) as f:
         data = json.load(f)
         # print(data)
@@ -628,19 +669,19 @@ def setupPriorityEntries():
                 keys.add(simplified)
                 hashmap[key] = [entry]
             
-            if tradkey in tradhashmap:
-                tradhashmap[tradkey].append(entry)
-                tradhashmap[tradkey].sort(key=lambda x: x['priority'])
-            else:
-                tradkeys.add(traditional)
-                tradhashmap[tradkey] = [entry]
+            # if tradkey in tradhashmap:
+            #     tradhashmap[tradkey].append(entry)
+            #     tradhashmap[tradkey].sort(key=lambda x: x['priority'])
+            # else:
+            #     tradkeys.add(traditional)
+            #     tradhashmap[tradkey] = [entry]
                 
     print('Done!')
     writeDataToFile(list(keys), f"keylist{PRIORITY}.json")
-    writeDataToFile(list(tradkeys), f"{TRAD}keylist{PRIORITY}.json")
+    # writeDataToFile(list(tradkeys), f"{TRAD}keylist{PRIORITY}.json")
     print('Done!Done!')
     writeDataToFile(hashmap, f"datamap{PRIORITY}.json")
-    writeDataToFile(tradhashmap, f"{TRAD}datamap{PRIORITY}.json")
+    # writeDataToFile(tradhashmap, f"{TRAD}datamap{PRIORITY}.json")
     print('Done!Done!Done!')
     
     # writeDataToFile(hashmap, "datamap.json")

@@ -346,23 +346,27 @@ class TradTrie(Trie):
     @staticmethod
     def loadTrie(owner):
         trie: TradTrie = TradTrie.getTrie(owner)
-        filename = f"{TRAD}keylistA.json"
+        filename = f"{TRAD}keylist.json"
         with open(os.path.join(DATA_DIR, filename)) as f:
             data = json.load(f)
             trie.insertMany(data)
+        # filename = f"{TRAD}keylistA.json"
+        # with open(os.path.join(DATA_DIR, filename)) as f:
+        #     data = json.load(f)
+        #     trie.insertMany(data)
             
-        filename = f"{TRAD}keylistB.json"
-        with open(os.path.join(DATA_DIR, filename)) as f:
-            data = json.load(f)
-            trie.insertMany(data)
+        # filename = f"{TRAD}keylistB.json"
+        # with open(os.path.join(DATA_DIR, filename)) as f:
+        #     data = json.load(f)
+        #     trie.insertMany(data)
             
-        with open(os.path.join(DATA_DIR, f"{TRAD}keylist{CUSTOM}.json")) as f:
-            data = json.load(f)
-            trie.insertMany(data)
+        # with open(os.path.join(DATA_DIR, f"{TRAD}keylist{CUSTOM}.json")) as f:
+        #     data = json.load(f)
+        #     trie.insertMany(data)
 
-        with open(os.path.join(DATA_DIR, f"{TRAD}keylist{BLACKLIST}.json")) as f:
-            data = json.load(f)
-            trie.removeMany(data)
+        # with open(os.path.join(DATA_DIR, f"{TRAD}keylist{BLACKLIST}.json")) as f:
+        #     data = json.load(f)
+        #     trie.removeMany(data)
     
     @staticmethod
     def createTrie(owner, words):

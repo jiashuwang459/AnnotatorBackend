@@ -69,6 +69,7 @@ class EntryManagerSingleton(object):
         self.dictCustom = []
         self.dictBlacklist = []
         self.dictPriority = []
+        self.tradToSimpMap = {}
         
         self.load()
 
@@ -281,6 +282,10 @@ class EntryManagerSingleton(object):
             data = json.load(f)
             self.dictPriority = data
             
+        with open(os.path.join(DATA_DIR, f"tradToSimpMap.json")) as f:
+            data = json.load(f)
+            self.tradToSimpMap = data
+            
         # with open(os.path.join(DATA_DIR, "keylistA.json")) as f:
         #     data = json.load(f)
         #     self.keylistA = set(data)
@@ -371,7 +376,7 @@ class EntryManagerSingleton(object):
 
         # print(f"A:{timeit.default_timer() - start_time}")
 
-    def get(self, phrase):
+    def get(self, phrase, trad=False):
 
         # defaultEntries = self.dictCache.get(f"default::{phrase}")
         # surnameEntries = self.dictCache.get(f"surname::{phrase}")
@@ -380,6 +385,15 @@ class EntryManagerSingleton(object):
         
         # start_time = timeit.default_timer()
         # print(f"looking for {phrase}")
+        print("get")
+        print(f"phrase: {phrase}, trad: {trad}")
+        if trad:
+            if phrase in self.tradToSimpMap:
+                # TODO: for now, we just take first one in list.
+                phrase = self.tradToSimpMap[phrase][0]
+                print("phrase changed")
+        print(f"phrase: {phrase}")
+        
         dictEntries = self.getDictEntries(phrase)
         customEntries = self.getCustomEntries(phrase)
         priorityEntries = self.getPriorityEntries(phrase)
@@ -454,89 +468,91 @@ class EntryManagerSingleton(object):
             # entries.extend(priorityEntries)
 
         if not entries:
-            return None
+            if not trad:
+                return self.get(phrase, trad=True)
 
         entries.sort(key=lambda x: x['priority'])
         entries = [entry for entry in entries if entry['priority'] != INVALID_PRIORITY]
+        
         # print(f"other:{timeit.default_timer() - start_time}")
 
         return entries
 
 
-class TradEntryManagerSingleton(EntryManagerSingleton):
-    def __init__(self, owner):
-        super().__init__(owner)
+# class TradEntryManagerSingleton(EntryManagerSingleton):
+#     def __init__(self, owner):
+#         super().__init__(owner)
     
 
-    def getDictEntries(self, phrase):
-        # start_time = timeit.default_timer()
-        key = cacheKey(TRADDICT, phrase)
+#     def getDictEntries(self, phrase):
+#         # start_time = timeit.default_timer()
+#         key = cacheKey(TRADDICT, phrase)
         
-        if key in self.dictA:
-            return self.dictA[key]
-        elif key in self.dictB:
-            return self.dictB[key]
-        else:
-            return []
-        # print(f"A:{timeit.default_timer() - start_time}")
+#         if key in self.dictA:
+#             return self.dictA[key]
+#         elif key in self.dictB:
+#             return self.dictB[key]
+#         else:
+#             return []
+#         # print(f"A:{timeit.default_timer() - start_time}")
         
 
-    def getCustomEntries(self, phrase):
-        # start_time = timeit.default_timer()
-        key = cacheKey(TRADCUSTOM, phrase)
+#     def getCustomEntries(self, phrase):
+#         # start_time = timeit.default_timer()
+#         key = cacheKey(TRADCUSTOM, phrase)
         
-        if key in self.dictCustom:
-            return self.dictCustom[key]
-        else:
-            return []
+#         if key in self.dictCustom:
+#             return self.dictCustom[key]
+#         else:
+#             return []
 
-        # print(f"A:{timeit.default_timer() - start_time}")
+#         # print(f"A:{timeit.default_timer() - start_time}")
 
 
-    def getBlacklistEntries(self, phrase):
-        # start_time = timeit.default_timer()
-        key = cacheKey(TRADBLACKLIST, phrase)
+#     def getBlacklistEntries(self, phrase):
+#         # start_time = timeit.default_timer()
+#         key = cacheKey(TRADBLACKLIST, phrase)
         
-        if key in self.dictBlacklist:
-            return self.dictBlacklist[key]
-        else:
-            return []
+#         if key in self.dictBlacklist:
+#             return self.dictBlacklist[key]
+#         else:
+#             return []
 
-        # print(f"A:{timeit.default_timer() - start_time}")
+#         # print(f"A:{timeit.default_timer() - start_time}")
 
 
-    def getPriorityEntries(self, phrase):
-        # start_time = timeit.default_timer()
-        key = cacheKey(TRADPRIORITY, phrase)
+#     def getPriorityEntries(self, phrase):
+#         # start_time = timeit.default_timer()
+#         key = cacheKey(TRADPRIORITY, phrase)
         
-        if key in self.dictPriority:
-            return self.dictPriority[key]
-        else:
-            return []
+#         if key in self.dictPriority:
+#             return self.dictPriority[key]
+#         else:
+#             return []
 
-        # print(f"A:{timeit.default_timer() - start_time}")
+#         # print(f"A:{timeit.default_timer() - start_time}")
 
 
-    def load(self) :
-        with open(os.path.join(DATA_DIR, f"{TRAD}datamapA.json")) as f:
-            data = json.load(f)
-            self.dictA = data
+#     def load(self) :
+#         with open(os.path.join(DATA_DIR, f"{TRAD}datamapA.json")) as f:
+#             data = json.load(f)
+#             self.dictA = data
             
-        with open(os.path.join(DATA_DIR, f"{TRAD}datamapB.json")) as f:
-            data = json.load(f)
-            self.dictB = data
+#         with open(os.path.join(DATA_DIR, f"{TRAD}datamapB.json")) as f:
+#             data = json.load(f)
+#             self.dictB = data
             
-        with open(os.path.join(DATA_DIR, f"{TRAD}datamap{CUSTOM}.json")) as f:
-            data = json.load(f)
-            self.dictCustom = data
+#         with open(os.path.join(DATA_DIR, f"{TRAD}datamap{CUSTOM}.json")) as f:
+#             data = json.load(f)
+#             self.dictCustom = data
             
-        with open(os.path.join(DATA_DIR, f"{TRAD}datamap{BLACKLIST}.json")) as f:
-            data = json.load(f)
-            self.dictBlacklist = data
+#         with open(os.path.join(DATA_DIR, f"{TRAD}datamap{BLACKLIST}.json")) as f:
+#             data = json.load(f)
+#             self.dictBlacklist = data
             
-        with open(os.path.join(DATA_DIR, f"{TRAD}datamap{PRIORITY}.json")) as f:
-            data = json.load(f)
-            self.dictPriority = data
+#         with open(os.path.join(DATA_DIR, f"{TRAD}datamap{PRIORITY}.json")) as f:
+#             data = json.load(f)
+#             self.dictPriority = data
 
 EntryManager = EntryManagerSingleton("default")
-TradEntryManager = TradEntryManagerSingleton("default")
+# TradEntryManager = TradEntryManagerSingleton("default")

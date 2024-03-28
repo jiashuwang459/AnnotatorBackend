@@ -16,7 +16,7 @@ from rest_framework import filters, generics, serializers, status
 from rest_framework.exceptions import bad_request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from api.EntryManager import EntryManager, TradEntryManager
+from api.EntryManager import EntryManager
 
 
 from api.models import (BlacklistEntry, ChineseEntry, Entry, EditEntry, Fragment, Memory,
@@ -100,10 +100,13 @@ def getEntry(request):
     #     "fragment": FragmentSerializer(Memory.objects.get(code=code).fragments.all(), many=True).data
     # }
 
+    #TODO: use trad to simp map.
     entries = EntryManager.get(phrase)
 
-    if entries is None:
-        entries = TradEntryManager.get(phrase)
+    # if entries is None:
+        # entries = TradEntryManager.get(phrase)
+        # pass
+    
     
     if entries is None:    
         return Response({'Not Found': f'phrase {phrase} not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -111,29 +114,29 @@ def getEntry(request):
     responseData = [EntrySerializer(entry).data for entry in entries if entry['priority'] < MAX_PRIORITY]
     return Response(responseData, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
-def getTradEntry(request):
-    if not request.session.exists(request.session.session_key):
-        request.session.create()
+# @api_view(['GET'])
+# def getTradEntry(request):
+#     if not request.session.exists(request.session.session_key):
+#         request.session.create()
 
-    phrase = request.query_params.get('phrase')
-    if phrase is None:
-        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+#     phrase = request.query_params.get('phrase')
+#     if phrase is None:
+#         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # TODO: DNE check
-    # memory = Memory.objects.get(code=code)
-    # data = {
-    #     "code": code,
-    #     "fragment": FragmentSerializer(Memory.objects.get(code=code).fragments.all(), many=True).data
-    # }
+#     # TODO: DNE check
+#     # memory = Memory.objects.get(code=code)
+#     # data = {
+#     #     "code": code,
+#     #     "fragment": FragmentSerializer(Memory.objects.get(code=code).fragments.all(), many=True).data
+#     # }
 
-    entries = TradEntryManager.get(phrase)
+#     entries = TradEntryManager.get(phrase)
 
-    if entries is None:
-        return Response({'Not Found': f'phrase {phrase} not found'}, status=status.HTTP_404_NOT_FOUND)
+    # if entries is None:
+    #     return Response({'Not Found': f'phrase {phrase} not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    responseData = [EntrySerializer(entry).data for entry in entries if entry['priority'] < MAX_PRIORITY]
-    return Response(responseData, status=status.HTTP_200_OK)
+    # responseData = [EntrySerializer(entry).data for entry in entries if entry['priority'] < MAX_PRIORITY]
+    # return Response(responseData, status=status.HTTP_200_OK)
 
     # def get_queryset(self):
     #     """
@@ -266,9 +269,9 @@ class AnnotationView(APIView):
         print(trie)
         
         if not tradTrie.contains('妳'):
-            test = TradEntryManager.get("妳")
-            if not test:
-                TradEntryManager.reload()
+            # test = TradEntryManager.get("妳")
+            # if not test:
+            #     TradEntryManager.reload()
 
             TradTrie.loadTrie(owner)
 
@@ -309,12 +312,12 @@ class AnnotationView(APIView):
                 else:
                     # findBest is simply greedy algo, find the longest
                     phrase = trie.findBest(remaining)
-                    # print("phrase: '" + phrase + "'")
+                    tradPhrase = tradTrie.findBest(remaining)
                     trad = False
-                    if not phrase:
-                        # unable to find phrase, so check to see if can find traditional.
-                        phrase = tradTrie.findBest(remaining)
+                    if(len(tradPhrase) > len(phrase)):
                         trad = True
+                        phrase = tradPhrase
+                        # print("phrase: '" + phrase + "'")
                     if not phrase:
                         remaining = remaining[1:]
                         # Unknown, so put dummy entry.
@@ -330,8 +333,8 @@ class AnnotationView(APIView):
                         #     | Q(traditional=phrase), Q(priority__lte=MAX_PRIORITY)).order_by("priority").values_list("pinyin", "english").first()    
                         # print(trad)
                         # print(phrase)
-                        entries = EntryManager.get(phrase) if not trad else TradEntryManager.get(phrase) 
-                        # print(entries)
+                        entries = EntryManager.get(phrase, trad=trad)
+                        print(entries)
                         if(entries):
                             entry = entries[0]
                             # print("entry: '" +  + "'")
@@ -413,10 +416,11 @@ class ReloadCEDictView(APIView):
             self.request.session.create()
         # print(request.data)
 
-        lenA, lenB = reloadCEDict()
+        lenA, lenB, lenTradToSimpMap = reloadCEDict()
         EntryManager.reload()
-        TradEntryManager.reload()
-        return Response({"OK": "Done reloaded CEDict", "lenA": lenA, "lenB": lenB}, status=status.HTTP_200_OK)
+        Trie.clearTries()
+        # TradEntryManager.reload()
+        return Response({"OK": "Done reloaded CEDict", "lenA": lenA, "lenB": lenB, "lenTradToSimpMap": lenTradToSimpMap}, status=status.HTTP_200_OK)
 
 class EditEntryView(APIView):
     queryset = EditEntry.objects.all()
