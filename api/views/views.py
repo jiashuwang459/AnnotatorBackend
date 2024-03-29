@@ -422,6 +422,16 @@ class ReloadCEDictView(APIView):
         # TradEntryManager.reload()
         return Response({"OK": "Done reloaded CEDict", "lenA": lenA, "lenB": lenB, "lenTradToSimpMap": lenTradToSimpMap}, status=status.HTTP_200_OK)
 
+class ClearRAMView(APIView):
+
+    def post(self, request, format=None):
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+        # print(request.data)
+
+        Trie.clearTries()
+        return Response({"OK": "Cleared Tries"}, status=status.HTTP_200_OK)
+
 class EditEntryView(APIView):
     queryset = EditEntry.objects.all()
     serializer_class = EditEntrySerializer
@@ -439,7 +449,6 @@ class EditEntryView(APIView):
         
         return Response(EditEntrySerializer(editEntries, many=True).data, status=status.HTTP_200_OK)
 
-    
     def post(self, request, format=None):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()

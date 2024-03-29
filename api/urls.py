@@ -1,7 +1,7 @@
 from django.urls import path, include
 
 from api.views.memoryView import CleanMemoryView, CreateMemoryView, DestroyMemoryView, FetchMemoryView, FragmentView, MemoryView, getMemoryHistory
-from api.views.views import  getEntry, getNovel, getNovelsAndChapters, EditEntryView, CleanEditEntryView, AnnotationView, BlacklistEntryView, ReloadCEDictView
+from api.views.views import  getEntry, getNovel, getNovelsAndChapters, EditEntryView, CleanEditEntryView, AnnotationView, BlacklistEntryView, ReloadCEDictView, ClearRAMView
 
 urlpatterns = [
     path('entry', getEntry),
@@ -29,6 +29,7 @@ urlpatterns = [
     path('fragments', FragmentView.as_view()),
     
     path('reloadcedict', ReloadCEDictView.as_view()),
+    path('clearram', ClearRAMView.as_view()),
     # path('cache', CacheView.as_view()),
     # path('fetch' , manage_item, name="single_item")
     # path('test', TestView.as_view()),

@@ -79,6 +79,21 @@ cd ./Annotator/frontend
 npm install
 ```
 
+### To run performance analysis
+
+1. set env variable PERFORMANCE=1.
+2. run the server without threads.
+
+
+python -m pip install django-debug-toolbar
+pip install pympler
+
+
+``` bash
+PERFORMANCE=1
+python -m manage.py runserver --nothreading
+```
+
 ### Common Commands
 
 ``` bash

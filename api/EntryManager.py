@@ -56,6 +56,7 @@ class EntryManagerSingleton(object):
         #     Trie.NAME: 'root'
         # }
         self.owner = owner
+        self.loaded = False
 
         # self.keylistA = []
         # self.keylistB = []
@@ -286,6 +287,8 @@ class EntryManagerSingleton(object):
             data = json.load(f)
             self.tradToSimpMap = data
             
+        self.loaded = True
+            
         # with open(os.path.join(DATA_DIR, "keylistA.json")) as f:
         #     data = json.load(f)
         #     self.keylistA = set(data)
@@ -323,6 +326,8 @@ class EntryManagerSingleton(object):
         self.dictCustom = {}
         self.dictBlacklist = {}
         self.dictPriority = {}
+        
+        self.loaded = False
         
     def reload(self):
         self.clear()
@@ -425,7 +430,6 @@ class EntryManagerSingleton(object):
         #     blacklistEntries = []
         # print(f"blacklist:{timeit.default_timer() - start_time}")
 
-        
         # customEntries = customEntries if customEntries else []
 
         # if not entries:
@@ -472,10 +476,9 @@ class EntryManagerSingleton(object):
             else:
                 return None
 
-
         entries.sort(key=lambda x: x['priority'])
         entries = [entry for entry in entries if entry['priority'] != INVALID_PRIORITY]
-        
+
         # print(f"other:{timeit.default_timer() - start_time}")
 
         return entries
