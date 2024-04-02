@@ -5,7 +5,6 @@
 I recommend creating a python venv to work on this project.
 NOTE: I'm currently using python 3.9.1
 
-
 ### From a fresh Ubuntu installation on Windows
 
 Using python 3.8.10
@@ -16,6 +15,7 @@ sudo apt install python3.8-venv
 ```
 
 ### Creating a python venv
+
 When you're in the base directory, `AnnotatorBackend`
 
 ```bash
@@ -24,7 +24,8 @@ python3 -m venv chinese-env
 ```
 
 #### Contents of ./setenv
-``` bash
+
+```bash
 source ./chinese-env/bin/activate
 ```
 
@@ -32,20 +33,20 @@ IMPORTANT! Make sure to execute `. ./setenv` in the base folder to activate the 
 
 ### Python dependencies
 
-``` bash
+```bash
 pip install -r requirements.txt
 ```
 
 ### Startup guide
 
-``` bash
+```bash
 mkdir static
 python manage.py migrate
 ```
 
 ### Common Commands
 
-``` bash
+```bash
 cd ./Annotator
 
 # make migrations based on Model objects in <app>/models.py
@@ -62,7 +63,6 @@ python manage.py runserver
 
 The frontend's base directory is: `/AnnotatorBackend/frontend`.
 
-
 ### Installing npm
 
 see https://github.com/nvm-sh/nvm
@@ -74,7 +74,7 @@ nvm install node
 
 ### NPM dependencies
 
-``` bash
+```bash
 cd ./Annotator/frontend
 npm install
 ```
@@ -84,31 +84,42 @@ npm install
 1. set env variable PERFORMANCE=1.
 2. run the server without threads.
 
-
 python -m pip install django-debug-toolbar
 pip install pympler
 
-
-``` bash
+```bash
 PERFORMANCE=1
 python -m manage.py runserver --nothreading
 ```
 
+###
+
+You can list environment variables in the `.env` file of the root directory, which will automatically be added when the program runs. My local `.env` file is as follows:
+
+.env
+
+```bash
+DATABASE_URL=sqlite:///db.sqlite3
+NODE_ENV=development
+DEBUG=1
+# PERFORMANCE=1
+DJANGO_LOG_LEVEL="INFO"
+
+```
+
 ### Common Commands
 
-``` bash
+```bash
 # Add dependencies to requirements.txt file:
 pip freeze > requirements.txt
 ```
 
-
-``` bash
+```bash
 # Run the backend deployment. Note - make sure to run build.sh first, and to set debug to false.
 python -m gunicorn Annotator.asgi:application -k uvicorn.workers.UvicornWorker
 ```
 
-
-``` bash
+```bash
 cd ./Annotator/frontend
 
 # runs the frontend with dev configurations
