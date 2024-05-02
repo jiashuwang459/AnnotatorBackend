@@ -35,7 +35,7 @@ SECRET_KEY = 'y87-@d^e3gw=1*yf2-gjf#q2a5r-&d00d(ih6xb*mh%-v%lyp7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 0)
-PERFORMANCE = os.environ.get('DEBUG', 0)
+PERFORMANCE = os.environ.get('PERFORMANCE', 0)
 
 # SECRET_KEY = '' # Change to empty string
 

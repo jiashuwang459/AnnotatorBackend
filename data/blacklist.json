@@ -190,5 +190,12 @@
     "pinyin": "de2 liao3",
     "english": "(emphatically, in rhetorical questions) possible",
     "reason": "it might be okay for now? Otherwise, add 得了解"
+  },
+  {
+    "traditional": "四國",
+    "simplified": "四国",
+    "pinyin": "Si4 guo2",
+    "english": "Shikoku (one of the four main islands of Japan)",
+    "reason": "Don't think we care about this island for now..."
   }
 ]
