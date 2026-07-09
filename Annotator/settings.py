@@ -47,7 +47,8 @@ PERFORMANCE = env_flag('PERFORMANCE', default=False)
 # SECRET_KEY = '' # Change to empty string
 
 if DEBUG:
-    ALLOWED_HOSTS = ['127.0.0.1:8000', 'localhost']
+    # Django validates hostnames only, so ports must not be included here.
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 else:
     ALLOWED_HOSTS = ['https://chinese-annotator.herokuapp.com',
                      'https://chinese-annotator.netlify.app',
@@ -65,7 +66,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api.apps.ApiConfig',
-    'frontend.apps.FrontendConfig',
     'corsheaders',
     'rest_framework',
     'Annotator'
@@ -311,7 +311,7 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
         },
     },
 }

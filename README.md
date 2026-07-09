@@ -72,16 +72,16 @@ What `local_setup.sh` does:
 3. creates the local `static/` directory
 4. collects static assets with Django `collectstatic`
 5. applies Django migrations to `db.sqlite3`
-6. installs frontend dependencies in `frontend/`
+6. installs frontend dependencies in `frontend-next/`
 
-After that, start the backend and frontend in separate terminals:
+After that, start the backend and the new frontend in separate terminals:
 
 ```bash
 uv run python manage.py runserver
 ```
 
 ```bash
-cd frontend
+cd frontend-next
 npm run dev
 ```
 
@@ -158,23 +158,40 @@ uv run python manage.py migrate
 uv run python manage.py runserver
 ```
 
-## Frontend (React)
+## Frontend (Next.js + Tailwind)
 
-The frontend's base directory is: `/AnnotatorBackend/frontend`.
+The new frontend lives in `/AnnotatorBackend/frontend-next`.
 
-### Installing npm
+### Project structure
 
-see https://github.com/nvm-sh/nvm
-
+```text
+frontend-next/
+├── src/app/
+│   ├── annotator/page.tsx
+│   ├── dictionary/page.tsx
+│   ├── edit-entry/page.tsx
+│   └── page.tsx
+├── src/components/site-shell.tsx
+└── src/lib/
+    ├── api.ts
+    ├── pinyin.ts
+    └── types.ts
 ```
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-nvm install node
+
+### Running the Next.js frontend
+
+```bash
+cd ./frontend-next
+npm install
+npm run dev
 ```
+
+The Next.js app proxies `/api/*` requests to the local Django backend on `http://127.0.0.1:8000`.
 
 ### NPM dependencies
 
 ```bash
-cd ./frontend
+cd ./frontend-next
 npm install
 ```
 
@@ -243,7 +260,7 @@ bash build.sh
 For local development, you can still run the individual commands manually if you do not want the full build flow.
 
 ```bash
-cd ./frontend
+cd ./frontend-next
 
 # runs the frontend with dev configurations
 npm run dev

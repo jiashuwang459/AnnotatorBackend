@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit
 
-# First-time local setup for backend and frontend development.
+# First-time local setup for backend and frontend-next development.
 # Run from the repository root with: bash local_setup.sh
 
 if ! command -v uv >/dev/null 2>&1; then
@@ -21,9 +21,13 @@ uv run python manage.py collectstatic --no-input
 uv run python manage.py migrate
 
 if command -v npm >/dev/null 2>&1; then
-	cd frontend
-	npm install
+	if [ -d frontend-next ]; then
+		(
+			cd frontend-next
+			npm install
+		)
+	fi
 else
 	echo "Warning: npm is not installed. Skipping frontend dependency installation." >&2
-	echo "Install Node.js/npm, then run: cd frontend && npm install" >&2
+	echo "Install Node.js/npm, then run: cd frontend-next && npm install" >&2
 fi
