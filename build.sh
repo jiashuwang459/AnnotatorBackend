@@ -2,6 +2,10 @@
 # Exit on error
 set -o errexit
 
+# Deployment helper for this Django app.
+# Run from the repository root to install dependencies, collect static files,
+# and apply database migrations.
+
 # Ensure uv is available, or install it with an available Python executable.
 if command -v uv >/dev/null 2>&1; then
 	:
