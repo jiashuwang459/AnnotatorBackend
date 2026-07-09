@@ -20,10 +20,9 @@ import os
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
-    path('', include('frontend.urls')),
 ]
 
-PERFORMANCE = os.environ.get('DEBUG', 0)
+PERFORMANCE = os.environ.get('PERFORMANCE', 0)
 
 if PERFORMANCE:
     urlpatterns.append(
