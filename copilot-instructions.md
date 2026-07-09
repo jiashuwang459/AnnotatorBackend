@@ -14,6 +14,7 @@ This is a **Chinese reading-learning application** that helps users who can spea
 | HTTP Client | axios (with Django CSRF token support configured) |
 | Language (backend) | Python 3 |
 | Language (frontend) | JavaScript (ES2017+, **no TypeScript**) |
+| Python Environment & Dependency Tool | uv (`uv venv`, `uv pip`, `uv run`) with `requirements.txt` |
 | Data | CEDict dictionary, custom Trie structure for lookups |
 
 The Django project lives under `Annotator/` and contains two Django apps:
@@ -101,6 +102,7 @@ Annotator/
 ### Django / Django REST Framework
 
 **DO:**
+- Use `uv` for Python environment and dependency workflows (`uv venv`, `uv pip install -r requirements.txt`, `uv run python ...`).
 - Use **class-based views** inheriting from `APIView` or a DRF generic view (`generics.ListAPIView`, `generics.ListCreateAPIView`, `generics.RetrieveUpdateDestroyAPIView`). Match the pattern in `views.py`.
 - Use a dedicated **serializer** for every model interaction. Never directly build raw dicts from `request.data` without validation.
 - Validate input with `serializer.is_valid()` before accessing `serializer.data`.
@@ -111,6 +113,7 @@ Annotator/
 - Always handle the case where a session does not yet exist: `if not self.request.session.exists(...): self.request.session.create()`.
 
 **DO NOT:**
+- Do not add new Python package managers or lockfile workflows (Poetry/Pipenv/etc.) without explicit approval.
 - Do not use Django function-based views. All views must be class-based.
 - Do not use `django.shortcuts.render` for API responses (it is only used in `frontend/views.py` to serve the SPA shell).
 - Do not use raw SQL queries. Use the Django ORM exclusively.
@@ -145,6 +148,29 @@ Annotator/
 
 ## 5. Testing & Documentation
 
+### Instruction Maintenance Requirement
+
+`copilot-instructions.md` is a living source of truth for coding agents in this repository.
+
+Whenever any PR or commit changes project-level conventions or implementation direction, this file **must** be reviewed and updated in the same change set.
+
+Required update triggers include:
+- Architecture changes (new app/module boundaries, moved responsibilities, routing structure changes)
+- Stack/technology changes (framework/library upgrades, replacements, additions, removals)
+- Code style or convention changes (naming, formatting, component patterns, serializer/view patterns)
+- Build/deploy/runtime changes (webpack/build pipeline, env handling, deployment platform behavior)
+- Testing strategy changes (new frameworks, required coverage expectations, test command changes)
+
+Contributor checklist for such changes:
+1. Update the relevant section(s) in this file to match the new reality.
+2. Remove or rewrite outdated guidance; do not leave contradictory rules.
+3. In the PR description, include a short note confirming instruction updates were reviewed.
+
+If a change intentionally diverges from existing guidance temporarily, add a concise `TODO` in this file describing:
+- what is changing,
+- why the temporary divergence exists, and
+- when/how it will be reconciled.
+
 ### Backend Tests
 
 - Tests live in `api/tests.py` and `frontend/tests.py`.
@@ -154,7 +180,7 @@ Annotator/
   - Happy path (valid input → expected HTTP 200/201 response)
   - Invalid input (missing required fields → HTTP 400)
   - Not-found cases (HTTP 404)
-- Run tests with: `python manage.py test`
+- Run tests with: `uv run python manage.py test`
 
 ### Frontend Tests
 

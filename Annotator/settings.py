@@ -34,8 +34,15 @@ load_dotenv()
 SECRET_KEY = 'y87-@d^e3gw=1*yf2-gjf#q2a5r-&d00d(ih6xb*mh%-v%lyp7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 0)
-PERFORMANCE = os.environ.get('PERFORMANCE', 0)
+def env_flag(name, default=False):
+    """Return a boolean for common truthy/falsey env var values."""
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return str(value).strip().lower() in ('1', 'true', 'yes', 'on')
+
+DEBUG = env_flag('DEBUG', default=False)
+PERFORMANCE = env_flag('PERFORMANCE', default=False)
 
 # SECRET_KEY = '' # Change to empty string
 
@@ -196,24 +203,34 @@ DATABASES = {}
 
 
 
-# MY_POSTGRES_URL = os.environ.get('DATABASE_PRIVATE_URL', 'postgresql://postgres:postgres@localhost:5432/annotator')
-if DEBUG:
+# Database resolution order:
+# 1) DATABASE_URL (preferred for local + hosted setups)
+# 2) Explicit PG* env vars
+# 3) Local sqlite fallback for zero-config development
+database_url = os.environ.get('DATABASE_URL')
+pg_required = ('PGDATABASE', 'PGUSER', 'PGPASSWORD', 'PGHOST', 'PGPORT')
+has_pg_env = all(os.environ.get(key) for key in pg_required)
+
+if database_url:
     DATABASES = {
-        'default': dj_database_url.config(
-            # Replace this value with your local database's connection string.
-            default='postgresql://postgres:postgres@localhost:5432/annotator',
-            conn_max_age=600
-        )
+        'default': dj_database_url.config(default=database_url, conn_max_age=600)
+    }
+elif has_pg_env:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ['PGDATABASE'],
+            'USER': os.environ['PGUSER'],
+            'PASSWORD': os.environ['PGPASSWORD'],
+            'HOST': os.environ['PGHOST'],
+            'PORT': os.environ['PGPORT'],
+        }
     }
 else:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.environ["PGDATABASE"],
-            'USER': os.environ["PGUSER"],
-            'PASSWORD': os.environ["PGPASSWORD"],
-            'HOST': os.environ["PGHOST"],
-            'PORT': os.environ["PGPORT"],
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
 

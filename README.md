@@ -2,61 +2,86 @@
 
 ## Backend (Django)
 
-I recommend creating a python venv to work on this project.
-NOTE: I'm currently using python 3.9.1
+Use `uv` to manage the Python environment and dependencies for this project.
+NOTE: Deploy/runtime currently targets Python 3.8.10 (see `runtime.txt`).
 
-### From a fresh Ubuntu installation on Windows
+### macOS (Homebrew)
 
-Using python 3.8.10
+Install `uv` with Homebrew:
+
+```bash
+brew update
+brew install uv
+```
+
+If needed, verify versions:
+
+```bash
+uv --version
+```
+
+### Ubuntu (alternative)
+
+Install system Python and `uv`:
 
 ```bash
 sudo apt-get update
-sudo apt install python3.8-venv
+sudo apt install python3.8 python3-pip
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### Creating a python venv
+Then restart your shell (or source your shell profile) so `uv` is on your `PATH`.
+
+### Creating the uv-managed environment
 
 When you're in the base directory, `AnnotatorBackend`
 
 ```bash
-python3 -m venv chinese-env
+uv venv --python 3.8.10
 . ./setenv
 ```
 
 #### Contents of ./setenv
 
 ```bash
-source ./chinese-env/bin/activate
+source ./.venv/bin/activate
 ```
 
-IMPORTANT! Make sure to execute `. ./setenv` in the base folder to activate the venv before any development or execution
+IMPORTANT! Make sure to execute `. ./setenv` in the base folder to activate the environment before any development or execution.
 
 ### Python dependencies
 
 ```bash
-pip install -r requirements.txt
+uv pip install -r requirements.txt
+```
+
+If you prefer not to activate the environment first, you can run commands through `uv` directly:
+
+```bash
+uv run python manage.py migrate
+uv run python manage.py runserver
 ```
 
 ### Startup guide
 
 ```bash
-mkdir static
-python manage.py migrate
+mkdir -p static
+uv run python manage.py migrate
 ```
 
 ### Common Commands
 
 ```bash
-cd ./Annotator
+# from repository root (AnnotatorBackend)
 
 # make migrations based on Model objects in <app>/models.py
-python manage.py makemigrations
+uv run python manage.py makemigrations
 
 # runs all migrations based on migrations in <app>/migrations/<migration>.py
-python manage.py migrate
+uv run python manage.py migrate
 
 # runs the backend server
-python manage.py runserver
+uv run python manage.py runserver
 ```
 
 ## Frontend (React)
@@ -75,7 +100,7 @@ nvm install node
 ### NPM dependencies
 
 ```bash
-cd ./Annotator/frontend
+cd ./frontend
 npm install
 ```
 
@@ -84,12 +109,13 @@ npm install
 1. set env variable PERFORMANCE=1.
 2. run the server without threads.
 
-python -m pip install django-debug-toolbar
-pip install pympler
+```bash
+uv pip install django-debug-toolbar pympler
+```
 
 ```bash
 PERFORMANCE=1
-python -m manage.py runserver --nothreading
+uv run python manage.py runserver --nothreading
 ```
 
 ###
@@ -111,16 +137,16 @@ DJANGO_LOG_LEVEL="INFO"
 
 ```bash
 # Add dependencies to requirements.txt file:
-pip freeze > requirements.txt
+uv pip freeze > requirements.txt
 ```
 
 ```bash
 # Run the backend deployment. Note - make sure to run build.sh first, and to set debug to false.
-python -m gunicorn Annotator.asgi:application -k uvicorn.workers.UvicornWorker
+uv run python -m gunicorn Annotator.asgi:application -k uvicorn.workers.UvicornWorker
 ```
 
 ```bash
-cd ./Annotator/frontend
+cd ./frontend
 
 # runs the frontend with dev configurations
 npm run dev
