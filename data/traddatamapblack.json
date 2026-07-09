@@ -1,0 +1,208 @@
+{
+  "tradblack::里根": [
+    {
+      "id": 105437,
+      "owner": "default",
+      "traditional": "里根",
+      "simplified": "里根",
+      "pinyin": "Li3 gen1",
+      "english": "Reagan (name)",
+      "reason": "In most context, the name doesn't make sense, so want default",
+      "priority": 200
+    }
+  ],
+  "tradblack::中的": [
+    {
+      "id": 3507,
+      "owner": "default",
+      "traditional": "中的",
+      "simplified": "中的",
+      "pinyin": "zhong4 di4",
+      "english": "to hit the target",
+      "reason": "I've never seen it used in this way... makes smore sense to just be default",
+      "priority": 200
+    }
+  ],
+  "tradblack::一生": [
+    {
+      "id": 677,
+      "owner": "default",
+      "traditional": "一生",
+      "simplified": "一生",
+      "pinyin": "yi1 sheng1",
+      "english": "all one's life",
+      "reason": "both words are correct for pinyin by default. 一生还 should be 一(生还)",
+      "priority": 200
+    }
+  ],
+  "tradblack::萬年": [
+    {
+      "id": 90436,
+      "owner": "default",
+      "traditional": "萬年",
+      "simplified": "万年",
+      "pinyin": "Wan4 nian2",
+      "english": "Wannian county in Shangrao 上饒|上饶, Jiangxi",
+      "reason": "We don't really care about the county, so we want default",
+      "priority": 200
+    }
+  ],
+  "tradblack::到了": [
+    {
+      "id": 90436,
+      "owner": "default",
+      "traditional": "到了",
+      "simplified": "到了",
+      "pinyin": "dao4 liao3",
+      "english": "at last/finally/in the end",
+      "reason": "We really don't need this... want the default",
+      "priority": 200
+    }
+  ],
+  "tradblack::麵的": [
+    {
+      "id": 358001,
+      "owner": "default",
+      "traditional": "麵的",
+      "simplified": "面的",
+      "pinyin": "mian4 di1",
+      "english": "abbr. of 麵包車的士|面包车的士[mian4 bao1 che1 di1 shi4]/minivan taxi",
+      "reason": "we probably won't see this at all, so we want default",
+      "priority": 200
+    }
+  ],
+  "tradblack::就正": [
+    {
+      "id": 273235,
+      "owner": "default",
+      "traditional": "就正",
+      "simplified": "就正",
+      "pinyin": "jiu4 zheng4",
+      "english": "(literary and deferential) to solicit comments (on one's writing)",
+      "reason": "we want it separate",
+      "priority": 200
+    }
+  ],
+  "tradblack::一聲": [
+    {
+      "id": 753,
+      "owner": "default",
+      "traditional": "一聲",
+      "simplified": "一声",
+      "pinyin": "yi1 sheng1",
+      "english": "first tone in Mandarin (high, level tone)",
+      "reason": "We don't really care about tones, a single sound seems more common",
+      "priority": 200
+    }
+  ],
+  "tradblack::明治": [
+    {
+      "traditional": "明治",
+      "simplified": "明治",
+      "pinyin": "Ming2 zhi4",
+      "english": "Meiji, Japanese era name, corresponding to the reign (1868-1912) of the Meiji emperor",
+      "reason": "We want it separate probably.",
+      "priority": 200
+    }
+  ],
+  "tradblack::在野": [
+    {
+      "traditional": "在野",
+      "simplified": "在野",
+      "pinyin": "zai4 ye3",
+      "english": "to be out of (political) office/to be out of power",
+      "reason": "don't think we see this often, so we want it to be separate",
+      "priority": 200
+    }
+  ],
+  "tradblack::地質": [
+    {
+      "traditional": "地質",
+      "simplified": "地质",
+      "pinyin": "di4 zhi4",
+      "english": "geology",
+      "reason": "地质问 is more common, so... separate until further notice. Used in 三体",
+      "priority": 200
+    }
+  ],
+  "tradblack::人居": [
+    {
+      "traditional": "人居",
+      "simplified": "人居",
+      "pinyin": "ren2 ju1",
+      "english": "human habitat",
+      "reason": "两人居然 is possible, so... separate would be better. Human habitat is also a bit weird.",
+      "priority": 200
+    }
+  ],
+  "tradblack::無任": [
+    {
+      "traditional": "無任",
+      "simplified": "无任",
+      "pinyin": "wu2 ren4",
+      "english": "extremely (pleased, grateful etc)",
+      "reason": "却无任何 is more likely. Never heard of this one, so separate it is.",
+      "priority": 200
+    }
+  ],
+  "tradblack::愛問": [
+    {
+      "traditional": "愛問",
+      "simplified": "爱问",
+      "pinyin": "Ai4 wen4",
+      "english": "iAsk.com, the search engine of Sina 新浪",
+      "reason": "don't know this website...",
+      "priority": 200
+    }
+  ],
+  "tradblack::在行": [
+    {
+      "traditional": "在行",
+      "simplified": "在行",
+      "pinyin": "zai4 hang2",
+      "english": "to be adept at sth/to be an expert in a trade or profession",
+      "reason": "it's a valid phrase... but we want it separate most likely... 在行驶[zai4 xing2 shi3] or 在行走[zai4 xing2 zou3]",
+      "priority": 200
+    }
+  ],
+  "tradblack::滿城": [
+    {
+      "traditional": "滿城",
+      "simplified": "满城",
+      "pinyin": "Man3 cheng2",
+      "english": "Mancheng county in Baoding 保定[Bao3 ding4], Hebei",
+      "reason": "We don't care about this place.",
+      "priority": 200
+    }
+  ],
+  "tradblack::不和": [
+    {
+      "traditional": "不和",
+      "simplified": "不和",
+      "pinyin": "bu4 he2",
+      "english": "not to get along well/to be on bad terms/to be at odds/discord",
+      "reason": "Don't think this is common",
+      "priority": 200
+    }
+  ],
+  "tradblack::天時": [
+    {
+      "traditional": "天時",
+      "simplified": "天时",
+      "pinyin": "tian1 shi2",
+      "english": "the time/the right time/weather conditions/destiny/course of time/heaven's natural order",
+      "reason": "Don't think this is common",
+      "priority": 200
+    }
+  ],
+  "tradblack::是的": [
+    {
+      "traditional": "是的",
+      "simplified": "是的",
+      "pinyin": "shi4 de5",
+      "english": "yes, that's right/variant of 似的[shi4 de5]",
+      "reason": "是(的哥). but eh.",
+      "priority": 200
+    }
+  ]
+}

@@ -2,60 +2,91 @@
 
 ## Backend (Django)
 
-I recommend creating a python venv to work on this project.
-NOTE: I'm currently using python 3.9.1
+Use `uv` to manage the Python environment and dependencies for this project.
+NOTE: Deploy/runtime currently targets Python 3.8.10 (see `runtime.txt`).
 
+### macOS (Homebrew)
 
-### From a fresh Ubuntu installation on Windows
+Install `uv` with Homebrew:
 
-Using python 3.8.10
+```bash
+brew update
+brew install uv
+```
+
+If needed, verify versions:
+
+```bash
+uv --version
+```
+
+### Ubuntu (alternative)
+
+Install system Python and `uv`:
 
 ```bash
 sudo apt-get update
-sudo apt install python3.8-venv
+sudo apt install python3.8 python3-pip
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### Creating a python venv
+Then restart your shell (or source your shell profile) so `uv` is on your `PATH`.
+
+### Creating the uv-managed environment
+
 When you're in the base directory, `AnnotatorBackend`
 
 ```bash
-python3 -m venv chinese-env
+uv venv --python 3.8.10
 . ./setenv
 ```
 
 #### Contents of ./setenv
-``` bash
-source ./chinese-env/bin/activate
+
+```bash
+source ./.venv/bin/activate
 ```
 
-IMPORTANT! Make sure to execute `. ./setenv` in the base folder to activate the venv before any development or execution
+IMPORTANT! Make sure to execute `. ./setenv` in the base folder to activate the environment before any development or execution.
 
 ### Python dependencies
 
-``` bash
-pip install django
-pip install djangorestframework
+```bash
+uv pip install -r requirements.txt
+```
+
+If you prefer not to activate the environment first, you can run commands through `uv` directly:
+
+```bash
+uv run python manage.py migrate
+uv run python manage.py runserver
+```
+
+### Startup guide
+
+```bash
+mkdir -p static
+uv run python manage.py migrate
 ```
 
 ### Common Commands
 
-``` bash
-cd ./Annotator
+```bash
+# from repository root (AnnotatorBackend)
 
 # make migrations based on Model objects in <app>/models.py
-python manage.py makemigrations
+uv run python manage.py makemigrations
 
 # runs all migrations based on migrations in <app>/migrations/<migration>.py
-python manage.py migrate
+uv run python manage.py migrate
 
 # runs the backend server
-python manage.py runserver
+uv run python manage.py runserver
 ```
 
 ## Frontend (React)
 
-The frontend's base directory is: `/AnnotatorBackend/Annotator/frontend`.
-
+The frontend's base directory is: `/AnnotatorBackend/frontend`.
 
 ### Installing npm
 
@@ -68,15 +99,54 @@ nvm install node
 
 ### NPM dependencies
 
-``` bash
-cd ./Annotator/frontend
+```bash
+cd ./frontend
 npm install
+```
+
+### To run performance analysis
+
+1. set env variable PERFORMANCE=1.
+2. run the server without threads.
+
+```bash
+uv pip install django-debug-toolbar pympler
+```
+
+```bash
+PERFORMANCE=1
+uv run python manage.py runserver --nothreading
+```
+
+###
+
+You can list environment variables in the `.env` file of the root directory, which will automatically be added when the program runs. My local `.env` file is as follows:
+
+.env
+
+```bash
+DATABASE_URL=sqlite:///db.sqlite3
+NODE_ENV=development
+DEBUG=1
+# PERFORMANCE=1
+DJANGO_LOG_LEVEL="INFO"
+
 ```
 
 ### Common Commands
 
-``` bash
-cd ./Annotator/frontend
+```bash
+# Add dependencies to requirements.txt file:
+uv pip freeze > requirements.txt
+```
+
+```bash
+# Run the backend deployment. Note - make sure to run build.sh first, and to set debug to false.
+uv run python -m gunicorn Annotator.asgi:application -k uvicorn.workers.UvicornWorker
+```
+
+```bash
+cd ./frontend
 
 # runs the frontend with dev configurations
 npm run dev

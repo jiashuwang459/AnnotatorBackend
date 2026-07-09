@@ -130,3 +130,7 @@ dmypy.json
 .pyre/
 
 node_modules/
+staticfiles/
+
+# macOS
+.DS_Store
