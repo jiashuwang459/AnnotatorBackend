@@ -120,11 +120,13 @@ function FloatingAction({
 
 function Overlay({
   children,
+  label,
   onClose,
   fullHeight = false,
   layerClassName = "z-40",
 }: {
   children: ReactNode;
+  label: string;
   onClose: () => void;
   fullHeight?: boolean;
   layerClassName?: string;
@@ -194,6 +196,7 @@ function Overlay({
         ref={panelRef}
         role="dialog"
         aria-modal="true"
+        aria-label={label}
         tabIndex={-1}
         className={`absolute inset-x-0 bottom-0 z-10 mx-auto w-full max-w-3xl overflow-hidden rounded-t-[2rem] border border-white/10 bg-white shadow-2xl ${
           fullHeight ? "max-h-[92vh]" : "max-h-[80vh]"
@@ -577,7 +580,7 @@ export default function AnnotatorPage() {
 
           <div className="mt-4 flex flex-wrap gap-2">
             <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
-              Paragraphs {annotations.length}
+              Paragraphs: {annotations.length}
             </span>
             <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
               Selected {selectedFragments.length}
@@ -695,7 +698,7 @@ export default function AnnotatorPage() {
       </div>
 
       {activePanel === "paste" ? (
-        <Overlay onClose={() => setActivePanel(null)} fullHeight>
+        <Overlay label="Paste text" onClose={() => setActivePanel(null)} fullHeight>
           <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
             <div>
               <h2 className="text-lg font-semibold text-slate-950">Paste text</h2>
@@ -740,7 +743,7 @@ export default function AnnotatorPage() {
       ) : null}
 
       {activePanel === "library" ? (
-        <Overlay onClose={() => setActivePanel(null)}>
+        <Overlay label="Novel library" onClose={() => setActivePanel(null)}>
           <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
             <div>
               <h2 className="text-lg font-semibold text-slate-950">Novel library</h2>
@@ -809,7 +812,7 @@ export default function AnnotatorPage() {
       ) : null}
 
       {activePanel === "review" ? (
-        <Overlay onClose={() => setActivePanel(null)}>
+        <Overlay label="Review selections" onClose={() => setActivePanel(null)}>
           <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
             <div>
               <h2 className="text-lg font-semibold text-slate-950">Review selections</h2>
@@ -885,7 +888,7 @@ export default function AnnotatorPage() {
       ) : null}
 
       {activePanel === "menu" ? (
-        <Overlay onClose={() => setActivePanel(null)}>
+        <Overlay label="Reader menu" onClose={() => setActivePanel(null)}>
           <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
             <div>
               <h2 className="text-lg font-semibold text-slate-950">Reader menu</h2>
@@ -931,7 +934,11 @@ export default function AnnotatorPage() {
       ) : null}
 
       {activeLookup ? (
-        <Overlay onClose={resetLookupState} layerClassName="z-50">
+        <Overlay
+          label={`${activeLookup.kind === "phrase" ? "Phrase" : "Character"} lookup`}
+          onClose={resetLookupState}
+          layerClassName="z-50"
+        >
           <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
             <div>
               <div className="flex flex-wrap items-center gap-2">
