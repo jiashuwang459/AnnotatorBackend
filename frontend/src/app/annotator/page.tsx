@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { SiteShell } from "@/components/site-shell";
+import Link from "next/link";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ApiError, api, getErrorMessage } from "@/lib/api";
 import { parsePinyin } from "@/lib/pinyin";
 import {
@@ -15,6 +15,8 @@ import {
 } from "@/lib/types";
 
 const NBSP = "\u00a0";
+
+type SecondaryPanel = "paste" | "library" | "review" | "menu" | null;
 
 function segmentText(text: string) {
   const lines = text.split("\n");
@@ -75,7 +77,7 @@ type LookupTarget = {
 
 function LookupEntryCard({ entry }: { entry: DictionaryEntry }) {
   return (
-    <article className="rounded-2xl border border-slate-200 bg-white p-4">
+    <article className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
       <div className="flex flex-wrap items-center gap-3">
         <h4 className="text-lg font-semibold text-slate-950">{entry.simplified}</h4>
         {entry.traditional && entry.traditional !== entry.simplified ? (
@@ -89,6 +91,58 @@ function LookupEntryCard({ entry }: { entry: DictionaryEntry }) {
       </div>
       <p className="mt-3 text-sm leading-6 text-slate-700">{entry.english}</p>
     </article>
+  );
+}
+
+function FloatingAction({
+  active = false,
+  label,
+  onClick,
+}: {
+  active?: boolean;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-2xl px-3 py-2 text-xs font-semibold transition ${
+        active
+          ? "bg-sky-500 text-white shadow-lg shadow-sky-950/20"
+          : "bg-white/90 text-slate-700 hover:bg-white"
+      }`}
+    >
+      <span>{label}</span>
+    </button>
+  );
+}
+
+function Overlay({
+  children,
+  onClose,
+  fullHeight = false,
+}: {
+  children: ReactNode;
+  onClose: () => void;
+  fullHeight?: boolean;
+}) {
+  return (
+    <div className="fixed inset-0 z-40 bg-slate-950/45 backdrop-blur-sm">
+      <button
+        type="button"
+        aria-label="Close panel"
+        onClick={onClose}
+        className="absolute inset-0"
+      />
+      <div
+        className={`absolute inset-x-0 bottom-0 mx-auto w-full max-w-3xl overflow-hidden rounded-t-[2rem] border border-white/10 bg-white shadow-2xl ${
+          fullHeight ? "max-h-[92vh]" : "max-h-[80vh]"
+        }`}
+      >
+        {children}
+      </div>
+    </div>
   );
 }
 
@@ -112,6 +166,8 @@ export default function AnnotatorPage() {
   const [lookupEntries, setLookupEntries] = useState<DictionaryEntry[]>([]);
   const [loadingLookup, setLoadingLookup] = useState(false);
   const [lookupError, setLookupError] = useState<string | null>(null);
+  const [activePanel, setActivePanel] = useState<SecondaryPanel>(null);
+  const [readerLabel, setReaderLabel] = useState("Open text to begin reading");
   const lookupRequestId = useRef(0);
 
   function resetLookupState() {
@@ -142,9 +198,10 @@ export default function AnnotatorPage() {
     [selectedFragments],
   );
 
-  async function annotateSource(sourceText: string) {
+  async function annotateSource(sourceText: string, nextReaderLabel = "Pasted text") {
     if (!sourceText.trim()) {
       setAnnotations([]);
+      setReaderLabel("Open text to begin reading");
       resetLookupState();
       return;
     }
@@ -164,7 +221,9 @@ export default function AnnotatorPage() {
       );
 
       setAnnotations(results);
+      setReaderLabel(nextReaderLabel);
       setStatusMessage("Annotation complete.");
+      setActivePanel(null);
     } catch (error) {
       setErrorMessage(getErrorMessage(error));
     } finally {
@@ -277,7 +336,7 @@ export default function AnnotatorPage() {
         `/novel?${params.toString()}`,
       );
       setText(response.text);
-      await annotateSource(response.text);
+      await annotateSource(response.text, `${selectedNovel} · ${selectedChapter}`);
       setStatusMessage("Chapter loaded and annotated.");
     } catch (error) {
       setErrorMessage(getErrorMessage(error));
@@ -338,6 +397,7 @@ export default function AnnotatorPage() {
     setText("");
     setAnnotations([]);
     setSelectedFragments([]);
+    setReaderLabel("Open text to begin reading");
     setStatusMessage(null);
     setErrorMessage(null);
     resetLookupState();
@@ -353,7 +413,7 @@ export default function AnnotatorPage() {
       return (
         <span
           key={key}
-          className="whitespace-pre-wrap rounded-lg px-1 py-1 text-base text-slate-700"
+          className="rounded-xl px-1 py-1 text-[1.4rem] leading-[3.2rem] text-slate-700"
         >
           {fragment.cchar}
         </span>
@@ -370,22 +430,22 @@ export default function AnnotatorPage() {
           }
           inspectFragment(fragment);
         }}
-        className={`flex min-w-11 flex-col items-center rounded-xl border px-2 py-1 text-center transition ${
+        className={`flex min-w-12 flex-col items-center rounded-2xl border px-2 py-2 text-center transition ${
           selected
             ? "border-emerald-300 bg-emerald-50 text-emerald-700"
-            : "border-slate-200 bg-white text-slate-800 hover:border-sky-300 hover:bg-sky-50"
-        } ${lookupSelected ? "ring-2 ring-sky-200 ring-offset-2 ring-offset-slate-50" : ""} ${
+            : "border-transparent bg-white/90 text-slate-800 hover:border-sky-200 hover:bg-sky-50"
+        } ${lookupSelected ? "ring-2 ring-sky-200 ring-offset-2 ring-offset-white" : ""} ${
           inPhrase ? "cursor-pointer" : ""
         }`}
       >
         <span
-          className={`min-h-4 text-[0.65rem] leading-4 ${
-            selected ? "invisible" : "text-sky-700"
+          className={`min-h-4 text-[0.72rem] leading-4 ${
+            selected ? "text-emerald-600" : "text-sky-700"
           }`}
         >
           {formatPinyin(fragment.pinyin)}
         </span>
-        <span className="text-lg font-medium">{fragment.cchar}</span>
+        <span className="text-[1.4rem] font-medium leading-7">{fragment.cchar}</span>
       </button>
     );
   }
@@ -411,10 +471,10 @@ export default function AnnotatorPage() {
           }
         }}
         title={item.english}
-        className={`inline-flex flex-wrap gap-1 rounded-2xl border bg-slate-50 p-1 text-left transition hover:border-sky-300 hover:bg-sky-50 ${
+        className={`inline-flex flex-wrap gap-1 rounded-[1.6rem] border p-1.5 transition hover:border-sky-200 hover:bg-sky-50 ${
           phraseSelected
-            ? "border-sky-300 ring-2 ring-sky-200 ring-offset-2 ring-offset-white"
-            : "border-slate-200"
+            ? "border-sky-300 bg-sky-50 ring-2 ring-sky-200 ring-offset-2 ring-offset-white"
+            : "border-slate-200 bg-white/80"
         }`}
       >
         {item.cchars.map((fragment, fragmentIndex) =>
@@ -425,131 +485,307 @@ export default function AnnotatorPage() {
   }
 
   return (
-    <SiteShell
-      title="Annotator"
-      description="Paste text, load a novel chapter, annotate against the existing backend, inspect dictionary matches inline, and save or restore fragment memory."
-    >
-      <div className="grid gap-6 xl:grid-cols-[1fr_1.15fr]">
-        <section className="space-y-6 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div className="space-y-3 rounded-2xl border border-slate-200 p-4">
-              <h2 className="text-lg font-semibold text-slate-950">
-                Manual annotation
-              </h2>
-              <textarea
-                value={text}
-                onChange={(event) => setText(event.target.value)}
-                placeholder="Paste Chinese text here…"
-                className="min-h-52 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-900 shadow-sm outline-none transition focus:border-sky-400 focus:bg-white"
-              />
-              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <button
-                  type="button"
-                  onClick={() => void annotateSource(text)}
-                  disabled={annotating || loadingChapter || text.trim().length === 0}
-                  className="w-full rounded-full bg-sky-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-slate-300 sm:w-auto"
-                >
-                  {annotating ? "Annotating…" : "Annotate text"}
-                </button>
-                <button
-                  type="button"
-                  onClick={clearWorkspace}
-                  className="w-full rounded-full border border-slate-200 px-5 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 sm:w-auto"
-                >
-                  Clear
-                </button>
-              </div>
+    <div className="min-h-screen bg-slate-100">
+      <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-4 pb-28 pt-4 sm:px-6 sm:pt-6">
+        <header className="sticky top-0 z-20 rounded-[2rem] border border-white/70 bg-white/85 px-4 py-4 shadow-sm backdrop-blur sm:px-6">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-sky-700">
+                Mobile reader
+              </p>
+              <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">
+                {readerLabel}
+              </h1>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Tap a word group to inspect its dictionary entry, or tap a single
+                character to review and save it.
+              </p>
             </div>
+            <button
+              type="button"
+              onClick={() => setActivePanel("menu")}
+              className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
+            >
+              Menu
+            </button>
+          </div>
 
-            <div className="space-y-3 rounded-2xl border border-slate-200 p-4">
-              <h2 className="text-lg font-semibold text-slate-950">
-                Novel / chapter
-              </h2>
-              <div className="space-y-3">
-                <label className="block space-y-2 text-sm text-slate-700">
-                  <span className="font-medium">Novel</span>
-                  <select
-                    value={selectedNovel}
-                    onChange={(event) => {
-                      setSelectedNovel(event.target.value);
-                      setSelectedChapter("");
-                    }}
-                    disabled={loadingNovels}
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-sky-400 focus:bg-white"
-                  >
-                    <option value="">Select a novel</option>
-                    {Object.entries(novels).map(([novelName, chapters]) => (
-                      <option key={novelName} value={novelName}>
-                        {novelName} [{chapters.length}]
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                <label className="block space-y-2 text-sm text-slate-700">
-                  <span className="font-medium">Chapter</span>
-                  <select
-                    value={selectedChapter}
-                    onChange={(event) => setSelectedChapter(event.target.value)}
-                    disabled={!selectedNovel || loadingNovels}
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-sky-400 focus:bg-white"
-                  >
-                    <option value="">Select a chapter</option>
-                    {(novels[selectedNovel] ?? []).map((chapter) => (
-                      <option key={chapter} value={chapter}>
-                        {chapter}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-
+          <div className="mt-4 flex flex-wrap gap-2">
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
+              Paragraphs {annotations.length}
+            </span>
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
+              Selected {selectedFragments.length}
+            </span>
+            {activeLookup ? (
               <button
                 type="button"
-                onClick={() => void handleChapterLoad()}
-                disabled={
-                  loadingChapter ||
-                  annotating ||
-                  !selectedNovel ||
-                  !selectedChapter
-                }
-                className="w-full rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300 sm:w-auto"
+                onClick={resetLookupState}
+                className="rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-sky-700 transition hover:bg-sky-200"
               >
-                {loadingChapter ? "Loading chapter…" : "Load and annotate"}
+                Close lookup
+              </button>
+            ) : null}
+          </div>
+        </header>
+
+        {(statusMessage || errorMessage) && (
+          <div
+            className={`mt-4 rounded-3xl border px-4 py-3 text-sm ${
+              errorMessage
+                ? "border-rose-200 bg-rose-50 text-rose-700"
+                : "border-emerald-200 bg-emerald-50 text-emerald-700"
+            }`}
+          >
+            {errorMessage ?? statusMessage}
+          </div>
+        )}
+
+        <main className="flex-1 pt-4 sm:pt-6">
+          {annotating ? (
+            <section className="rounded-[2rem] border border-slate-200 bg-white px-6 py-16 text-center shadow-sm">
+              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-sky-700">
+                Annotating
+              </p>
+              <p className="mt-3 text-lg text-slate-600">
+                Preparing a cleaner mobile reading view…
+              </p>
+            </section>
+          ) : annotations.length === 0 ? (
+            <section className="rounded-[2rem] border border-dashed border-slate-300 bg-white px-6 py-14 text-center shadow-sm">
+              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">
+                Reader ready
+              </p>
+              <h2 className="mt-3 text-2xl font-semibold text-slate-950">
+                Open a chapter or paste text to start reading.
+              </h2>
+              <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600">
+                The reading surface stays clear until you need support tools. Use
+                the bottom tray to load text, browse the novel library, or review
+                saved fragments.
+              </p>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                <button
+                  type="button"
+                  onClick={() => setActivePanel("library")}
+                  className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
+                >
+                  Browse library
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActivePanel("paste")}
+                  className="rounded-full border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                >
+                  Paste text
+                </button>
+              </div>
+            </section>
+          ) : (
+            <article className="space-y-5">
+              {annotations.map((paragraph, paragraphIndex) => (
+                <section
+                  key={`paragraph-${paragraphIndex}`}
+                  className="rounded-[2rem] border border-slate-200 bg-white px-4 py-5 shadow-sm sm:px-6 sm:py-6"
+                >
+                  {paragraph.length === 0 ? (
+                    <div className="text-sm italic text-slate-400">Empty paragraph</div>
+                  ) : (
+                    <div className="flex flex-wrap items-end gap-2 leading-[3.4rem]">
+                      {paragraph.map((item, index) =>
+                        renderAnnotationItem(item, index),
+                      )}
+                    </div>
+                  )}
+                </section>
+              ))}
+            </article>
+          )}
+        </main>
+      </div>
+
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/70 bg-white/90 px-4 pb-4 pt-3 backdrop-blur sm:px-6">
+        <div className="mx-auto flex max-w-5xl gap-2">
+          <FloatingAction
+            label="Paste"
+            active={activePanel === "paste"}
+            onClick={() => setActivePanel(activePanel === "paste" ? null : "paste")}
+          />
+          <FloatingAction
+            label="Library"
+            active={activePanel === "library"}
+            onClick={() =>
+              setActivePanel(activePanel === "library" ? null : "library")
+            }
+          />
+          <FloatingAction
+            label="Review"
+            active={activePanel === "review"}
+            onClick={() => setActivePanel(activePanel === "review" ? null : "review")}
+          />
+          <FloatingAction
+            label="More"
+            active={activePanel === "menu"}
+            onClick={() => setActivePanel(activePanel === "menu" ? null : "menu")}
+          />
+        </div>
+      </div>
+
+      {activePanel === "paste" ? (
+        <Overlay onClose={() => setActivePanel(null)} fullHeight>
+          <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-950">Paste text</h2>
+              <p className="text-sm text-slate-600">
+                Manual text entry stays close at hand without taking over the reader.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setActivePanel(null)}
+              className="rounded-full border border-slate-200 px-3 py-1 text-sm font-semibold text-slate-700"
+            >
+              Close
+            </button>
+          </div>
+          <div className="space-y-4 overflow-y-auto px-5 py-5">
+            <textarea
+              value={text}
+              onChange={(event) => setText(event.target.value)}
+              placeholder="Paste Chinese text here…"
+              className="min-h-72 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-900 shadow-sm outline-none transition focus:border-sky-400 focus:bg-white"
+            />
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <button
+                type="button"
+                onClick={() => void annotateSource(text)}
+                disabled={annotating || loadingChapter || text.trim().length === 0}
+                className="w-full rounded-full bg-sky-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-slate-300 sm:w-auto"
+              >
+                {annotating ? "Annotating…" : "Annotate text"}
+              </button>
+              <button
+                type="button"
+                onClick={clearWorkspace}
+                className="w-full rounded-full border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 sm:w-auto"
+              >
+                Clear reader
               </button>
             </div>
           </div>
+        </Overlay>
+      ) : null}
 
-          <div className="rounded-2xl border border-slate-200 p-4">
-            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-              <div>
-                <h2 className="text-lg font-semibold text-slate-950">
-                  Memory
-                </h2>
-                <p className="text-sm leading-6 text-slate-600">
-                  Click annotated characters to build the fragment list used by
-                  the existing memory endpoints.
-                </p>
-              </div>
+      {activePanel === "library" ? (
+        <Overlay onClose={() => setActivePanel(null)}>
+          <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-950">Novel library</h2>
+              <p className="text-sm text-slate-600">
+                Choose a novel and chapter, then return straight to the reader.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setActivePanel(null)}
+              className="rounded-full border border-slate-200 px-3 py-1 text-sm font-semibold text-slate-700"
+            >
+              Close
+            </button>
+          </div>
+          <div className="space-y-4 overflow-y-auto px-5 py-5">
+            <label className="block space-y-2 text-sm text-slate-700">
+              <span className="font-medium">Novel</span>
+              <select
+                value={selectedNovel}
+                onChange={(event) => {
+                  setSelectedNovel(event.target.value);
+                  setSelectedChapter("");
+                }}
+                disabled={loadingNovels}
+                className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-sky-400 focus:bg-white"
+              >
+                <option value="">Select a novel</option>
+                {Object.entries(novels).map(([novelName, chapters]) => (
+                  <option key={novelName} value={novelName}>
+                    {novelName} [{chapters.length}]
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="block space-y-2 text-sm text-slate-700">
+              <span className="font-medium">Chapter</span>
+              <select
+                value={selectedChapter}
+                onChange={(event) => setSelectedChapter(event.target.value)}
+                disabled={!selectedNovel || loadingNovels}
+                className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-sky-400 focus:bg-white"
+              >
+                <option value="">Select a chapter</option>
+                {(novels[selectedNovel] ?? []).map((chapter) => (
+                  <option key={chapter} value={chapter}>
+                    {chapter}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <button
+              type="button"
+              onClick={() => void handleChapterLoad()}
+              disabled={
+                loadingChapter || annotating || !selectedNovel || !selectedChapter
+              }
+              className="w-full rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300 sm:w-auto"
+            >
+              {loadingChapter ? "Loading chapter…" : "Load and annotate"}
+            </button>
+          </div>
+        </Overlay>
+      ) : null}
+
+      {activePanel === "review" ? (
+        <Overlay onClose={() => setActivePanel(null)}>
+          <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-950">Review selections</h2>
+              <p className="text-sm text-slate-600">
+                Inspect recognized characters and sync them with the memory endpoints.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setActivePanel(null)}
+              className="rounded-full border border-slate-200 px-3 py-1 text-sm font-semibold text-slate-700"
+            >
+              Close
+            </button>
+          </div>
+          <div className="space-y-5 overflow-y-auto px-5 py-5">
+            <div className="flex flex-wrap items-center gap-3">
               <div className="rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700">
                 Current code: {memoryCode}
               </div>
+              <div className="rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700">
+                Fragments: {selectedFragments.length}
+              </div>
             </div>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto]">
+            <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto]">
               <input
                 type="number"
                 min="0"
                 value={memoryCodeInput}
                 onChange={(event) => setMemoryCodeInput(event.target.value)}
-                className="min-w-0 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-sky-400 focus:bg-white sm:col-span-2 lg:col-span-1"
+                className="min-w-0 rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-sky-400 focus:bg-white sm:col-span-2 lg:col-span-1"
                 placeholder="Memory code"
               />
               <button
                 type="button"
                 onClick={() => void handleMemoryLoad()}
                 disabled={loadingMemory}
-                className="w-full rounded-full border border-slate-200 px-5 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                className="w-full rounded-full border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
               >
                 {loadingMemory ? "Loading…" : "Load memory"}
               </button>
@@ -557,167 +793,136 @@ export default function AnnotatorPage() {
                 type="button"
                 onClick={() => void handleMemorySave()}
                 disabled={savingMemory || selectedFragments.length === 0}
-                className="w-full rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300 sm:w-auto"
+                className="w-full rounded-full bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300 sm:w-auto"
               >
                 {savingMemory ? "Saving…" : "Save memory"}
               </button>
             </div>
 
-            <div className="mt-4">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-                Selected fragments
-              </h3>
-              {selectedFragments.length === 0 ? (
-                <p className="mt-2 text-sm text-slate-500">
-                  No fragments selected yet.
-                </p>
-              ) : (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {selectedFragments.map((fragment, index) => (
-                    <button
-                      key={`${fragmentKey(fragment)}-${index}`}
-                      type="button"
-                      onClick={() => toggleFragment(fragment)}
-                      className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm text-emerald-800"
-                    >
-                      {fragment.cchar} · {fragment.pinyin}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {(statusMessage || errorMessage) && (
-            <div
-              className={`rounded-2xl border px-4 py-3 text-sm ${
-                errorMessage
-                  ? "border-rose-200 bg-rose-50 text-rose-700"
-                  : "border-emerald-200 bg-emerald-50 text-emerald-700"
-              }`}
-            >
-              {errorMessage ?? statusMessage}
-            </div>
-          )}
-        </section>
-
-        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-950">
-                Annotation output
-              </h2>
-              <p className="text-sm leading-6 text-slate-600">
-                Empty and loading states are preserved while the backend
-                responses render as selectable token groups.
-              </p>
-            </div>
-            <div className="rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700">
-              Paragraphs: {annotations.length}
-            </div>
-          </div>
-
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
-              <div className="space-y-2">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-                  Dictionary inspector
-                </h3>
-                <p className="text-sm leading-6 text-slate-600">
-                  Click a phrase group to inspect the full lookup, or click an individual
-                  character to inspect it while toggling memory selection.
-                </p>
-              </div>
-              {activeLookup ? (
-                <button
-                  type="button"
-                  onClick={resetLookupState}
-                  className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-white"
-                >
-                  Close inspector
-                </button>
-              ) : null}
-            </div>
-
-            {!activeLookup ? (
-              <div className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-8 text-center text-sm text-slate-500">
-                Select an annotation to preview dictionary matches here.
+            {selectedFragments.length === 0 ? (
+              <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">
+                Tap characters in the reader to collect them here.
               </div>
             ) : (
-              <div className="mt-4 space-y-4">
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
-                    {activeLookup.kind === "phrase" ? "Phrase" : "Character"}
-                  </span>
-                  <h4 className="text-xl font-semibold text-slate-950">{activeLookup.label}</h4>
-                  {activeLookup.annotationPinyin ? (
-                    <span className="rounded-full bg-sky-100 px-3 py-1 text-sm font-medium text-sky-800">
-                      {formatPinyin(activeLookup.annotationPinyin)}
-                    </span>
-                  ) : null}
-                </div>
-
-                {activeLookup.annotationEnglish ? (
-                  <p className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-600">
-                    Annotation gloss: {activeLookup.annotationEnglish}
-                  </p>
-                ) : null}
-
-                {lookupError ? (
-                  <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-                    {lookupError}
-                  </div>
-                ) : loadingLookup ? (
-                  <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-8 text-center text-sm text-slate-500">
-                    Loading dictionary matches…
-                  </div>
-                ) : lookupEntries.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-8 text-center text-sm text-slate-500">
-                    No saved dictionary entries were returned for this selection.
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {lookupEntries.map((entry, index) => (
-                      <LookupEntryCard key={`${activeLookup.key}-${index}`} entry={entry} />
-                    ))}
-                  </div>
-                )}
+              <div className="flex flex-wrap gap-2">
+                {selectedFragments.map((fragment, index) => (
+                  <button
+                    key={`${fragmentKey(fragment)}-${index}`}
+                    type="button"
+                    onClick={() => toggleFragment(fragment)}
+                    className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800"
+                  >
+                    {fragment.cchar} · {fragment.pinyin}
+                  </button>
+                ))}
               </div>
             )}
           </div>
+        </Overlay>
+      ) : null}
 
-          {annotating ? (
-            <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500">
-              Annotating text…
+      {activePanel === "menu" ? (
+        <Overlay onClose={() => setActivePanel(null)}>
+          <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-950">Reader menu</h2>
+              <p className="text-sm text-slate-600">
+                Keep secondary tools nearby without moving them into the main view.
+              </p>
             </div>
-          ) : annotations.length === 0 ? (
-            <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500">
-              No annotations yet. Paste text or load a chapter to begin.
+            <button
+              type="button"
+              onClick={() => setActivePanel(null)}
+              className="rounded-full border border-slate-200 px-3 py-1 text-sm font-semibold text-slate-700"
+            >
+              Close
+            </button>
+          </div>
+          <div className="space-y-3 overflow-y-auto px-5 py-5">
+            <Link
+              href="/dictionary"
+              className="flex items-center justify-between rounded-3xl border border-slate-200 px-4 py-4 text-sm font-semibold text-slate-800 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
+            >
+              Dictionary lookup
+              <span className="text-slate-400">→</span>
+            </Link>
+            <Link
+              href="/edit-entry"
+              className="flex items-center justify-between rounded-3xl border border-slate-200 px-4 py-4 text-sm font-semibold text-slate-800 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
+            >
+              Edit dictionary entries
+              <span className="text-slate-400">→</span>
+            </Link>
+            <button
+              type="button"
+              onClick={() => {
+                setActivePanel("paste");
+                resetLookupState();
+              }}
+              className="flex w-full items-center justify-between rounded-3xl border border-slate-200 px-4 py-4 text-left text-sm font-semibold text-slate-800 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
+            >
+              Replace current text
+              <span className="text-slate-400">→</span>
+            </button>
+          </div>
+        </Overlay>
+      ) : null}
+
+      {activeLookup ? (
+        <Overlay onClose={resetLookupState}>
+          <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+                  {activeLookup.kind === "phrase" ? "Phrase" : "Character"}
+                </span>
+                <h2 className="text-lg font-semibold text-slate-950">
+                  {activeLookup.label}
+                </h2>
+              </div>
+              {activeLookup.annotationPinyin ? (
+                <p className="mt-2 text-sm text-slate-600">
+                  {formatPinyin(activeLookup.annotationPinyin)}
+                </p>
+              ) : null}
             </div>
-          ) : (
-            <div className="mt-6 space-y-4">
-              {annotations.map((paragraph, paragraphIndex) => (
-                <div
-                  key={`paragraph-${paragraphIndex}`}
-                  className="min-h-16 rounded-2xl border border-slate-200 bg-slate-50 p-4"
-                >
-                  {paragraph.length === 0 ? (
-                    <div className="text-sm italic text-slate-400">
-                      Empty paragraph
-                    </div>
-                  ) : (
-                    <div className="flex flex-wrap items-end gap-2">
-                      {paragraph.map((item, index) =>
-                        renderAnnotationItem(item, index),
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      </div>
-    </SiteShell>
+            <button
+              type="button"
+              onClick={resetLookupState}
+              className="rounded-full border border-slate-200 px-3 py-1 text-sm font-semibold text-slate-700"
+            >
+              Close
+            </button>
+          </div>
+          <div className="space-y-4 overflow-y-auto px-5 py-5">
+            {activeLookup.annotationEnglish ? (
+              <p className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-600">
+                Annotation gloss: {activeLookup.annotationEnglish}
+              </p>
+            ) : null}
+
+            {lookupError ? (
+              <div className="rounded-3xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                {lookupError}
+              </div>
+            ) : loadingLookup ? (
+              <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500">
+                Loading dictionary matches…
+              </div>
+            ) : lookupEntries.length === 0 ? (
+              <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500">
+                No saved dictionary entries were returned for this selection.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {lookupEntries.map((entry, index) => (
+                  <LookupEntryCard key={`${activeLookup.key}-${index}`} entry={entry} />
+                ))}
+              </div>
+            )}
+          </div>
+        </Overlay>
+      ) : null}
+    </div>
   );
 }
