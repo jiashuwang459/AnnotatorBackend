@@ -130,11 +130,13 @@ function Overlay({
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const panelElement = panelRef.current;
+    const panel = panelRef.current;
 
-    if (panelElement === null) {
+    if (panel === null) {
       return;
     }
+
+    const panelElement: HTMLDivElement = panel;
 
     panelElement.focus();
 
