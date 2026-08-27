@@ -122,10 +122,12 @@ function Overlay({
   children,
   onClose,
   fullHeight = false,
+  layerClassName = "z-40",
 }: {
   children: ReactNode;
   onClose: () => void;
   fullHeight?: boolean;
+  layerClassName?: string;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -181,7 +183,7 @@ function Overlay({
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-40 bg-slate-950/45 backdrop-blur-sm">
+    <div className={`fixed inset-0 bg-slate-950/45 backdrop-blur-sm ${layerClassName}`}>
       <button
         type="button"
         aria-label="Close panel"
@@ -193,7 +195,7 @@ function Overlay({
         role="dialog"
         aria-modal="true"
         tabIndex={-1}
-        className={`absolute inset-x-0 bottom-0 mx-auto w-full max-w-3xl overflow-hidden rounded-t-[2rem] border border-white/10 bg-white shadow-2xl ${
+        className={`absolute inset-x-0 bottom-0 z-10 mx-auto w-full max-w-3xl overflow-hidden rounded-t-[2rem] border border-white/10 bg-white shadow-2xl ${
           fullHeight ? "max-h-[92vh]" : "max-h-[80vh]"
         }`}
       >
@@ -255,6 +257,11 @@ export default function AnnotatorPage() {
     [selectedFragments],
   );
 
+  function openPanel(panel: Exclude<SecondaryPanel, null>) {
+    resetLookupState();
+    setActivePanel((current) => (current === panel ? null : panel));
+  }
+
   async function annotateSource(sourceText: string, nextReaderLabel = "Pasted text") {
     if (!sourceText.trim()) {
       setAnnotations([]);
@@ -289,6 +296,7 @@ export default function AnnotatorPage() {
   }
 
   async function inspectLookup(target: LookupTarget) {
+    setActivePanel(null);
     setActiveLookup(target);
     setLookupEntries([]);
     setLoadingLookup(true);
@@ -560,7 +568,7 @@ export default function AnnotatorPage() {
             </div>
             <button
               type="button"
-              onClick={() => setActivePanel("menu")}
+              onClick={() => openPanel("menu")}
               className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
             >
               Menu
@@ -624,14 +632,14 @@ export default function AnnotatorPage() {
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
                 <button
                   type="button"
-                  onClick={() => setActivePanel("library")}
+                  onClick={() => openPanel("library")}
                   className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
                 >
                   Browse library
                 </button>
                 <button
                   type="button"
-                  onClick={() => setActivePanel("paste")}
+                  onClick={() => openPanel("paste")}
                   className="rounded-full border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
                 >
                   Paste text
@@ -666,24 +674,22 @@ export default function AnnotatorPage() {
           <FloatingAction
             label="Paste"
             active={activePanel === "paste"}
-            onClick={() => setActivePanel(activePanel === "paste" ? null : "paste")}
+            onClick={() => openPanel("paste")}
           />
           <FloatingAction
             label="Library"
             active={activePanel === "library"}
-            onClick={() =>
-              setActivePanel(activePanel === "library" ? null : "library")
-            }
+            onClick={() => openPanel("library")}
           />
           <FloatingAction
             label="Review"
             active={activePanel === "review"}
-            onClick={() => setActivePanel(activePanel === "review" ? null : "review")}
+            onClick={() => openPanel("review")}
           />
           <FloatingAction
             label="More"
             active={activePanel === "menu"}
-            onClick={() => setActivePanel(activePanel === "menu" ? null : "menu")}
+            onClick={() => openPanel("menu")}
           />
         </div>
       </div>
@@ -913,8 +919,7 @@ export default function AnnotatorPage() {
             <button
               type="button"
               onClick={() => {
-                setActivePanel("paste");
-                resetLookupState();
+                openPanel("paste");
               }}
               className="flex w-full items-center justify-between rounded-3xl border border-slate-200 px-4 py-4 text-left text-sm font-semibold text-slate-800 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
             >
@@ -926,7 +931,7 @@ export default function AnnotatorPage() {
       ) : null}
 
       {activeLookup ? (
-        <Overlay onClose={resetLookupState}>
+        <Overlay onClose={resetLookupState} layerClassName="z-50">
           <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
             <div>
               <div className="flex flex-wrap items-center gap-2">
