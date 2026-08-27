@@ -571,10 +571,6 @@ export default function AnnotatorPage() {
   }
 
   function handlePhrasePress(item: PhraseAnnotation) {
-    if (viewMode !== "reader") {
-      return;
-    }
-
     toggleFragments(item.cchars);
   }
 
@@ -689,6 +685,11 @@ export default function AnnotatorPage() {
     }
 
     const hidePinyin = viewMode === "reader" && selected;
+    const fragmentToneClass = selected
+      ? "text-emerald-700"
+      : viewMode === "reader"
+        ? "text-slate-800"
+        : "text-slate-900";
 
     return (
       <button
@@ -701,15 +702,9 @@ export default function AnnotatorPage() {
 
           handleFragmentPress(fragment, phrase);
         }}
-        className={`flex min-w-[1.35em] flex-col items-center px-0 py-0 text-center transition ${
-          viewMode === "reader"
-            ? selected
-              ? "bg-transparent text-emerald-700"
-              : "bg-transparent text-slate-800"
-            : selected
-              ? "bg-transparent text-emerald-700"
-              : "bg-transparent text-slate-900"
-        } ${lookupSelected ? "rounded-md bg-sky-100/70 text-sky-900" : ""}`}
+        className={`flex min-w-[1.35em] flex-col items-center bg-transparent px-0 py-0 text-center transition ${fragmentToneClass} ${
+          lookupSelected ? "rounded-md bg-sky-100/70 text-sky-900" : ""
+        }`}
       >
         <span
           className={`min-h-4 text-[0.72rem] leading-4 ${
@@ -817,9 +812,11 @@ export default function AnnotatorPage() {
           </div>
         )}
 
-        <div className="mb-4 px-1 text-sm leading-6 text-slate-600">
-          {headerDescription}
-        </div>
+        {annotations.length > 0 ? (
+          <div className="mb-4 px-1 text-sm leading-6 text-slate-600">
+            {headerDescription}
+          </div>
+        ) : null}
 
         <main className="flex-1 pt-4 sm:pt-6">
           {annotating ? (
