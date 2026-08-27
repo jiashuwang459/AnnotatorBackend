@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { SiteShell } from "@/components/site-shell";
 import { api, getErrorMessage } from "@/lib/api";
@@ -110,6 +110,14 @@ function Field({
 }
 
 export default function EditEntryPage() {
+  return (
+    <Suspense fallback={null}>
+      <EditEntryPageContent />
+    </Suspense>
+  );
+}
+
+function EditEntryPageContent() {
   const searchParams = useSearchParams();
   const initialForm = useMemo(() => {
     const type = searchParams.get("type");
