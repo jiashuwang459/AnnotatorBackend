@@ -9,17 +9,18 @@ This is a **Chinese reading-learning application** that helps users who can spea
 | Layer | Technology |
 |---|---|
 | Backend API | Django 4.x + Django REST Framework (DRF) 3.x |
-| Frontend UI | React 17 (class components), MUI v5, styled-components, react-router-dom v5 |
-| Bundler | Webpack 5 (frontend assets compiled and served via Django static files) |
+| Frontend UI | Next.js 16 with React 19, Tailwind CSS 4, TypeScript 5 |
+| Bundler | Next.js built-in bundler |
 | HTTP Client | axios (with Django CSRF token support configured) |
 | Language (backend) | Python 3 |
-| Language (frontend) | JavaScript (ES2017+, **no TypeScript**) |
+| Language (frontend) | TypeScript |
 | Python Environment & Dependency Tool | uv (`uv venv`, `uv pip`, `uv run`) with `requirements.txt` |
 | Data | CEDict dictionary, custom Trie structure for lookups |
 
-The Django project lives under `Annotator/` and contains two Django apps:
+The Django project lives under `Annotator/` and contains one Django app:
 - `api/` — all backend REST API logic (models, views, serializers, utilities)
-- `frontend/` — the Next frontend, compiled by webpack and served as a Django template
+
+The frontend is a separate Next.js application under `frontend/` that communicates with the backend via REST API calls.
 
 ---
 
@@ -39,17 +40,17 @@ The Django project lives under `Annotator/` and contains two Django apps:
 - **No unused code:** Do not leave commented-out code blocks unless they carry meaningful in-progress notes. Remove dead code.
 - **Type hints:** Add type hints to new utility functions and helper methods when the types are non-obvious.
 
-### JavaScript (Frontend)
+### TypeScript (Frontend)
 
 - **Naming:**
-  - React components: `PascalCase` file names and class names (e.g., `HelperCard.js`, `DisplayArea.js`)
-  - Methods, variables, props: `camelCase` (e.g., `parsePinyin`, `triggerAnnotate`)
-  - CSS-in-JS styled components: `PascalCase` (e.g., `const Container = styled.div\`...\``)
-- **Formatting:** 2-space indentation, single quotes for strings.
-- **No TypeScript:** This project uses plain JavaScript. Do **not** introduce `.ts` or `.tsx` files or TypeScript configuration.
-- **Class components:** All React components are **class-based** (a legacy pattern maintained for consistency with the existing codebase). Do not introduce functional components or React hooks — mixing paradigms within this codebase would create inconsistency. If the project is ever migrated to functional components, that should be done holistically, not file-by-file.
-- **State management:** Component state is managed via `this.state`. Do not introduce Redux, Zustand, or any external state library.
-- **JSDoc:** Document all non-trivial methods with JSDoc comments (see the `parsePinyin` method in `HelperCard.js` as the reference pattern).
+  - React components: `PascalCase` file names and function names (e.g., `HelperCard.tsx`, `DisplayArea.tsx`)
+  - Variables, functions, props: `camelCase` (e.g., `parsePinyin`, `triggerAnnotate`)
+  - Constants: `UPPER_SNAKE_CASE`
+- **Formatting:** 2-space indentation, single quotes for strings. Follow TypeScript strict mode requirements.
+- **TypeScript:** All new code must use TypeScript (`.ts` and `.tsx` files). Use strict mode with proper type annotations.
+- **Functional components:** Use **functional components** with React hooks (the modern React paradigm). Do not use class-based components.
+- **State management:** Use React hooks for state management (`useState`, `useContext`, etc.). Do not introduce Redux, Zustand, or other external state libraries without explicit approval.
+- **Styling:** Use Tailwind CSS for styling. Apply utility classes directly to JSX elements. Do not use styled-components or CSS-in-JS.
 
 ---
 
@@ -61,7 +62,7 @@ The Django project lives under `Annotator/` and contains two Django apps:
 Annotator/
 ├── Annotator/          # Django project settings, root URL conf
 │   ├── settings.py
-│   └── urls.py         # Routes: /api/ → api.urls, / → frontend.urls
+│   └── urls.py         # Routes: /api/ → api.urls
 ├── api/                # Main API Django app
 │   ├── models.py       # All Django ORM models
 │   ├── serializers.py  # All DRF serializers
@@ -71,13 +72,15 @@ Annotator/
 │   ├── Trie.py         # Trie data structure for fast dictionary lookups
 │   ├── migrations/     # Django database migrations (auto-generated)
 │   └── tests.py        # Django test cases
-└── frontend/           # Frontend Django app
+└── frontend/           # Next.js frontend application
     ├── src/
+    │   ├── app/        # Next.js App Router pages and layouts
     │   ├── components/ # All React components (one per file)
-    │   └── index.js    # Webpack entry point
-    ├── templates/      # Django HTML template that mounts the React app
-    ├── static/         # Compiled JS/CSS output from webpack
-    ├── webpack.config.js
+    │   └── lib/        # Utility functions and helpers
+    ├── public/         # Static assets
+    ├── next.config.ts  # Next.js configuration
+    ├── tsconfig.json   # TypeScript configuration
+    ├── tailwind.config.ts # Tailwind CSS configuration
     └── package.json
 ```
 
@@ -86,8 +89,10 @@ Annotator/
 - New models go in `api/models.py`. Run `python manage.py makemigrations` after any model change.
 - New serializers go in `api/serializers.py`.
 - Shared/reusable backend logic (e.g., Chinese character parsing, dictionary helpers) goes in `api/utils.py`.
-- New React components go in `frontend/src/components/` as a single `.js` file per component.
+- New React components go in `frontend/src/components/` as a single `.tsx` file per component. Use functional components with TypeScript.
 - Do not create sub-directories inside `frontend/src/components/` unless there is an explicit need for co-located assets.
+- Pages and layouts go in `frontend/src/app/` following Next.js App Router conventions.
+- Utility functions and custom hooks go in `frontend/src/lib/`.
 
 ### Module Interaction
 
@@ -121,21 +126,22 @@ Annotator/
 - Do not use `serializer.save()` unless the serializer's `create`/`update` method is explicitly defined for that serializer.
 - Do not hardcode the `owner` field; use the `OwnerOrDefault(owner)` utility and the `DEFAULT_OWNER` constant from `utils.py`.
 
-### React (Frontend)
+### React / Next.js (Frontend)
 
 **DO:**
-- Use **class-based React components** for all new components. Export the component as a named export (`export class MyComponent extends React.Component`) or default export (`export default class MyComponent extends React.Component`), matching the pattern of the file being edited.
-- Use `axios` for all HTTP requests. Reference the existing usage in `DictionaryPage.js` and `Memory.js` as the pattern.
-- Use **MUI v5** (`@mui/material`) for UI components and layout. Use `styled-components` for custom wrapper/layout elements.
-- Use `react-router-dom` v5 (`<Switch>`, `<Route>`, `<Link>`) for all routing.
-- Call `this.setState(...)` to update component state; never mutate `this.state` directly.
+- Use **functional components** with React hooks (`useState`, `useEffect`, etc.) for all new components.
+- Export components as default or named exports, e.g. `export default function MyComponent() { ... }` or `export function MyComponent() { ... }`.
+- Use `axios` for all HTTP requests to backend `/api/` endpoints.
+- Use **Tailwind CSS** for all styling. Apply utility classes directly to JSX elements (e.g., `<div className="flex items-center gap-4">`).
+- Use Next.js App Router conventions for pages and layouts. Place pages in `src/app/` following the file-based routing structure.
+- Use custom hooks in `src/lib/` for shared logic between components.
 
 **DO NOT:**
-- Do not use functional components or React hooks (`useState`, `useEffect`, etc.).
-- Do not import from `react-router-dom` v6 API (e.g., `useNavigate`, `useParams` as a hook). This project uses v5, which has reached end-of-life; a future migration to v6 should be done holistically rather than mixing v5 and v6 APIs.
+- Do not use class-based components. This project uses modern functional components with hooks exclusively.
+- Do not use MUI, styled-components, or other CSS-in-JS libraries. Use Tailwind CSS only.
 - Do not use `fetch` for HTTP calls. Use `axios` exclusively.
-- Do not add new npm packages without explicit approval. The existing MUI, styled-components, axios, and react-bootstrap packages cover the UI requirements.
-- Do not use `ReactDOM.render` outside of `index.js` (the single entry point).
+- Do not add new npm packages without explicit approval. Check `frontend/package.json` before installing new dependencies.
+- Do not use the old `react-router-dom` library. Next.js App Router handles routing natively.
 
 ### Pinyin / Chinese Text Processing
 
@@ -201,14 +207,14 @@ If a change intentionally diverges from existing guidance temporarily, add a con
           Toned Unicode pinyin string, e.g. 'sān'.
       """
   ```
-- **JavaScript:** Use JSDoc for all non-trivial methods.
-  ```javascript
+- **TypeScript:** Use proper type annotations and JSDoc comments when needed for complex types.
+  ```typescript
   /**
    * Parses pinyin from ASCII to UTF-8.
-   * @param {string} pinyin - ASCII pinyin, e.g. 'san1'
-   * @returns {string} Toned pinyin, e.g. 'sān'
    */
-  parsePinyin(pinyin) { ... }
+  function parsePinyin(pinyin: string): string {
+    // implementation
+  }
   ```
 - **Inline comments:** Add inline comments only when the logic is non-obvious (e.g., Unicode range handling, priority ordering). Do not add comments that merely restate what the code does.
 - **TODO comments:** Use `# TODO:` or `// TODO:` for known missing features or edge cases, followed by a concise description. Do not leave empty TODOs.
