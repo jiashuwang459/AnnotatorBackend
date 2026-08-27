@@ -207,7 +207,7 @@ function Overlay({
       return;
     }
 
-    const panelElement = panelRef.current!;
+    const panelElement = panelRef.current;
 
     panelElement.focus();
 
