@@ -17,6 +17,19 @@ import {
 const NBSP = "\u00a0";
 
 type SecondaryPanel = "paste" | "library" | "review" | "menu" | null;
+type ViewMode = "reader" | "dictionary";
+
+type PhraseContext = {
+  key: string;
+  text: string;
+  pinyin: string;
+  english: string;
+};
+
+type LookupTarget = {
+  fragment: Fragment;
+  phrase: PhraseContext | null;
+};
 
 function segmentText(text: string) {
   const lines = text.split("\n");
@@ -29,10 +42,6 @@ function segmentText(text: string) {
 
 function fragmentKey(fragment: Fragment) {
   return `${fragment.cchar}::${fragment.pinyin}`;
-}
-
-function fragmentLookupKey(fragment: Fragment) {
-  return `fragment::${fragmentKey(fragment)}`;
 }
 
 function phraseLookupKey(phrase: string) {
@@ -66,16 +75,56 @@ function isSelectableFragment(fragment: Fragment) {
   );
 }
 
-type LookupTarget = {
-  key: string;
-  kind: "fragment" | "phrase";
-  label: string;
-  phrase: string;
-  annotationPinyin?: string;
-  annotationEnglish?: string;
-};
+function buildPhraseContext(item: PhraseAnnotation): PhraseContext | null {
+  const text = getPhraseText(item).trim();
 
-function LookupEntryCard({ entry }: { entry: DictionaryEntry }) {
+  if (!text) {
+    return null;
+  }
+
+  return {
+    key: phraseLookupKey(text),
+    text,
+    pinyin: getPhrasePinyin(item),
+    english: item.english,
+  };
+}
+
+function buildEditEntryHref({
+  simplified,
+  traditional,
+  pinyin,
+  english,
+}: {
+  simplified: string;
+  traditional?: string;
+  pinyin?: string;
+  english?: string;
+}) {
+  const params = new URLSearchParams({ type: "custom", simplified });
+
+  if (traditional) {
+    params.set("traditional", traditional);
+  }
+
+  if (pinyin) {
+    params.set("pinyin", pinyin);
+  }
+
+  if (english) {
+    params.set("english", english);
+  }
+
+  return `/edit-entry?${params.toString()}`;
+}
+
+function LookupEntryCard({
+  entry,
+  actionHref,
+}: {
+  entry: DictionaryEntry;
+  actionHref: string;
+}) {
   return (
     <article className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
       <div className="flex flex-wrap items-center gap-3">
@@ -90,6 +139,14 @@ function LookupEntryCard({ entry }: { entry: DictionaryEntry }) {
         </span>
       </div>
       <p className="mt-3 text-sm leading-6 text-slate-700">{entry.english}</p>
+      <div className="mt-4">
+        <Link
+          href={actionHref}
+          className="inline-flex rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
+        >
+          Edit entry
+        </Link>
+      </div>
     </article>
   );
 }
@@ -134,13 +191,11 @@ function Overlay({
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const panel = panelRef.current;
+    const panelElement = panelRef.current;
 
-    if (panel === null) {
+    if (panelElement === null) {
       return;
     }
-
-    const panelElement: HTMLDivElement = panel;
 
     panelElement.focus();
 
@@ -224,8 +279,12 @@ export default function AnnotatorPage() {
   const [loadingChapter, setLoadingChapter] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>("reader");
   const [activeLookup, setActiveLookup] = useState<LookupTarget | null>(null);
-  const [lookupEntries, setLookupEntries] = useState<DictionaryEntry[]>([]);
+  const [fragmentLookupEntries, setFragmentLookupEntries] = useState<DictionaryEntry[]>(
+    [],
+  );
+  const [phraseLookupEntries, setPhraseLookupEntries] = useState<DictionaryEntry[]>([]);
   const [loadingLookup, setLoadingLookup] = useState(false);
   const [lookupError, setLookupError] = useState<string | null>(null);
   const [activePanel, setActivePanel] = useState<SecondaryPanel>(null);
@@ -235,7 +294,8 @@ export default function AnnotatorPage() {
   function resetLookupState() {
     lookupRequestId.current += 1;
     setActiveLookup(null);
-    setLookupEntries([]);
+    setFragmentLookupEntries([]);
+    setPhraseLookupEntries([]);
     setLoadingLookup(false);
     setLookupError(null);
   }
@@ -263,6 +323,15 @@ export default function AnnotatorPage() {
   function openPanel(panel: Exclude<SecondaryPanel, null>) {
     resetLookupState();
     setActivePanel((current) => (current === panel ? null : panel));
+  }
+
+  function switchViewMode(nextMode: ViewMode) {
+    setViewMode(nextMode);
+    resetLookupState();
+  }
+
+  function toggleViewMode() {
+    switchViewMode(viewMode === "reader" ? "dictionary" : "reader");
   }
 
   async function annotateSource(sourceText: string, nextReaderLabel = "Pasted text") {
@@ -298,92 +367,109 @@ export default function AnnotatorPage() {
     }
   }
 
-  async function inspectLookup(target: LookupTarget) {
+  async function fetchDictionaryEntries(phrase: string) {
+    try {
+      const params = new URLSearchParams({ phrase });
+      return await api.get<DictionaryEntry[]>(`/entry?${params.toString()}`);
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 404) {
+        return [];
+      }
+
+      throw error;
+    }
+  }
+
+  async function inspectLookup(fragment: Fragment, phrase: PhraseContext | null) {
     setActivePanel(null);
-    setActiveLookup(target);
-    setLookupEntries([]);
+    setActiveLookup({ fragment, phrase });
+    setFragmentLookupEntries([]);
+    setPhraseLookupEntries([]);
     setLoadingLookup(true);
     setLookupError(null);
 
     const requestId = lookupRequestId.current + 1;
     lookupRequestId.current = requestId;
 
-    try {
-      const params = new URLSearchParams({ phrase: target.phrase });
-      const entries = await api.get<DictionaryEntry[]>(`/entry?${params.toString()}`);
+    const phraseText =
+      phrase && phrase.text !== fragment.cchar ? phrase.text : null;
 
-      if (lookupRequestId.current !== requestId) {
-        return;
-      }
+    const [fragmentResult, phraseResult] = await Promise.allSettled([
+      fetchDictionaryEntries(fragment.cchar),
+      phraseText ? fetchDictionaryEntries(phraseText) : Promise.resolve([]),
+    ]);
 
-      setLookupEntries(entries);
-    } catch (error) {
-      if (lookupRequestId.current !== requestId) {
-        return;
-      }
-
-      if (error instanceof ApiError && error.status === 404) {
-        setLookupEntries([]);
-        setLookupError(null);
-      } else {
-        setLookupEntries([]);
-        setLookupError(getErrorMessage(error));
-      }
-    } finally {
-      if (lookupRequestId.current === requestId) {
-        setLoadingLookup(false);
-      }
+    if (lookupRequestId.current !== requestId) {
+      return;
     }
+
+    let nextError: string | null = null;
+
+    if (fragmentResult.status === "fulfilled") {
+      setFragmentLookupEntries(fragmentResult.value);
+    } else {
+      nextError = getErrorMessage(fragmentResult.reason);
+      setFragmentLookupEntries([]);
+    }
+
+    if (phraseResult.status === "fulfilled") {
+      setPhraseLookupEntries(phraseResult.value);
+    } else {
+      nextError ??= getErrorMessage(phraseResult.reason);
+      setPhraseLookupEntries([]);
+    }
+
+    setLookupError(nextError);
+    setLoadingLookup(false);
   }
 
-  function toggleFragment(fragment: Fragment) {
-    if (!isSelectableFragment(fragment)) {
+  function toggleFragments(fragments: Fragment[]) {
+    const selectableFragments = fragments.filter(isSelectableFragment);
+
+    if (selectableFragments.length === 0) {
       return;
     }
 
     setSelectedFragments((current) => {
-      const exists = current.some(
-        (entry) =>
-          entry.cchar === fragment.cchar && entry.pinyin === fragment.pinyin,
-      );
+      const selected = new Set(current.map(fragmentKey));
+      const targetKeys = selectableFragments.map(fragmentKey);
+      const everySelected = targetKeys.every((key) => selected.has(key));
 
-      if (exists) {
-        return current.filter(
-          (entry) =>
-            entry.cchar !== fragment.cchar || entry.pinyin !== fragment.pinyin,
-        );
+      if (everySelected) {
+        const removalKeys = new Set(targetKeys);
+        return current.filter((fragment) => !removalKeys.has(fragmentKey(fragment)));
       }
 
-      return [...current, fragment];
+      const next = [...current];
+
+      selectableFragments.forEach((fragment) => {
+        const key = fragmentKey(fragment);
+
+        if (!selected.has(key)) {
+          selected.add(key);
+          next.push(fragment);
+        }
+      });
+
+      return next;
     });
   }
 
-  function inspectFragment(fragment: Fragment) {
-    toggleFragment(fragment);
-    void inspectLookup({
-      key: fragmentLookupKey(fragment),
-      kind: "fragment",
-      label: fragment.cchar,
-      phrase: fragment.cchar,
-      annotationPinyin: fragment.pinyin,
-    });
-  }
-
-  function inspectPhrase(item: PhraseAnnotation) {
-    const phrase = getPhraseText(item).trim();
-
-    if (!phrase) {
+  function handleFragmentPress(fragment: Fragment, phrase: PhraseContext | null) {
+    if (viewMode === "reader") {
+      toggleFragments([fragment]);
       return;
     }
 
-    void inspectLookup({
-      key: phraseLookupKey(phrase),
-      kind: "phrase",
-      label: phrase,
-      phrase,
-      annotationPinyin: getPhrasePinyin(item),
-      annotationEnglish: item.english,
-    });
+    void inspectLookup(fragment, phrase);
+  }
+
+  function handlePhrasePress(item: PhraseAnnotation) {
+    if (viewMode !== "reader") {
+      return;
+    }
+
+    toggleFragments(item.cchars);
   }
 
   async function handleChapterLoad() {
@@ -471,11 +557,19 @@ export default function AnnotatorPage() {
     resetLookupState();
   }
 
-  function renderFragment(fragment: Fragment, key: string, inPhrase = false) {
+  function renderFragment(
+    fragment: Fragment,
+    key: string,
+    {
+      inPhrase = false,
+      phrase = null,
+    }: { inPhrase?: boolean; phrase?: PhraseContext | null } = {},
+  ) {
     const selected = selectedKeys.has(fragmentKey(fragment));
     const lookupSelected =
-      activeLookup?.key === fragmentLookupKey(fragment) &&
-      fragment.cchar.trim().length > 0;
+      activeLookup?.fragment.cchar === fragment.cchar &&
+      activeLookup.fragment.pinyin === fragment.pinyin &&
+      viewMode === "dictionary";
 
     if (!isSelectableFragment(fragment)) {
       return (
@@ -488,6 +582,8 @@ export default function AnnotatorPage() {
       );
     }
 
+    const hidePinyin = viewMode === "reader" && selected;
+
     return (
       <button
         key={key}
@@ -496,19 +592,22 @@ export default function AnnotatorPage() {
           if (inPhrase) {
             event.stopPropagation();
           }
-          inspectFragment(fragment);
+
+          handleFragmentPress(fragment, phrase);
         }}
-        className={`flex min-w-12 flex-col items-center rounded-2xl border px-2 py-2 text-center transition ${
-          selected
-            ? "border-emerald-300 bg-emerald-50 text-emerald-700"
-            : "border-transparent bg-white/90 text-slate-800 hover:border-sky-200 hover:bg-sky-50"
-        } ${lookupSelected ? "ring-2 ring-sky-200 ring-offset-2 ring-offset-white" : ""} ${
-          inPhrase ? "cursor-pointer" : ""
-        }`}
+        className={`flex min-w-12 flex-col items-center rounded-2xl px-2 py-2 text-center transition ${
+          viewMode === "reader"
+            ? selected
+              ? "bg-transparent text-emerald-700"
+              : "bg-transparent text-slate-800 hover:bg-slate-100"
+            : selected
+              ? "border border-emerald-300 bg-emerald-50 text-slate-900"
+              : "border border-slate-200 bg-white text-slate-900 hover:border-sky-200 hover:bg-sky-50"
+        } ${lookupSelected ? "ring-2 ring-sky-200 ring-offset-2 ring-offset-white" : ""}`}
       >
         <span
           className={`min-h-4 text-[0.72rem] leading-4 ${
-            selected ? "text-emerald-600" : "text-sky-700"
+            hidePinyin ? "invisible" : selected ? "text-emerald-600" : "text-sky-700"
           }`}
         >
           {formatPinyin(fragment.pinyin)}
@@ -523,34 +622,68 @@ export default function AnnotatorPage() {
       return renderFragment(item, `fragment-${index}`);
     }
 
-    const phrase = getPhraseText(item);
-    const phraseSelected = activeLookup?.key === phraseLookupKey(phrase);
+    const phrase = buildPhraseContext(item);
+    const selectableFragments = item.cchars.filter(isSelectableFragment);
+    const phraseRecognized =
+      selectableFragments.length > 0 &&
+      selectableFragments.every((fragment) => selectedKeys.has(fragmentKey(fragment)));
+    const phraseSelected = activeLookup?.phrase?.key === phrase?.key;
+
+    if (viewMode === "reader") {
+      return (
+        <div
+          key={`phrase-${index}`}
+          role={selectableFragments.length > 0 ? "button" : undefined}
+          tabIndex={selectableFragments.length > 0 ? 0 : undefined}
+          onClick={() => handlePhrasePress(item)}
+          onKeyDown={(event) => {
+            if (
+              selectableFragments.length > 0 &&
+              (event.key === "Enter" || event.key === " ")
+            ) {
+              event.preventDefault();
+              handlePhrasePress(item);
+            }
+          }}
+          title={item.english}
+          className={`inline-flex flex-wrap items-end gap-1 rounded-2xl px-0.5 py-1 transition ${
+            phraseRecognized ? "text-emerald-700" : ""
+          }`}
+        >
+          {item.cchars.map((fragment, fragmentIndex) =>
+            renderFragment(fragment, `phrase-${index}-${fragmentIndex}`, {
+              inPhrase: true,
+              phrase,
+            }),
+          )}
+        </div>
+      );
+    }
 
     return (
       <div
         key={`phrase-${index}`}
-        role="button"
-        tabIndex={0}
-        onClick={() => inspectPhrase(item)}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            inspectPhrase(item);
-          }
-        }}
         title={item.english}
-        className={`inline-flex flex-wrap gap-1 rounded-[1.6rem] border p-1.5 transition hover:border-sky-200 hover:bg-sky-50 ${
+        className={`inline-flex flex-wrap gap-1 rounded-md border border-dashed p-1.5 transition ${
           phraseSelected
-            ? "border-sky-300 bg-sky-50 ring-2 ring-sky-200 ring-offset-2 ring-offset-white"
-            : "border-slate-200 bg-white/80"
+            ? "border-sky-300 bg-sky-50/70"
+            : "border-slate-300 bg-slate-50/50"
         }`}
       >
         {item.cchars.map((fragment, fragmentIndex) =>
-          renderFragment(fragment, `phrase-${index}-${fragmentIndex}`, true),
+          renderFragment(fragment, `phrase-${index}-${fragmentIndex}`, {
+            inPhrase: true,
+            phrase,
+          }),
         )}
       </div>
     );
   }
+
+  const headerDescription =
+    viewMode === "reader"
+      ? "Tap a character to mark it recognized, or tap a word to update the whole phrase without leaving the reading flow."
+      : "Tap a character to inspect that character, its pronunciations, and the parent phrase in the dictionary sheet.";
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -565,8 +698,7 @@ export default function AnnotatorPage() {
                 {readerLabel}
               </h1>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                Tap a word group to inspect its dictionary entry, or tap a single
-                character to review and save it.
+                {headerDescription}
               </p>
             </div>
             <button
@@ -578,22 +710,41 @@ export default function AnnotatorPage() {
             </button>
           </div>
 
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
+              Mode: {viewMode}
+            </span>
             <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
               Paragraphs: {annotations.length}
             </span>
             <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
-              Selected {selectedFragments.length}
+              Selected: {selectedFragments.length}
             </span>
-            {activeLookup ? (
-              <button
-                type="button"
-                onClick={resetLookupState}
-                className="rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-sky-700 transition hover:bg-sky-200"
-              >
-                Close lookup
-              </button>
-            ) : null}
+          </div>
+
+          <div className="mt-4 inline-flex rounded-full bg-slate-100 p-1">
+            <button
+              type="button"
+              onClick={() => switchViewMode("reader")}
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                viewMode === "reader"
+                  ? "bg-white text-slate-950 shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Reader mode
+            </button>
+            <button
+              type="button"
+              onClick={() => switchViewMode("dictionary")}
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                viewMode === "dictionary"
+                  ? "bg-white text-slate-950 shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Dictionary mode
+            </button>
           </div>
         </header>
 
@@ -629,8 +780,8 @@ export default function AnnotatorPage() {
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600">
                 The reading surface stays clear until you need support tools. Use
-                the bottom tray to load text, browse the novel library, or review
-                saved fragments.
+                the bottom tray to load text, browse the novel library, review
+                recognition memory, or switch modes.
               </p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
                 <button
@@ -654,7 +805,11 @@ export default function AnnotatorPage() {
               {annotations.map((paragraph, paragraphIndex) => (
                 <section
                   key={`paragraph-${paragraphIndex}`}
-                  className="rounded-[2rem] border border-slate-200 bg-white px-4 py-5 shadow-sm sm:px-6 sm:py-6"
+                  className={`rounded-[2rem] bg-white px-4 py-5 shadow-sm sm:px-6 sm:py-6 ${
+                    viewMode === "reader"
+                      ? "border border-transparent"
+                      : "border border-slate-200"
+                  }`}
                 >
                   {paragraph.length === 0 ? (
                     <div className="text-sm italic text-slate-400">Empty paragraph</div>
@@ -674,6 +829,11 @@ export default function AnnotatorPage() {
 
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/70 bg-white/90 px-4 pb-4 pt-3 backdrop-blur sm:px-6">
         <div className="mx-auto flex max-w-5xl gap-2">
+          <FloatingAction
+            label={viewMode === "reader" ? "Reader" : "Dictionary"}
+            active={viewMode === "dictionary"}
+            onClick={toggleViewMode}
+          />
           <FloatingAction
             label="Paste"
             active={activePanel === "paste"}
@@ -867,7 +1027,7 @@ export default function AnnotatorPage() {
 
             {selectedFragments.length === 0 ? (
               <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">
-                Tap characters in the reader to collect them here.
+                Reader mode taps collect recognized characters here.
               </div>
             ) : (
               <div className="flex flex-wrap gap-2">
@@ -875,7 +1035,7 @@ export default function AnnotatorPage() {
                   <button
                     key={`${fragmentKey(fragment)}-${index}`}
                     type="button"
-                    onClick={() => toggleFragment(fragment)}
+                    onClick={() => toggleFragments([fragment])}
                     className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800"
                   >
                     {fragment.cchar} · {fragment.pinyin}
@@ -921,9 +1081,7 @@ export default function AnnotatorPage() {
             </Link>
             <button
               type="button"
-              onClick={() => {
-                openPanel("paste");
-              }}
+              onClick={() => openPanel("paste")}
               className="flex w-full items-center justify-between rounded-3xl border border-slate-200 px-4 py-4 text-left text-sm font-semibold text-slate-800 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
             >
               Replace current text
@@ -935,7 +1093,7 @@ export default function AnnotatorPage() {
 
       {activeLookup ? (
         <Overlay
-          label={`${activeLookup.kind === "phrase" ? "Phrase" : "Character"} lookup`}
+          label="Dictionary lookup"
           onClose={resetLookupState}
           layerClassName="z-50"
         >
@@ -943,17 +1101,15 @@ export default function AnnotatorPage() {
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
-                  {activeLookup.kind === "phrase" ? "Phrase" : "Character"}
+                  Character
                 </span>
                 <h2 className="text-lg font-semibold text-slate-950">
-                  {activeLookup.label}
+                  {activeLookup.fragment.cchar}
                 </h2>
               </div>
-              {activeLookup.annotationPinyin ? (
-                <p className="mt-2 text-sm text-slate-600">
-                  {formatPinyin(activeLookup.annotationPinyin)}
-                </p>
-              ) : null}
+              <p className="mt-2 text-sm text-slate-600">
+                {formatPinyin(activeLookup.fragment.pinyin)}
+              </p>
             </div>
             <button
               type="button"
@@ -963,32 +1119,120 @@ export default function AnnotatorPage() {
               Close
             </button>
           </div>
-          <div className="space-y-4 overflow-y-auto px-5 py-5">
-            {activeLookup.annotationEnglish ? (
-              <p className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-600">
-                Annotation gloss: {activeLookup.annotationEnglish}
-              </p>
-            ) : null}
-
+          <div className="space-y-5 overflow-y-auto px-5 py-5">
             {lookupError ? (
               <div className="rounded-3xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
                 {lookupError}
               </div>
-            ) : loadingLookup ? (
-              <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500">
-                Loading dictionary matches…
+            ) : null}
+
+            <section className="space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                    Character entries
+                  </h3>
+                  <p className="text-sm text-slate-600">
+                    {fragmentLookupEntries.length > 1
+                      ? "Multiple pronunciations found for this character."
+                      : "Saved dictionary entries for the tapped character."}
+                  </p>
+                </div>
+                <Link
+                  href={buildEditEntryHref({
+                    simplified: activeLookup.fragment.cchar,
+                    pinyin: activeLookup.fragment.pinyin,
+                  })}
+                  className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
+                >
+                  Edit entry
+                </Link>
               </div>
-            ) : lookupEntries.length === 0 ? (
-              <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500">
-                No saved dictionary entries were returned for this selection.
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {lookupEntries.map((entry, index) => (
-                  <LookupEntryCard key={`${activeLookup.key}-${index}`} entry={entry} />
-                ))}
-              </div>
-            )}
+
+              {loadingLookup ? (
+                <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500">
+                  Loading dictionary matches…
+                </div>
+              ) : fragmentLookupEntries.length === 0 ? (
+                <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-sm text-slate-500">
+                  No saved dictionary entry was returned for this character yet.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {fragmentLookupEntries.map((entry, index) => (
+                    <LookupEntryCard
+                      key={`${fragmentKey(activeLookup.fragment)}-${index}`}
+                      entry={entry}
+                      actionHref={buildEditEntryHref({
+                        simplified: entry.simplified,
+                        traditional: entry.traditional,
+                        pinyin: entry.pinyin,
+                        english: entry.english,
+                      })}
+                    />
+                  ))}
+                </div>
+              )}
+            </section>
+
+            {activeLookup.phrase ? (
+              <section className="space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                      Parent phrase
+                    </h3>
+                    <div className="mt-1 flex flex-wrap items-center gap-2">
+                      <span className="text-lg font-semibold text-slate-950">
+                        {activeLookup.phrase.text}
+                      </span>
+                      {activeLookup.phrase.pinyin ? (
+                        <span className="rounded-full bg-sky-100 px-3 py-1 text-sm font-medium text-sky-800">
+                          {formatPinyin(activeLookup.phrase.pinyin)}
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
+                  <Link
+                    href={buildEditEntryHref({
+                      simplified: activeLookup.phrase.text,
+                      pinyin: activeLookup.phrase.pinyin,
+                      english: activeLookup.phrase.english,
+                    })}
+                    className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
+                  >
+                    Edit entry
+                  </Link>
+                </div>
+
+                {activeLookup.phrase.english ? (
+                  <p className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-600">
+                    Annotation gloss: {activeLookup.phrase.english}
+                  </p>
+                ) : null}
+
+                {loadingLookup ? null : phraseLookupEntries.length === 0 ? (
+                  <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-sm text-slate-500">
+                    No saved phrase entry was returned for this word yet.
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {phraseLookupEntries.map((entry, index) => (
+                      <LookupEntryCard
+                        key={`${activeLookup.phrase?.key ?? "phrase"}-${index}`}
+                        entry={entry}
+                        actionHref={buildEditEntryHref({
+                          simplified: entry.simplified,
+                          traditional: entry.traditional,
+                          pinyin: entry.pinyin,
+                          english: entry.english,
+                        })}
+                      />
+                    ))}
+                  </div>
+                )}
+              </section>
+            ) : null}
           </div>
         </Overlay>
       ) : null}
