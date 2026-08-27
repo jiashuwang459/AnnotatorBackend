@@ -72,7 +72,7 @@ What `local_setup.sh` does:
 3. creates the local `static/` directory
 4. collects static assets with Django `collectstatic`
 5. applies Django migrations to `db.sqlite3`
-6. installs frontend dependencies in `frontend-next/`
+6. installs frontend dependencies in `frontend/`
 
 After that, start the backend and the new frontend in separate terminals:
 
@@ -81,7 +81,7 @@ uv run python manage.py runserver
 ```
 
 ```bash
-cd frontend-next
+cd frontend
 npm run dev
 ```
 
@@ -160,12 +160,12 @@ uv run python manage.py runserver
 
 ## Frontend (Next.js + Tailwind)
 
-The new frontend lives in `/AnnotatorBackend/frontend-next`.
+The frontend lives in `/AnnotatorBackend/frontend`.
 
 ### Project structure
 
 ```text
-frontend-next/
+frontend/
 ├── src/app/
 │   ├── annotator/page.tsx
 │   ├── dictionary/page.tsx
@@ -181,7 +181,7 @@ frontend-next/
 ### Running the Next.js frontend
 
 ```bash
-cd ./frontend-next
+cd ./frontend
 npm install
 npm run dev
 ```
@@ -191,7 +191,7 @@ The Next.js app proxies `/api/*` requests to the local Django backend on `http:/
 ### NPM dependencies
 
 ```bash
-cd ./frontend-next
+cd ./frontend
 npm install
 ```
 
@@ -260,7 +260,7 @@ bash build.sh
 For local development, you can still run the individual commands manually if you do not want the full build flow.
 
 ```bash
-cd ./frontend-next
+cd ./frontend
 
 # runs the frontend with dev configurations
 npm run dev
