@@ -111,7 +111,25 @@ function Field({
 
 export default function EditEntryPage() {
   const searchParams = useSearchParams();
-  const [form, setForm] = useState<FormState>(emptyForm);
+  const initialForm = useMemo(() => {
+    const type = searchParams.get("type");
+
+    return {
+      type: type && type in fieldsByType ? (type as EditEntryType) : "",
+      simplified: searchParams.get("simplified") ?? "",
+      traditional: searchParams.get("traditional") ?? "",
+      pinyin: searchParams.get("pinyin") ?? "",
+      english: searchParams.get("english") ?? "",
+      reason: "",
+      notes: "",
+    } satisfies FormState;
+  }, [searchParams]);
+
+  return <EditEntryScreen key={searchParams.toString()} initialForm={initialForm} />;
+}
+
+function EditEntryScreen({ initialForm }: { initialForm: FormState }) {
+  const [form, setForm] = useState<FormState>(initialForm);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>(
     {},
   );
@@ -128,28 +146,6 @@ export default function EditEntryPage() {
     () => (form.type ? fieldsByType[form.type] : []),
     [form.type],
   );
-
-  useEffect(() => {
-    const type = searchParams.get("type");
-    const simplified = searchParams.get("simplified");
-    const traditional = searchParams.get("traditional");
-    const pinyin = searchParams.get("pinyin");
-    const english = searchParams.get("english");
-    const nextType = type && type in fieldsByType ? (type as EditEntryType) : "";
-
-    if (!nextType && !simplified && !traditional && !pinyin && !english) {
-      return;
-    }
-
-    setForm((current) => ({
-      ...current,
-      type: nextType || current.type,
-      simplified: simplified ?? current.simplified,
-      traditional: traditional ?? current.traditional,
-      pinyin: pinyin ?? current.pinyin,
-      english: english ?? current.english,
-    }));
-  }, [searchParams]);
 
   useEffect(() => {
     async function loadEntries(type: EditEntryType) {
