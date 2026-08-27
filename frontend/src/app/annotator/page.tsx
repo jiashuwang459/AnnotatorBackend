@@ -182,6 +182,77 @@ function FloatingAction({
   );
 }
 
+function ReaderHeader({
+  hidden,
+  onMenuOpen,
+  onSwitchToReader,
+  onSwitchToDictionary,
+  paragraphCount,
+  selectedCount,
+  readerLabel,
+  viewMode,
+}: {
+  hidden: boolean;
+  onMenuOpen: () => void;
+  onSwitchToReader: () => void;
+  onSwitchToDictionary: () => void;
+  paragraphCount: number;
+  selectedCount: number;
+  readerLabel: string;
+  viewMode: ViewMode;
+}) {
+  return (
+    <header
+      className={`sticky top-3 z-20 mb-3 rounded-[1.6rem] border border-white/70 bg-white/70 px-3 py-3 shadow-sm backdrop-blur transition-transform duration-200 sm:top-4 sm:px-4 ${
+        hidden ? "-translate-y-[calc(100%+1rem)]" : "translate-y-0"
+      }`}
+    >
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-slate-900">{readerLabel}</p>
+          <p className="text-[0.7rem] uppercase tracking-[0.22em] text-slate-500">
+            {paragraphCount} paragraphs · {selectedCount} saved
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <div className="inline-flex rounded-full bg-slate-100/90 p-1">
+            <button
+              type="button"
+              onClick={onSwitchToReader}
+              className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                viewMode === "reader"
+                  ? "bg-white text-slate-950 shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Reader
+            </button>
+            <button
+              type="button"
+              onClick={onSwitchToDictionary}
+              className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                viewMode === "dictionary"
+                  ? "bg-white text-slate-950 shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Dictionary
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={onMenuOpen}
+            aria-label="Open reader menu"
+            className="rounded-full border border-slate-200 bg-white/90 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
+          >
+            Menu
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+}
+
 function Overlay({
   children,
   label,
@@ -301,6 +372,7 @@ export default function AnnotatorPage() {
   const [lookupError, setLookupError] = useState<string | null>(null);
   const [activePanel, setActivePanel] = useState<SecondaryPanel>(null);
   const [readerLabel, setReaderLabel] = useState("Open text to begin reading");
+  const [headerHidden, setHeaderHidden] = useState(false);
   const lookupRequestId = useRef(0);
 
   const resetLookupState = useCallback(() => {
@@ -325,6 +397,28 @@ export default function AnnotatorPage() {
     }
 
     void loadNovels();
+  }, []);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+
+    function handleScroll() {
+      const nextScrollY = window.scrollY;
+      const scrollingDown = nextScrollY > lastScrollY;
+
+      if (nextScrollY < 24) {
+        setHeaderHidden(false);
+      } else if (scrollingDown && nextScrollY - lastScrollY > 4) {
+        setHeaderHidden(true);
+      } else if (!scrollingDown && lastScrollY - nextScrollY > 4) {
+        setHeaderHidden(false);
+      }
+
+      lastScrollY = nextScrollY;
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const selectedKeys = useMemo(
@@ -587,7 +681,7 @@ export default function AnnotatorPage() {
       return (
         <span
           key={key}
-          className="rounded-xl px-1 py-1 text-[1.4rem] leading-[3.2rem] text-slate-700"
+          className="px-0 py-0 text-[1.4rem] leading-[3.2rem] text-slate-700"
         >
           {fragment.cchar}
         </span>
@@ -607,15 +701,15 @@ export default function AnnotatorPage() {
 
           handleFragmentPress(fragment, phrase);
         }}
-        className={`flex min-w-12 flex-col items-center rounded-2xl px-2 py-2 text-center transition ${
+        className={`flex min-w-[1.35em] flex-col items-center px-0 py-0 text-center transition ${
           viewMode === "reader"
             ? selected
               ? "bg-transparent text-emerald-700"
-              : "bg-transparent text-slate-800 hover:bg-slate-100"
+              : "bg-transparent text-slate-800"
             : selected
-              ? "border border-emerald-300 bg-emerald-50 text-slate-900"
-              : "border border-slate-200 bg-white text-slate-900 hover:border-sky-200 hover:bg-sky-50"
-        } ${lookupSelected ? "ring-2 ring-sky-200 ring-offset-2 ring-offset-white" : ""}`}
+              ? "bg-transparent text-emerald-700"
+              : "bg-transparent text-slate-900"
+        } ${lookupSelected ? "rounded-md bg-sky-100/70 text-sky-900" : ""}`}
       >
         <span
           className={`min-h-4 text-[0.72rem] leading-4 ${
@@ -658,7 +752,7 @@ export default function AnnotatorPage() {
             }
           }}
           title={item.english}
-          className={`inline-flex flex-wrap items-end gap-1 rounded-2xl px-0.5 py-1 transition ${
+          className={`inline-flex flex-wrap items-end gap-0 rounded-md transition ${
             phraseRecognized ? "text-emerald-700" : ""
           }`}
         >
@@ -676,10 +770,10 @@ export default function AnnotatorPage() {
       <div
         key={`phrase-${index}`}
         title={item.english}
-        className={`inline-flex flex-wrap gap-1 rounded-md border border-dashed p-1.5 transition ${
+        className={`inline-flex flex-wrap items-end gap-0 rounded-md px-0 py-0 outline outline-1 outline-transparent transition ${
           phraseSelected
-            ? "border-sky-300 bg-sky-50/70"
-            : "border-slate-300 bg-slate-50/50"
+            ? "bg-sky-50/70 outline-sky-300"
+            : "bg-slate-50/50 outline-slate-300"
         }`}
       >
         {item.cchars.map((fragment, fragmentIndex) =>
@@ -700,65 +794,16 @@ export default function AnnotatorPage() {
   return (
     <div className="min-h-screen bg-slate-100">
       <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-4 pb-28 pt-4 sm:px-6 sm:pt-6">
-        <header className="sticky top-0 z-20 rounded-[2rem] border border-white/70 bg-white/85 px-4 py-4 shadow-sm backdrop-blur sm:px-6">
-          <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-sky-700">
-                Annotator reader
-              </p>
-              <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">
-                {readerLabel}
-              </h1>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                {headerDescription}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => openPanel("menu")}
-              className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
-            >
-              Menu
-            </button>
-          </div>
-
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
-              Mode: {viewMode}
-            </span>
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
-              Paragraphs: {annotations.length}
-            </span>
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
-              Selected: {selectedFragments.length}
-            </span>
-          </div>
-
-          <div className="mt-4 inline-flex rounded-full bg-slate-100 p-1">
-            <button
-              type="button"
-              onClick={() => switchViewMode("reader")}
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                viewMode === "reader"
-                  ? "bg-white text-slate-950 shadow-sm"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Reader mode
-            </button>
-            <button
-              type="button"
-              onClick={() => switchViewMode("dictionary")}
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                viewMode === "dictionary"
-                  ? "bg-white text-slate-950 shadow-sm"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Dictionary mode
-            </button>
-          </div>
-        </header>
+        <ReaderHeader
+          hidden={headerHidden}
+          onMenuOpen={() => openPanel("menu")}
+          onSwitchToReader={() => switchViewMode("reader")}
+          onSwitchToDictionary={() => switchViewMode("dictionary")}
+          paragraphCount={annotations.length}
+          selectedCount={selectedFragments.length}
+          readerLabel={readerLabel}
+          viewMode={viewMode}
+        />
 
         {(statusMessage || errorMessage) && (
           <div
@@ -771,6 +816,10 @@ export default function AnnotatorPage() {
             {errorMessage ?? statusMessage}
           </div>
         )}
+
+        <div className="mb-4 px-1 text-sm leading-6 text-slate-600">
+          {headerDescription}
+        </div>
 
         <main className="flex-1 pt-4 sm:pt-6">
           {annotating ? (
@@ -826,7 +875,7 @@ export default function AnnotatorPage() {
                   {paragraph.length === 0 ? (
                     <div className="text-sm italic text-slate-400">Empty paragraph</div>
                   ) : (
-                    <div className="flex flex-wrap items-end gap-2 leading-[3.4rem]">
+                    <div className="flex flex-wrap items-end gap-x-0 gap-y-2 leading-[3.4rem]">
                       {paragraph.map((item, index) =>
                         renderAnnotationItem(item, index),
                       )}
