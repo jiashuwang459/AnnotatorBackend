@@ -19,7 +19,7 @@ This is a **Chinese reading-learning application** that helps users who can spea
 
 The Django project lives under `Annotator/` and contains two Django apps:
 - `api/` — all backend REST API logic (models, views, serializers, utilities)
-- `frontend/` — the React frontend, compiled by webpack and served as a Django template
+- `frontend/` — the Next frontend, compiled by webpack and served as a Django template
 
 ---
 
