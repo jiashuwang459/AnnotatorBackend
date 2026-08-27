@@ -130,13 +130,13 @@ function Overlay({
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const panel = panelRef.current;
+    const panelElement = panelRef.current;
 
-    if (!panel) {
+    if (panelElement === null) {
       return;
     }
 
-    panel.focus();
+    panelElement.focus();
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
@@ -150,14 +150,14 @@ function Overlay({
       }
 
       const focusable = Array.from(
-        panel.querySelectorAll<HTMLElement>(
+        panelElement.querySelectorAll<HTMLElement>(
           'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
         ),
       ).filter((element) => !element.hasAttribute("hidden"));
 
       if (focusable.length === 0) {
         event.preventDefault();
-        panel.focus();
+        panelElement.focus();
         return;
       }
 
