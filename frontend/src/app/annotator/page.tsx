@@ -1,7 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { ApiError, api, getErrorMessage } from "@/lib/api";
 import { parsePinyin } from "@/lib/pinyin";
 import {
@@ -189,6 +196,11 @@ function Overlay({
   layerClassName?: string;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (panelRef.current === null) {
@@ -202,7 +214,7 @@ function Overlay({
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         event.preventDefault();
-        onClose();
+        onCloseRef.current();
         return;
       }
 
@@ -237,7 +249,7 @@ function Overlay({
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [onClose]);
+  }, []);
 
   return (
     <div className={`fixed inset-0 bg-slate-950/45 backdrop-blur-sm ${layerClassName}`}>
@@ -291,14 +303,14 @@ export default function AnnotatorPage() {
   const [readerLabel, setReaderLabel] = useState("Open text to begin reading");
   const lookupRequestId = useRef(0);
 
-  function resetLookupState() {
+  const resetLookupState = useCallback(() => {
     lookupRequestId.current += 1;
     setActiveLookup(null);
     setFragmentLookupEntries([]);
     setPhraseLookupEntries([]);
     setLoadingLookup(false);
     setLookupError(null);
-  }
+  }, []);
 
   useEffect(() => {
     async function loadNovels() {
@@ -830,7 +842,7 @@ export default function AnnotatorPage() {
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/70 bg-white/90 px-4 pb-4 pt-3 backdrop-blur sm:px-6">
         <div className="mx-auto flex max-w-5xl gap-2">
           <FloatingAction
-            label={viewMode === "reader" ? "Reader" : "Dictionary"}
+            label={viewMode === "reader" ? "Dictionary" : "Reader"}
             active={viewMode === "dictionary"}
             onClick={toggleViewMode}
           />
