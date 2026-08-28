@@ -489,7 +489,7 @@ export default function AnnotatorPage() {
   const [fabExpanded, setFabExpanded] = useState(false);
   const [modeToast, setModeToast] = useState<string | null>(null);
   const lookupRequestId = useRef(0);
-  const initialModeRef = useRef(true);
+  const previousViewModeRef = useRef<ViewMode>("reader");
   const updateProgress = useCallback(() => {
     const scrollTop = window.scrollY;
     const scrollHeight =
@@ -550,25 +550,22 @@ export default function AnnotatorPage() {
   }, []);
 
   useEffect(() => {
-    const resizeOptions = { passive: true } as AddEventListenerOptions;
+    const resizeOptions: boolean | AddEventListenerOptions = { passive: true };
 
     window.addEventListener("scroll", updateProgress, { passive: true });
-    window.addEventListener("resize", updateProgress as EventListener, resizeOptions);
+    window.addEventListener("resize", updateProgress, resizeOptions);
     return () => {
       window.removeEventListener("scroll", updateProgress);
-      window.removeEventListener(
-        "resize",
-        updateProgress as EventListener,
-        resizeOptions,
-      );
+      window.removeEventListener("resize", updateProgress, resizeOptions);
     };
   }, [updateProgress]);
 
   useEffect(() => {
-    if (initialModeRef.current) {
-      initialModeRef.current = false;
+    if (previousViewModeRef.current === viewMode) {
       return;
     }
+
+    previousViewModeRef.current = viewMode;
 
     setModeToast(
       viewMode === "reader"
@@ -934,7 +931,11 @@ export default function AnnotatorPage() {
           key={`phrase-${index}`}
           role={selectableFragments.length > 0 ? "button" : undefined}
           tabIndex={selectableFragments.length > 0 ? 0 : undefined}
-          onClick={() => handlePhrasePress(item)}
+          onClick={
+            selectableFragments.length > 0
+              ? () => handlePhrasePress(item)
+              : undefined
+          }
           onKeyDown={(event) => {
             if (
               selectableFragments.length > 0 &&
@@ -1487,7 +1488,11 @@ export default function AnnotatorPage() {
                   </p>
                 ) : null}
 
-                {loadingLookup ? null : phraseLookupEntries.length === 0 ? (
+                {loadingLookup ? (
+                  <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-sm text-slate-500">
+                    Loading phrase matches…
+                  </div>
+                ) : phraseLookupEntries.length === 0 ? (
                   <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-sm text-slate-500">
                     No saved phrase entry was returned for this word yet.
                   </div>
