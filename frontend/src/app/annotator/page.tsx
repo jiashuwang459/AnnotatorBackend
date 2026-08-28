@@ -420,7 +420,6 @@ function Overlay({
       }
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
-      const last = focusable[focusable.length - 1];
 
       if (event.shiftKey && activeElement === first) {
         event.preventDefault();
