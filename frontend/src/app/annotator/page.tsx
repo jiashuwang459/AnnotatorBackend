@@ -158,53 +158,105 @@ function LookupEntryCard({
   );
 }
 
-function FloatingAction({
-  active = false,
-  label,
-  onClick,
-}: {
-  active?: boolean;
-  label: string;
-  onClick: () => void;
-}) {
+function ModeToast({ message }: { message: string | null }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-2xl px-3 py-2 text-xs font-semibold transition ${
-        active
-          ? "bg-sky-500 text-white shadow-lg shadow-sky-950/20"
-          : "bg-white/90 text-slate-700 hover:bg-white"
+    <div
+      className={`pointer-events-none fixed inset-x-0 top-14 z-50 flex justify-center px-4 transition duration-200 ${
+        message ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
       }`}
+      aria-live="polite"
+      aria-atomic="true"
     >
-      <span>{label}</span>
-    </button>
+      <div className="rounded-full bg-slate-950/85 px-4 py-2 text-sm font-medium text-white shadow-lg backdrop-blur">
+        {message ?? ""}
+      </div>
+    </div>
   );
 }
 
-function ModeFab({
+function VerticalProgressBar({
+  progress,
   viewMode,
-  onToggle,
 }: {
+  progress: number;
   viewMode: ViewMode;
-  onToggle: () => void;
 }) {
-  const nextLabel = viewMode === "reader" ? "Dictionary" : "Reader";
+  return (
+    <div className="fixed left-0 top-0 z-40 h-full w-1 bg-black/6">
+      <div
+        className={`w-full origin-top transition-[height,background-color] duration-200 ${
+          viewMode === "reader" ? "bg-emerald-500" : "bg-sky-500"
+        }`}
+        style={{ height: `${progress}%` }}
+      />
+    </div>
+  );
+}
+
+function SpeedDialFab({
+  expanded,
+  onToggleExpanded,
+  onToggleMode,
+  onOpenLibrary,
+  onOpenPaste,
+  onOpenReview,
+  onOpenMenu,
+  viewMode,
+}: {
+  expanded: boolean;
+  onToggleExpanded: () => void;
+  onToggleMode: () => void;
+  onOpenLibrary: () => void;
+  onOpenPaste: () => void;
+  onOpenReview: () => void;
+  onOpenMenu: () => void;
+  viewMode: ViewMode;
+}) {
+  const actions = [
+    {
+      label: viewMode === "reader" ? "Dictionary mode" : "Reader mode",
+      icon: viewMode === "reader" ? "🔎" : "📖",
+      onClick: onToggleMode,
+    },
+    { label: "Paste text", icon: "✍️", onClick: onOpenPaste },
+    { label: "Library", icon: "📚", onClick: onOpenLibrary },
+    { label: "Review", icon: "✅", onClick: onOpenReview },
+    { label: "More", icon: "☰", onClick: onOpenMenu },
+  ];
 
   return (
-    <button
-      type="button"
-      onClick={onToggle}
-      aria-label={`Switch to ${nextLabel} mode`}
-      className="fixed right-4 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/70 bg-white/75 px-3 py-3 shadow-lg backdrop-blur transition hover:bg-white sm:right-6"
-    >
-      <span className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-        <span className="text-lg" aria-hidden="true">
-          {viewMode === "reader" ? "📖" : "🔎"}
+    <div className="fixed bottom-5 right-4 z-40 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
+      {expanded
+        ? actions.map((action) => (
+            <button
+              key={action.label}
+              type="button"
+              onClick={action.onClick}
+              className="flex items-center gap-3 rounded-full border border-white/70 bg-white/92 px-4 py-2 text-sm font-semibold text-slate-800 shadow-lg backdrop-blur transition hover:bg-white"
+            >
+              <span className="text-base" aria-hidden="true">
+                {action.icon}
+              </span>
+              <span>{action.label}</span>
+            </button>
+          ))
+        : null}
+
+      <button
+        type="button"
+        onClick={onToggleExpanded}
+        aria-label={expanded ? "Collapse actions" : "Expand actions"}
+        aria-expanded={expanded}
+        className="rounded-full border border-white/70 bg-slate-950/85 px-4 py-4 text-white shadow-xl backdrop-blur transition hover:bg-slate-950"
+      >
+        <span className="flex items-center gap-2 text-sm font-semibold">
+          <span className="text-lg" aria-hidden="true">
+            {expanded ? "×" : "+"}
+          </span>
+          <span className="hidden sm:inline">Actions</span>
         </span>
-        <span className="hidden sm:inline">{nextLabel}</span>
-      </span>
-    </button>
+      </button>
+    </div>
   );
 }
 
@@ -420,7 +472,10 @@ export default function AnnotatorPage() {
   const [readerLabel, setReaderLabel] = useState("Open text to begin reading");
   const [headerHidden, setHeaderHidden] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [fabExpanded, setFabExpanded] = useState(false);
+  const [modeToast, setModeToast] = useState<string | null>(null);
   const lookupRequestId = useRef(0);
+  const initialModeRef = useRef(true);
 
   const resetLookupState = useCallback(() => {
     lookupRequestId.current += 1;
@@ -491,6 +546,22 @@ export default function AnnotatorPage() {
     };
   }, [annotations.length, viewMode]);
 
+  useEffect(() => {
+    if (initialModeRef.current) {
+      initialModeRef.current = false;
+      return;
+    }
+
+    setModeToast(
+      viewMode === "reader"
+        ? "Reader Mode: Tap characters to toggle recognition."
+        : "Dictionary Mode: Tap phrases to view definitions.",
+    );
+
+    const timeoutId = window.setTimeout(() => setModeToast(null), 2200);
+    return () => window.clearTimeout(timeoutId);
+  }, [viewMode]);
+
   const selectedKeys = useMemo(
     () => new Set(selectedFragments.map(fragmentKey)),
     [selectedFragments],
@@ -498,10 +569,12 @@ export default function AnnotatorPage() {
 
   function openPanel(panel: Exclude<SecondaryPanel, null>) {
     resetLookupState();
+    setFabExpanded(false);
     setActivePanel((current) => (current === panel ? null : panel));
   }
 
   function switchViewMode(nextMode: ViewMode) {
+    setFabExpanded(false);
     setViewMode(nextMode);
     resetLookupState();
   }
@@ -566,6 +639,7 @@ export default function AnnotatorPage() {
   }
 
   async function inspectLookup(fragment: Fragment, phrase: PhraseContext | null) {
+    setFabExpanded(false);
     setActivePanel(null);
     setActiveLookup({ fragment, phrase });
     setFragmentLookupEntries([]);
@@ -658,6 +732,7 @@ export default function AnnotatorPage() {
       return;
     }
 
+    setFabExpanded(false);
     setLoadingChapter(true);
     setErrorMessage(null);
     setStatusMessage(null);
@@ -739,6 +814,7 @@ export default function AnnotatorPage() {
   }
 
   function clearWorkspace() {
+    setFabExpanded(false);
     setText("");
     setAnnotations([]);
     setSelectedFragments([]);
@@ -853,11 +929,33 @@ export default function AnnotatorPage() {
     return (
       <div
         key={`phrase-${index}`}
+        role={selectableFragments.length > 0 ? "button" : undefined}
+        tabIndex={selectableFragments.length > 0 ? 0 : undefined}
+        onClick={() => {
+          const fragment = selectableFragments[0];
+
+          if (fragment) {
+            handleFragmentPress(fragment, phrase);
+          }
+        }}
+        onKeyDown={(event) => {
+          if (
+            selectableFragments.length > 0 &&
+            (event.key === "Enter" || event.key === " ")
+          ) {
+            event.preventDefault();
+            const fragment = selectableFragments[0];
+
+            if (fragment) {
+              handleFragmentPress(fragment, phrase);
+            }
+          }
+        }}
         title={item.english}
-        className={`inline-flex flex-wrap items-end gap-0 rounded-md px-0 py-0 outline outline-1 outline-transparent transition ${
+        className={`inline-flex cursor-pointer flex-wrap items-end gap-0 rounded-md border border-transparent px-0 py-0 transition-colors ${
           phraseSelected
-            ? "bg-sky-50/70 outline-sky-300"
-            : "bg-slate-50/50 outline-slate-300"
+            ? "bg-sky-100/65"
+            : "bg-sky-50/25 hover:bg-sky-100/45 active:bg-sky-100/60"
         }`}
       >
         {item.cchars.map((fragment, fragmentIndex) =>
@@ -881,15 +979,10 @@ export default function AnnotatorPage() {
         viewMode === "reader" ? "bg-[#fdf6e3]" : "bg-slate-100"
       }`}
     >
-      <div className="fixed left-0 top-0 z-50 h-1 w-full bg-black/5">
-        <div
-          className={`h-full transition-[width,background-color] duration-200 ${
-            viewMode === "reader" ? "bg-emerald-500" : "bg-sky-500"
-          }`}
-          style={{ width: `${scrollProgress}%` }}
-        />
-      </div>
-      <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-4 pb-16 pt-4 sm:px-6 sm:pt-6">
+      <VerticalProgressBar progress={scrollProgress} viewMode={viewMode} />
+      <ModeToast message={modeToast} />
+
+      <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-5 pb-24 pt-4 sm:px-7 sm:pt-6">
         <ReaderHeader
           hidden={headerHidden}
           onMenuOpen={() => openPanel("menu")}
@@ -937,8 +1030,8 @@ export default function AnnotatorPage() {
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600">
                 The reading surface stays clear until you need support tools. Use
-                the bottom tray to load text, browse the novel library, review
-                recognition memory, or switch modes.
+                the floating action menu to load text, browse the novel library,
+                review recognition memory, or switch modes.
               </p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
                 <button
@@ -975,16 +1068,12 @@ export default function AnnotatorPage() {
                 }}
               />
               {annotations.map((paragraph, paragraphIndex) => (
-                <section
+                <div
                   key={`paragraph-${paragraphIndex}`}
-                  className={`rounded-[2rem] bg-white px-4 py-5 shadow-sm sm:px-6 sm:py-6 ${
-                    viewMode === "reader"
-                      ? "border border-transparent"
-                      : "border border-slate-200"
-                  }`}
+                  className="py-1"
                 >
                   {paragraph.length === 0 ? (
-                    <div className="text-sm italic text-slate-400">Empty paragraph</div>
+                    <div className="h-6" />
                   ) : (
                     <div className="flex flex-wrap items-end gap-x-0 gap-y-2 leading-[3.4rem]">
                       {paragraph.map((item, index) =>
@@ -992,7 +1081,7 @@ export default function AnnotatorPage() {
                       )}
                     </div>
                   )}
-                </section>
+                </div>
               ))}
               <ChapterNavigation
                 hasPrevious={previousChapter !== null}
@@ -1014,32 +1103,16 @@ export default function AnnotatorPage() {
         </main>
       </div>
 
-      <ModeFab viewMode={viewMode} onToggle={toggleViewMode} />
-
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/70 bg-white/90 px-4 pb-4 pt-3 backdrop-blur sm:px-6">
-        <div className="mx-auto flex max-w-5xl gap-2">
-          <FloatingAction
-            label="Paste"
-            active={activePanel === "paste"}
-            onClick={() => openPanel("paste")}
-          />
-          <FloatingAction
-            label="Library"
-            active={activePanel === "library"}
-            onClick={() => openPanel("library")}
-          />
-          <FloatingAction
-            label="Review"
-            active={activePanel === "review"}
-            onClick={() => openPanel("review")}
-          />
-          <FloatingAction
-            label="More"
-            active={activePanel === "menu"}
-            onClick={() => openPanel("menu")}
-          />
-        </div>
-      </div>
+      <SpeedDialFab
+        expanded={fabExpanded}
+        onToggleExpanded={() => setFabExpanded((current) => !current)}
+        onToggleMode={toggleViewMode}
+        onOpenPaste={() => openPanel("paste")}
+        onOpenLibrary={() => openPanel("library")}
+        onOpenReview={() => openPanel("review")}
+        onOpenMenu={() => openPanel("menu")}
+        viewMode={viewMode}
+      />
 
       {activePanel === "paste" ? (
         <Overlay label="Paste text" onClose={() => setActivePanel(null)} fullHeight>
