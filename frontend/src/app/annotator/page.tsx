@@ -388,6 +388,15 @@ function Overlay({
     panelElement.focus();
 
     function handleKeyDown(event: KeyboardEvent) {
+      const activeElement = document.activeElement;
+
+      if (
+        !(activeElement instanceof Node) ||
+        (activeElement !== panelElement && !panelElement.contains(activeElement))
+      ) {
+        return;
+      }
+
       if (event.key === "Escape") {
         event.preventDefault();
         onCloseRef.current();
@@ -409,10 +418,9 @@ function Overlay({
         panelElement.focus();
         return;
       }
-
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
-      const activeElement = document.activeElement;
+      const last = focusable[focusable.length - 1];
 
       if (event.shiftKey && activeElement === first) {
         event.preventDefault();
@@ -586,9 +594,9 @@ export default function AnnotatorPage() {
 
   function switchViewMode(nextMode: ViewMode) {
     setFabExpanded(false);
-    setScrollProgress(0);
     setViewMode(nextMode);
     resetLookupState();
+    updateProgress();
   }
 
   function toggleViewMode() {
@@ -996,7 +1004,7 @@ export default function AnnotatorPage() {
     );
   }
 
-  const headerDescription = modeDescriptions[viewMode];
+  const modeDescription = modeDescriptions[viewMode];
   const chapterNavigationProps: Parameters<typeof ChapterNavigation>[0] = {
     hasPrevious: previousChapter !== null,
     hasNext: nextChapter !== null,
@@ -1046,7 +1054,7 @@ export default function AnnotatorPage() {
 
         {annotations.length > 0 && !annotating ? (
           <div className="mb-4 px-1 text-sm leading-6 text-slate-600">
-            {headerDescription}
+            {modeDescription}
           </div>
         ) : null}
 
