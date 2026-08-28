@@ -182,11 +182,74 @@ function FloatingAction({
   );
 }
 
+function ModeFab({
+  viewMode,
+  onToggle,
+}: {
+  viewMode: ViewMode;
+  onToggle: () => void;
+}) {
+  const nextLabel = viewMode === "reader" ? "Dictionary" : "Reader";
+
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-label={`Switch to ${nextLabel} mode`}
+      className="fixed right-4 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/70 bg-white/75 px-3 py-3 shadow-lg backdrop-blur transition hover:bg-white sm:right-6"
+    >
+      <span className="flex items-center gap-2 text-sm font-semibold text-slate-800">
+        <span className="text-lg" aria-hidden="true">
+          {viewMode === "reader" ? "📖" : "🔎"}
+        </span>
+        <span className="hidden sm:inline">{nextLabel}</span>
+      </span>
+    </button>
+  );
+}
+
+function ChapterNavigation({
+  hasPrevious,
+  hasNext,
+  loading,
+  onPrevious,
+  onNext,
+}: {
+  hasPrevious: boolean;
+  hasNext: boolean;
+  loading: boolean;
+  onPrevious: () => void;
+  onNext: () => void;
+}) {
+  if (!hasPrevious && !hasNext) {
+    return null;
+  }
+
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-2xl border border-slate-300/70 bg-white/55 px-3 py-3 backdrop-blur">
+      <button
+        type="button"
+        onClick={onPrevious}
+        disabled={!hasPrevious || loading}
+        className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        Previous chapter
+      </button>
+      <button
+        type="button"
+        onClick={onNext}
+        disabled={!hasNext || loading}
+        className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        Next chapter
+      </button>
+    </div>
+  );
+}
+
 function ReaderHeader({
   hidden,
   onMenuOpen,
-  onSwitchToReader,
-  onSwitchToDictionary,
   paragraphCount,
   selectedCount,
   readerLabel,
@@ -194,8 +257,6 @@ function ReaderHeader({
 }: {
   hidden: boolean;
   onMenuOpen: () => void;
-  onSwitchToReader: () => void;
-  onSwitchToDictionary: () => void;
   paragraphCount: number;
   selectedCount: number;
   readerLabel: string;
@@ -215,30 +276,15 @@ function ReaderHeader({
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <div className="inline-flex rounded-full bg-slate-100/90 p-1">
-            <button
-              type="button"
-              onClick={onSwitchToReader}
-              className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                viewMode === "reader"
-                  ? "bg-white text-slate-950 shadow-sm"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Reader
-            </button>
-            <button
-              type="button"
-              onClick={onSwitchToDictionary}
-              className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                viewMode === "dictionary"
-                  ? "bg-white text-slate-950 shadow-sm"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Dictionary
-            </button>
-          </div>
+          <span
+            className={`rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] ${
+              viewMode === "reader"
+                ? "bg-amber-100/90 text-amber-800"
+                : "bg-slate-200/90 text-slate-700"
+            }`}
+          >
+            {viewMode}
+          </span>
           <button
             type="button"
             onClick={onMenuOpen}
@@ -373,6 +419,7 @@ export default function AnnotatorPage() {
   const [activePanel, setActivePanel] = useState<SecondaryPanel>(null);
   const [readerLabel, setReaderLabel] = useState("Open text to begin reading");
   const [headerHidden, setHeaderHidden] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const lookupRequestId = useRef(0);
 
   const resetLookupState = useCallback(() => {
@@ -421,6 +468,29 @@ export default function AnnotatorPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    function updateProgress() {
+      const scrollTop = window.scrollY;
+      const scrollHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+
+      if (scrollHeight <= 0) {
+        setScrollProgress(0);
+        return;
+      }
+
+      setScrollProgress(Math.min(100, Math.max(0, (scrollTop / scrollHeight) * 100)));
+    }
+
+    updateProgress();
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
+    return () => {
+      window.removeEventListener("scroll", updateProgress);
+      window.removeEventListener("resize", updateProgress);
+    };
+  }, [annotations.length, viewMode]);
+
   const selectedKeys = useMemo(
     () => new Set(selectedFragments.map(fragmentKey)),
     [selectedFragments],
@@ -439,6 +509,15 @@ export default function AnnotatorPage() {
   function toggleViewMode() {
     switchViewMode(viewMode === "reader" ? "dictionary" : "reader");
   }
+
+  const chapterList = selectedNovel ? (novels[selectedNovel] ?? []) : [];
+  const chapterIndex = chapterList.indexOf(selectedChapter);
+  const previousChapter =
+    chapterIndex > 0 ? chapterList[chapterIndex - 1] : null;
+  const nextChapter =
+    chapterIndex >= 0 && chapterIndex < chapterList.length - 1
+      ? chapterList[chapterIndex + 1]
+      : null;
 
   async function annotateSource(sourceText: string, nextReaderLabel = "Pasted text") {
     if (!sourceText.trim()) {
@@ -574,8 +653,8 @@ export default function AnnotatorPage() {
     toggleFragments(item.cchars);
   }
 
-  async function handleChapterLoad() {
-    if (!selectedNovel || !selectedChapter) {
+  async function loadChapter(novelName: string, chapter: string) {
+    if (!novelName || !chapter) {
       return;
     }
 
@@ -585,20 +664,30 @@ export default function AnnotatorPage() {
 
     try {
       const params = new URLSearchParams({
-        novelName: selectedNovel,
-        chapter: selectedChapter,
+        novelName,
+        chapter,
       });
       const response = await api.get<{ text: string }>(
         `/novel?${params.toString()}`,
       );
+      setSelectedNovel(novelName);
+      setSelectedChapter(chapter);
       setText(response.text);
-      await annotateSource(response.text, `${selectedNovel} · ${selectedChapter}`);
+      await annotateSource(response.text, `${novelName} · ${chapter}`);
       setStatusMessage("Chapter loaded and annotated.");
     } catch (error) {
       setErrorMessage(getErrorMessage(error));
     } finally {
       setLoadingChapter(false);
     }
+  }
+
+  async function handleChapterLoad() {
+    if (!selectedNovel || !selectedChapter) {
+      return;
+    }
+
+    await loadChapter(selectedNovel, selectedChapter);
   }
 
   async function handleMemoryLoad() {
@@ -787,13 +876,23 @@ export default function AnnotatorPage() {
       : "Tap a character to inspect that character, its pronunciations, and the parent phrase in the dictionary sheet.";
 
   return (
-    <div className="min-h-screen bg-slate-100">
-      <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-4 pb-28 pt-4 sm:px-6 sm:pt-6">
+    <div
+      className={`min-h-screen transition-colors duration-300 ${
+        viewMode === "reader" ? "bg-[#fdf6e3]" : "bg-slate-100"
+      }`}
+    >
+      <div className="fixed left-0 top-0 z-50 h-1 w-full bg-black/5">
+        <div
+          className={`h-full transition-[width,background-color] duration-200 ${
+            viewMode === "reader" ? "bg-emerald-500" : "bg-sky-500"
+          }`}
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+      <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-4 pb-16 pt-4 sm:px-6 sm:pt-6">
         <ReaderHeader
           hidden={headerHidden}
           onMenuOpen={() => openPanel("menu")}
-          onSwitchToReader={() => switchViewMode("reader")}
-          onSwitchToDictionary={() => switchViewMode("dictionary")}
           paragraphCount={annotations.length}
           selectedCount={selectedFragments.length}
           readerLabel={readerLabel}
@@ -860,6 +959,21 @@ export default function AnnotatorPage() {
             </section>
           ) : (
             <article className="space-y-5">
+              <ChapterNavigation
+                hasPrevious={previousChapter !== null}
+                hasNext={nextChapter !== null}
+                loading={loadingChapter || annotating}
+                onPrevious={() => {
+                  if (previousChapter) {
+                    void loadChapter(selectedNovel, previousChapter);
+                  }
+                }}
+                onNext={() => {
+                  if (nextChapter) {
+                    void loadChapter(selectedNovel, nextChapter);
+                  }
+                }}
+              />
               {annotations.map((paragraph, paragraphIndex) => (
                 <section
                   key={`paragraph-${paragraphIndex}`}
@@ -880,18 +994,30 @@ export default function AnnotatorPage() {
                   )}
                 </section>
               ))}
+              <ChapterNavigation
+                hasPrevious={previousChapter !== null}
+                hasNext={nextChapter !== null}
+                loading={loadingChapter || annotating}
+                onPrevious={() => {
+                  if (previousChapter) {
+                    void loadChapter(selectedNovel, previousChapter);
+                  }
+                }}
+                onNext={() => {
+                  if (nextChapter) {
+                    void loadChapter(selectedNovel, nextChapter);
+                  }
+                }}
+              />
             </article>
           )}
         </main>
       </div>
 
+      <ModeFab viewMode={viewMode} onToggle={toggleViewMode} />
+
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/70 bg-white/90 px-4 pb-4 pt-3 backdrop-blur sm:px-6">
         <div className="mx-auto flex max-w-5xl gap-2">
-          <FloatingAction
-            label={viewMode === "reader" ? "Dictionary" : "Reader"}
-            active={viewMode === "dictionary"}
-            onClick={toggleViewMode}
-          />
           <FloatingAction
             label="Paste"
             active={activePanel === "paste"}

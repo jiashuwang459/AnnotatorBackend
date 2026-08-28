@@ -56,10 +56,6 @@ export function SiteShell({ title, description, children }: SiteShellProps) {
       </header>
 
       <main className="flex-1">{children}</main>
-
-      <footer className="pb-4 text-sm text-slate-500">
-        Responsive Next.js UI on top of the existing Django API contracts.
-      </footer>
     </div>
   );
 }
