@@ -483,6 +483,18 @@ export default function AnnotatorPage() {
   const [modeToast, setModeToast] = useState<string | null>(null);
   const lookupRequestId = useRef(0);
   const initialModeRef = useRef(true);
+  const updateProgress = useCallback(() => {
+    const scrollTop = window.scrollY;
+    const scrollHeight =
+      document.documentElement.scrollHeight - window.innerHeight;
+
+    if (scrollHeight <= 0) {
+      setScrollProgress(0);
+      return;
+    }
+
+    setScrollProgress(Math.min(100, Math.max(0, (scrollTop / scrollHeight) * 100)));
+  }, []);
 
   const resetLookupState = useCallback(() => {
     lookupRequestId.current += 1;
@@ -531,27 +543,24 @@ export default function AnnotatorPage() {
   }, []);
 
   useEffect(() => {
-    function updateProgress() {
-      const scrollTop = window.scrollY;
-      const scrollHeight =
-        document.documentElement.scrollHeight - window.innerHeight;
-
-      if (scrollHeight <= 0) {
-        setScrollProgress(0);
-        return;
-      }
-
-      setScrollProgress(Math.min(100, Math.max(0, (scrollTop / scrollHeight) * 100)));
-    }
+    const resizeOptions = { passive: true } as AddEventListenerOptions;
 
     updateProgress();
     window.addEventListener("scroll", updateProgress, { passive: true });
-    window.addEventListener("resize", updateProgress);
+    window.addEventListener("resize", updateProgress as EventListener, resizeOptions);
     return () => {
       window.removeEventListener("scroll", updateProgress);
-      window.removeEventListener("resize", updateProgress);
+      window.removeEventListener(
+        "resize",
+        updateProgress as EventListener,
+        resizeOptions,
+      );
     };
-  }, [annotations.length, viewMode]);
+  }, [updateProgress]);
+
+  useEffect(() => {
+    updateProgress();
+  }, [annotations.length, viewMode, updateProgress]);
 
   useEffect(() => {
     if (initialModeRef.current) {
@@ -994,12 +1003,12 @@ export default function AnnotatorPage() {
     hasNext: nextChapter !== null,
     loading: loadingChapter || annotating,
     onPrevious: () => {
-      if (previousChapter) {
+      if (selectedNovel && previousChapter) {
         void loadChapter(selectedNovel, previousChapter);
       }
     },
     onNext: () => {
-      if (nextChapter) {
+      if (selectedNovel && nextChapter) {
         void loadChapter(selectedNovel, nextChapter);
       }
     },
@@ -1036,7 +1045,7 @@ export default function AnnotatorPage() {
           </div>
         )}
 
-        {annotations.length > 0 ? (
+        {annotations.length > 0 && !annotating ? (
           <div className="mb-4 px-1 text-sm leading-6 text-slate-600">
             {headerDescription}
           </div>
@@ -1049,7 +1058,7 @@ export default function AnnotatorPage() {
                 Annotating
               </p>
               <p className="mt-3 text-lg text-slate-600">
-                Preparing a cleaner mobile reading view…
+                Processing text, this may take a moment…
               </p>
             </section>
           ) : annotations.length === 0 ? (
