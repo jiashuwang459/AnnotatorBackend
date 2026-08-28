@@ -182,7 +182,7 @@ function VerticalProgressBar({
   viewMode: ViewMode;
 }) {
   return (
-    <div className="fixed left-0 top-0 z-40 h-full w-1 bg-black/6">
+    <div className="fixed left-0 top-0 z-40 h-full w-1 bg-black/5">
       <div
         className={`w-full origin-top transition-[height,background-color] duration-200 ${
           viewMode === "reader" ? "bg-emerald-500" : "bg-sky-500"
@@ -524,6 +524,8 @@ export default function AnnotatorPage() {
   }, []);
 
   useEffect(() => {
+    const resizeOptions = { passive: true } as const;
+
     function updateProgress() {
       const scrollTop = window.scrollY;
       const scrollHeight =
@@ -539,10 +541,10 @@ export default function AnnotatorPage() {
 
     updateProgress();
     window.addEventListener("scroll", updateProgress, { passive: true });
-    window.addEventListener("resize", updateProgress);
+    window.addEventListener("resize", updateProgress, resizeOptions);
     return () => {
       window.removeEventListener("scroll", updateProgress);
-      window.removeEventListener("resize", updateProgress);
+      window.removeEventListener("resize", updateProgress, resizeOptions);
     };
   }, [annotations.length, viewMode]);
 
@@ -650,36 +652,47 @@ export default function AnnotatorPage() {
     const requestId = lookupRequestId.current + 1;
     lookupRequestId.current = requestId;
 
-    const phraseText =
-      phrase && phrase.text !== fragment.cchar ? phrase.text : null;
+    try {
+      const phraseText =
+        phrase && phrase.text !== fragment.cchar ? phrase.text : null;
 
-    const [fragmentResult, phraseResult] = await Promise.allSettled([
-      fetchDictionaryEntries(fragment.cchar),
-      phraseText ? fetchDictionaryEntries(phraseText) : Promise.resolve([]),
-    ]);
+      const [fragmentResult, phraseResult] = await Promise.allSettled([
+        fetchDictionaryEntries(fragment.cchar),
+        phraseText ? fetchDictionaryEntries(phraseText) : Promise.resolve([]),
+      ]);
 
-    if (lookupRequestId.current !== requestId) {
-      return;
-    }
+      if (lookupRequestId.current !== requestId) {
+        return;
+      }
 
-    let nextError: string | null = null;
+      let nextError: string | null = null;
 
-    if (fragmentResult.status === "fulfilled") {
-      setFragmentLookupEntries(fragmentResult.value);
-    } else {
-      nextError = getErrorMessage(fragmentResult.reason);
+      if (fragmentResult.status === "fulfilled") {
+        setFragmentLookupEntries(fragmentResult.value);
+      } else {
+        nextError = getErrorMessage(fragmentResult.reason);
+        setFragmentLookupEntries([]);
+      }
+
+      if (phraseResult.status === "fulfilled") {
+        setPhraseLookupEntries(phraseResult.value);
+      } else {
+        nextError ??= getErrorMessage(phraseResult.reason);
+        setPhraseLookupEntries([]);
+      }
+
+      setLookupError(nextError);
+      setLoadingLookup(false);
+    } catch (error) {
+      if (lookupRequestId.current !== requestId) {
+        return;
+      }
+
       setFragmentLookupEntries([]);
-    }
-
-    if (phraseResult.status === "fulfilled") {
-      setPhraseLookupEntries(phraseResult.value);
-    } else {
-      nextError ??= getErrorMessage(phraseResult.reason);
       setPhraseLookupEntries([]);
+      setLookupError(getErrorMessage(error));
+      setLoadingLookup(false);
     }
-
-    setLookupError(nextError);
-    setLoadingLookup(false);
   }
 
   function toggleFragments(fragments: Fragment[]) {
@@ -736,6 +749,8 @@ export default function AnnotatorPage() {
     setLoadingChapter(true);
     setErrorMessage(null);
     setStatusMessage(null);
+    setSelectedNovel(novelName);
+    setSelectedChapter(chapter);
 
     try {
       const params = new URLSearchParams({
@@ -745,8 +760,6 @@ export default function AnnotatorPage() {
       const response = await api.get<{ text: string }>(
         `/novel?${params.toString()}`,
       );
-      setSelectedNovel(novelName);
-      setSelectedChapter(chapter);
       setText(response.text);
       await annotateSource(response.text, `${novelName} · ${chapter}`);
       setStatusMessage("Chapter loaded and annotated.");
@@ -972,6 +985,21 @@ export default function AnnotatorPage() {
     viewMode === "reader"
       ? "Tap a character to mark it recognized, or tap a word to update the whole phrase without leaving the reading flow."
       : "Tap a character to inspect that character, its pronunciations, and the parent phrase in the dictionary sheet.";
+  const chapterNavigationProps: Parameters<typeof ChapterNavigation>[0] = {
+    hasPrevious: previousChapter !== null,
+    hasNext: nextChapter !== null,
+    loading: loadingChapter || annotating,
+    onPrevious: () => {
+      if (previousChapter) {
+        void loadChapter(selectedNovel, previousChapter);
+      }
+    },
+    onNext: () => {
+      if (nextChapter) {
+        void loadChapter(selectedNovel, nextChapter);
+      }
+    },
+  };
 
   return (
     <div
@@ -1052,21 +1080,7 @@ export default function AnnotatorPage() {
             </section>
           ) : (
             <article className="space-y-5">
-              <ChapterNavigation
-                hasPrevious={previousChapter !== null}
-                hasNext={nextChapter !== null}
-                loading={loadingChapter || annotating}
-                onPrevious={() => {
-                  if (previousChapter) {
-                    void loadChapter(selectedNovel, previousChapter);
-                  }
-                }}
-                onNext={() => {
-                  if (nextChapter) {
-                    void loadChapter(selectedNovel, nextChapter);
-                  }
-                }}
-              />
+              <ChapterNavigation {...chapterNavigationProps} />
               {annotations.map((paragraph, paragraphIndex) => (
                 <div
                   key={`paragraph-${paragraphIndex}`}
@@ -1083,21 +1097,7 @@ export default function AnnotatorPage() {
                   )}
                 </div>
               ))}
-              <ChapterNavigation
-                hasPrevious={previousChapter !== null}
-                hasNext={nextChapter !== null}
-                loading={loadingChapter || annotating}
-                onPrevious={() => {
-                  if (previousChapter) {
-                    void loadChapter(selectedNovel, previousChapter);
-                  }
-                }}
-                onNext={() => {
-                  if (nextChapter) {
-                    void loadChapter(selectedNovel, nextChapter);
-                  }
-                }}
-              />
+              <ChapterNavigation {...chapterNavigationProps} />
             </article>
           )}
         </main>
