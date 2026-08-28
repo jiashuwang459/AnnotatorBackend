@@ -38,6 +38,13 @@ type LookupTarget = {
   phrase: PhraseContext | null;
 };
 
+const modeDescriptions: Record<ViewMode, string> = {
+  reader:
+    "Tap a character to mark it recognized, or tap a word to update the whole phrase without leaving the reading flow.",
+  dictionary:
+    "Tap a character to inspect that character, its pronunciations, and the parent phrase in the dictionary sheet.",
+};
+
 function segmentText(text: string) {
   const lines = text.split("\n");
 
@@ -946,6 +953,8 @@ export default function AnnotatorPage() {
           const fragment = selectableFragments[0];
 
           if (fragment) {
+            // Phrase taps open the phrase-level context while defaulting the
+            // fragment detail to the first selectable character.
             handleFragmentPress(fragment, phrase);
           }
         }}
@@ -979,10 +988,7 @@ export default function AnnotatorPage() {
     );
   }
 
-  const headerDescription =
-    viewMode === "reader"
-      ? "Tap a character to mark it recognized, or tap a word to update the whole phrase without leaving the reading flow."
-      : "Tap a character to inspect that character, its pronunciations, and the parent phrase in the dictionary sheet.";
+  const headerDescription = modeDescriptions[viewMode];
   const chapterNavigationProps: Parameters<typeof ChapterNavigation>[0] = {
     hasPrevious: previousChapter !== null,
     hasNext: nextChapter !== null,
