@@ -545,7 +545,6 @@ export default function AnnotatorPage() {
   useEffect(() => {
     const resizeOptions = { passive: true } as AddEventListenerOptions;
 
-    updateProgress();
     window.addEventListener("scroll", updateProgress, { passive: true });
     window.addEventListener("resize", updateProgress as EventListener, resizeOptions);
     return () => {
@@ -557,10 +556,6 @@ export default function AnnotatorPage() {
       );
     };
   }, [updateProgress]);
-
-  useEffect(() => {
-    updateProgress();
-  }, [annotations.length, viewMode, updateProgress]);
 
   useEffect(() => {
     if (initialModeRef.current) {
@@ -591,6 +586,7 @@ export default function AnnotatorPage() {
 
   function switchViewMode(nextMode: ViewMode) {
     setFabExpanded(false);
+    setScrollProgress(0);
     setViewMode(nextMode);
     resetLookupState();
   }
@@ -612,6 +608,7 @@ export default function AnnotatorPage() {
     if (!sourceText.trim()) {
       setAnnotations([]);
       setReaderLabel("Open text to begin reading");
+      setScrollProgress(0);
       resetLookupState();
       return;
     }
@@ -763,6 +760,7 @@ export default function AnnotatorPage() {
     setLoadingChapter(true);
     setErrorMessage(null);
     setStatusMessage(null);
+    setScrollProgress(0);
     setSelectedNovel(novelName);
     setSelectedChapter(chapter);
 
@@ -842,6 +840,7 @@ export default function AnnotatorPage() {
 
   function clearWorkspace() {
     setFabExpanded(false);
+    setScrollProgress(0);
     setText("");
     setAnnotations([]);
     setSelectedFragments([]);
