@@ -524,8 +524,6 @@ export default function AnnotatorPage() {
   }, []);
 
   useEffect(() => {
-    const resizeOptions = { passive: true } as const;
-
     function updateProgress() {
       const scrollTop = window.scrollY;
       const scrollHeight =
@@ -541,10 +539,10 @@ export default function AnnotatorPage() {
 
     updateProgress();
     window.addEventListener("scroll", updateProgress, { passive: true });
-    window.addEventListener("resize", updateProgress, resizeOptions);
+    window.addEventListener("resize", updateProgress);
     return () => {
       window.removeEventListener("scroll", updateProgress);
-      window.removeEventListener("resize", updateProgress, resizeOptions);
+      window.removeEventListener("resize", updateProgress);
     };
   }, [annotations.length, viewMode]);
 
