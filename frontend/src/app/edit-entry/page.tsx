@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { SiteShell } from "@/components/site-shell";
 import { api, getErrorMessage } from "@/lib/api";
 import type { EditEntryRecord, EditEntryType } from "@/lib/types";
@@ -109,7 +110,34 @@ function Field({
 }
 
 export default function EditEntryPage() {
-  const [form, setForm] = useState<FormState>(emptyForm);
+  return (
+    <Suspense fallback={null}>
+      <EditEntryPageContent />
+    </Suspense>
+  );
+}
+
+function EditEntryPageContent() {
+  const searchParams = useSearchParams();
+  const initialForm = useMemo(() => {
+    const type = searchParams.get("type");
+
+    return {
+      type: type && type in fieldsByType ? (type as EditEntryType) : "",
+      simplified: searchParams.get("simplified") ?? "",
+      traditional: searchParams.get("traditional") ?? "",
+      pinyin: searchParams.get("pinyin") ?? "",
+      english: searchParams.get("english") ?? "",
+      reason: "",
+      notes: "",
+    } satisfies FormState;
+  }, [searchParams]);
+
+  return <EditEntryScreen key={searchParams.toString()} initialForm={initialForm} />;
+}
+
+function EditEntryScreen({ initialForm }: { initialForm: FormState }) {
+  const [form, setForm] = useState<FormState>(initialForm);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>(
     {},
   );
