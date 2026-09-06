@@ -9,6 +9,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: "Inter", "Segoe UI", Arial, sans-serif;
+  --font-reading-cjk: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", serif;
   --font-mono: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
 }
 
@@ -44,4 +45,12 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+.reader-text {
+  font-family:
+    var(--font-reading-cjk),
+    "PingFang SC",
+    "Hiragino Sans GB",
+    serif;
 }

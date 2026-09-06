@@ -38,13 +38,6 @@ type LookupTarget = {
   phrase: PhraseContext | null;
 };
 
-const modeDescriptions: Record<ViewMode, string> = {
-  reader:
-    "Tap a character to mark it recognized, or tap a word to update the whole phrase without leaving the reading flow.",
-  dictionary:
-    "Tap a character to inspect that character, its pronunciations, and the parent phrase in the dictionary sheet.",
-};
-
 function segmentText(text: string) {
   const lines = text.split("\n");
 
@@ -165,7 +158,13 @@ function LookupEntryCard({
   );
 }
 
-function ModeToast({ message }: { message: string | null }) {
+function TopToast({
+  message,
+  tone = "neutral",
+}: {
+  message: string | null;
+  tone?: "neutral" | "success";
+}) {
   return (
     <div
       className={`pointer-events-none fixed inset-x-0 top-14 z-50 flex justify-center px-4 transition duration-200 ${
@@ -174,7 +173,11 @@ function ModeToast({ message }: { message: string | null }) {
       aria-live="polite"
       aria-atomic="true"
     >
-      <div className="rounded-full bg-slate-950/85 px-4 py-2 text-sm font-medium text-white shadow-lg backdrop-blur">
+      <div
+        className={`rounded-full px-4 py-2 text-sm font-medium text-white shadow-lg backdrop-blur ${
+          tone === "success" ? "bg-emerald-700/90" : "bg-slate-950/85"
+        }`}
+      >
         {message ?? ""}
       </div>
     </div>
@@ -200,9 +203,7 @@ function VerticalProgressBar({
   );
 }
 
-function SpeedDialFab({
-  expanded,
-  onToggleExpanded,
+function SideActionRail({
   onToggleMode,
   onOpenLibrary,
   onOpenPaste,
@@ -210,8 +211,6 @@ function SpeedDialFab({
   onOpenMenu,
   viewMode,
 }: {
-  expanded: boolean;
-  onToggleExpanded: () => void;
   onToggleMode: () => void;
   onOpenLibrary: () => void;
   onOpenPaste: () => void;
@@ -232,48 +231,33 @@ function SpeedDialFab({
   ];
 
   return (
-    <div className="fixed bottom-5 right-4 z-40 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
-      {expanded
-        ? actions.map((action) => (
-            <button
-              key={action.label}
-              type="button"
-              onClick={action.onClick}
-              className="flex items-center gap-3 rounded-full border border-white/70 bg-white/92 px-4 py-2 text-sm font-semibold text-slate-800 shadow-lg backdrop-blur transition hover:bg-white"
-            >
-              <span className="text-base" aria-hidden="true">
-                {action.icon}
-              </span>
-              <span>{action.label}</span>
-            </button>
-          ))
-        : null}
-
-      <button
-        type="button"
-        onClick={onToggleExpanded}
-        aria-label={expanded ? "Collapse actions" : "Expand actions"}
-        aria-expanded={expanded}
-        className="rounded-full border border-white/70 bg-slate-950/85 px-4 py-4 text-white shadow-xl backdrop-blur transition hover:bg-slate-950"
-      >
-        <span className="flex items-center gap-2 text-sm font-semibold">
-          <span className="text-lg" aria-hidden="true">
-            {expanded ? "×" : "+"}
+    <div className="fixed right-3 top-1/2 z-40 flex -translate-y-1/2 flex-col items-end gap-2 sm:right-5">
+      {actions.map((action) => (
+        <button
+          key={action.label}
+          type="button"
+          onClick={action.onClick}
+          className="flex items-center gap-3 rounded-full border border-white/70 bg-white/88 px-3 py-2 text-sm font-semibold text-slate-800 shadow-lg backdrop-blur transition hover:bg-white"
+        >
+          <span className="text-base" aria-hidden="true">
+            {action.icon}
           </span>
-          <span className="hidden sm:inline">Actions</span>
-        </span>
-      </button>
+          <span className="hidden sm:inline">{action.label}</span>
+        </button>
+      ))}
     </div>
   );
 }
 
 function ChapterNavigation({
+  chapterLabel,
   hasPrevious,
   hasNext,
   loading,
   onPrevious,
   onNext,
 }: {
+  chapterLabel?: string;
   hasPrevious: boolean;
   hasNext: boolean;
   loading: boolean;
@@ -285,23 +269,30 @@ function ChapterNavigation({
   }
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-2xl border border-slate-300/70 bg-white/55 px-3 py-3 backdrop-blur">
-      <button
-        type="button"
-        onClick={onPrevious}
-        disabled={!hasPrevious || loading}
-        className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
-      >
-        Previous chapter
-      </button>
-      <button
-        type="button"
-        onClick={onNext}
-        disabled={!hasNext || loading}
-        className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
-      >
-        Next chapter
-      </button>
+    <div className="space-y-3">
+      {chapterLabel ? (
+        <p className="text-center text-sm font-medium tracking-[0.08em] text-slate-500">
+          end of chapter {chapterLabel}
+        </p>
+      ) : null}
+      <div className="flex items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={onPrevious}
+          disabled={!hasPrevious || loading}
+          className="rounded-full border border-slate-400/70 bg-white/50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          Previous chapter
+        </button>
+        <button
+          type="button"
+          onClick={onNext}
+          disabled={!hasNext || loading}
+          className="rounded-full border border-slate-400/70 bg-white/50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          Next chapter
+        </button>
+      </div>
     </div>
   );
 }
@@ -312,14 +303,12 @@ function ReaderHeader({
   paragraphCount,
   selectedCount,
   readerLabel,
-  viewMode,
 }: {
   hidden: boolean;
   onMenuOpen: () => void;
   paragraphCount: number;
   selectedCount: number;
   readerLabel: string;
-  viewMode: ViewMode;
 }) {
   return (
     <header
@@ -335,15 +324,6 @@ function ReaderHeader({
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <span
-            className={`rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] ${
-              viewMode === "reader"
-                ? "bg-amber-100/90 text-amber-800"
-                : "bg-slate-200/90 text-slate-700"
-            }`}
-          >
-            {viewMode}
-          </span>
           <button
             type="button"
             onClick={onMenuOpen}
@@ -472,7 +452,6 @@ export default function AnnotatorPage() {
   const [loadingMemory, setLoadingMemory] = useState(false);
   const [savingMemory, setSavingMemory] = useState(false);
   const [loadingChapter, setLoadingChapter] = useState(false);
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("reader");
   const [activeLookup, setActiveLookup] = useState<LookupTarget | null>(null);
@@ -486,10 +465,11 @@ export default function AnnotatorPage() {
   const [readerLabel, setReaderLabel] = useState("Open text to begin reading");
   const [headerHidden, setHeaderHidden] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [fabExpanded, setFabExpanded] = useState(false);
-  const [modeToast, setModeToast] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastTone, setToastTone] = useState<"neutral" | "success">("neutral");
   const lookupRequestId = useRef(0);
   const previousViewModeRef = useRef<ViewMode>("reader");
+  const toastTimeoutRef = useRef<number | null>(null);
   const updateProgress = useCallback(() => {
     const scrollTop = window.scrollY;
     const scrollHeight =
@@ -567,15 +547,35 @@ export default function AnnotatorPage() {
 
     previousViewModeRef.current = viewMode;
 
-    setModeToast(
+    setToastTone("neutral");
+    setToastMessage(
       viewMode === "reader"
         ? "Reader Mode: Tap characters to toggle recognition."
         : "Dictionary Mode: Tap phrases to view definitions.",
     );
 
-    const timeoutId = window.setTimeout(() => setModeToast(null), 2200);
-    return () => window.clearTimeout(timeoutId);
+    if (toastTimeoutRef.current) {
+      window.clearTimeout(toastTimeoutRef.current);
+    }
+
+    toastTimeoutRef.current = window.setTimeout(() => setToastMessage(null), 2200);
+    return () => {
+      if (toastTimeoutRef.current) {
+        window.clearTimeout(toastTimeoutRef.current);
+      }
+    };
   }, [viewMode]);
+
+  const showToast = useCallback((message: string, tone: "neutral" | "success" = "neutral") => {
+    setToastTone(tone);
+    setToastMessage(message);
+
+    if (toastTimeoutRef.current) {
+      window.clearTimeout(toastTimeoutRef.current);
+    }
+
+    toastTimeoutRef.current = window.setTimeout(() => setToastMessage(null), 2200);
+  }, []);
 
   const selectedKeys = useMemo(
     () => new Set(selectedFragments.map(fragmentKey)),
@@ -584,12 +584,10 @@ export default function AnnotatorPage() {
 
   function openPanel(panel: Exclude<SecondaryPanel, null>) {
     resetLookupState();
-    setFabExpanded(false);
     setActivePanel((current) => (current === panel ? null : panel));
   }
 
   function switchViewMode(nextMode: ViewMode) {
-    setFabExpanded(false);
     setViewMode(nextMode);
     resetLookupState();
     updateProgress();
@@ -619,7 +617,6 @@ export default function AnnotatorPage() {
 
     setAnnotating(true);
     setErrorMessage(null);
-    setStatusMessage(null);
     resetLookupState();
 
     try {
@@ -633,7 +630,7 @@ export default function AnnotatorPage() {
 
       setAnnotations(results);
       setReaderLabel(nextReaderLabel);
-      setStatusMessage("Annotation complete.");
+      showToast("Annotation complete.", "success");
       setActivePanel(null);
     } catch (error) {
       setErrorMessage(getErrorMessage(error));
@@ -656,7 +653,6 @@ export default function AnnotatorPage() {
   }
 
   async function inspectLookup(fragment: Fragment, phrase: PhraseContext | null) {
-    setFabExpanded(false);
     setActivePanel(null);
     setActiveLookup({ fragment, phrase });
     setFragmentLookupEntries([]);
@@ -760,10 +756,8 @@ export default function AnnotatorPage() {
       return;
     }
 
-    setFabExpanded(false);
     setLoadingChapter(true);
     setErrorMessage(null);
-    setStatusMessage(null);
     setScrollProgress(0);
     setSelectedNovel(novelName);
     setSelectedChapter(chapter);
@@ -778,7 +772,7 @@ export default function AnnotatorPage() {
       );
       setText(response.text);
       await annotateSource(response.text, `${novelName} · ${chapter}`);
-      setStatusMessage("Chapter loaded and annotated.");
+      showToast("Chapter loaded and annotated.", "success");
     } catch (error) {
       setErrorMessage(getErrorMessage(error));
     } finally {
@@ -801,7 +795,6 @@ export default function AnnotatorPage() {
 
     setLoadingMemory(true);
     setErrorMessage(null);
-    setStatusMessage(null);
 
     try {
       const params = new URLSearchParams({ code: memoryCodeInput.trim() });
@@ -811,7 +804,7 @@ export default function AnnotatorPage() {
       setMemoryCode(response.code);
       setMemoryCodeInput(String(response.code));
       setSelectedFragments(response.fragments);
-      setStatusMessage(`Loaded memory ${response.code}.`);
+      showToast(`Loaded memory ${response.code}.`, "success");
     } catch (error) {
       setErrorMessage(getErrorMessage(error));
     } finally {
@@ -826,7 +819,6 @@ export default function AnnotatorPage() {
 
     setSavingMemory(true);
     setErrorMessage(null);
-    setStatusMessage(null);
 
     try {
       const response = await api.post<MemoryRecord>("/memory/save", {
@@ -834,7 +826,7 @@ export default function AnnotatorPage() {
       });
       setMemoryCode(response.code);
       setMemoryCodeInput(String(response.code));
-      setStatusMessage(`Saved ${selectedFragments.length} fragment(s).`);
+      showToast(`Saved ${selectedFragments.length} fragment(s).`, "success");
     } catch (error) {
       setErrorMessage(getErrorMessage(error));
     } finally {
@@ -843,13 +835,11 @@ export default function AnnotatorPage() {
   }
 
   function clearWorkspace() {
-    setFabExpanded(false);
     setScrollProgress(0);
     setText("");
     setAnnotations([]);
     setSelectedFragments([]);
     setReaderLabel("Open text to begin reading");
-    setStatusMessage(null);
     setErrorMessage(null);
     resetLookupState();
   }
@@ -1004,7 +994,6 @@ export default function AnnotatorPage() {
     );
   }
 
-  const modeDescription = modeDescriptions[viewMode];
   const chapterNavigationProps: Parameters<typeof ChapterNavigation>[0] = {
     hasPrevious: previousChapter !== null,
     hasNext: nextChapter !== null,
@@ -1028,7 +1017,7 @@ export default function AnnotatorPage() {
       }`}
     >
       <VerticalProgressBar progress={scrollProgress} viewMode={viewMode} />
-      <ModeToast message={modeToast} />
+      <TopToast message={toastMessage} tone={toastTone} />
 
       <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-5 pb-24 pt-4 sm:px-7 sm:pt-6">
         <ReaderHeader
@@ -1037,26 +1026,15 @@ export default function AnnotatorPage() {
           paragraphCount={annotations.length}
           selectedCount={selectedFragments.length}
           readerLabel={readerLabel}
-          viewMode={viewMode}
         />
 
-        {(statusMessage || errorMessage) && (
+        {errorMessage && (
           <div
-            className={`mt-4 rounded-3xl border px-4 py-3 text-sm ${
-              errorMessage
-                ? "border-rose-200 bg-rose-50 text-rose-700"
-                : "border-emerald-200 bg-emerald-50 text-emerald-700"
-            }`}
+            className="mt-4 rounded-3xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"
           >
-            {errorMessage ?? statusMessage}
+            {errorMessage}
           </div>
         )}
-
-        {annotations.length > 0 && !annotating ? (
-          <div className="mb-4 px-1 text-sm leading-6 text-slate-600">
-            {modeDescription}
-          </div>
-        ) : null}
 
         <main className="flex-1 pt-4 sm:pt-6">
           {annotating ? (
@@ -1078,7 +1056,7 @@ export default function AnnotatorPage() {
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600">
                 The reading surface stays clear until you need support tools. Use
-                the floating action menu to load text, browse the novel library,
+                the action buttons on the right edge to load text, browse the novel library,
                 review recognition memory, or switch modes.
               </p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
@@ -1099,7 +1077,7 @@ export default function AnnotatorPage() {
               </div>
             </section>
           ) : (
-            <article className="space-y-5">
+            <article className="reader-text space-y-5">
               <ChapterNavigation {...chapterNavigationProps} />
               {annotations.map((paragraph, paragraphIndex) => (
                 <div
@@ -1117,15 +1095,16 @@ export default function AnnotatorPage() {
                   )}
                 </div>
               ))}
-              <ChapterNavigation {...chapterNavigationProps} />
+              <ChapterNavigation
+                {...chapterNavigationProps}
+                chapterLabel={selectedChapter || "this chapter"}
+              />
             </article>
           )}
         </main>
       </div>
 
-      <SpeedDialFab
-        expanded={fabExpanded}
-        onToggleExpanded={() => setFabExpanded((current) => !current)}
+      <SideActionRail
         onToggleMode={toggleViewMode}
         onOpenPaste={() => openPanel("paste")}
         onOpenLibrary={() => openPanel("library")}
