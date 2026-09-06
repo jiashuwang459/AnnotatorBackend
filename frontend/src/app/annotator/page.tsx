@@ -712,21 +712,6 @@ export default function AnnotatorPage() {
     setActionRailVisible((current) => !current);
   }
 
-  const chapterOptions = useMemo(
-    () =>
-      Object.entries(novels).flatMap(([novelName, chapters]) =>
-        chapters.map((chapter) => ({
-          novelName,
-          chapter,
-          value: `${novelName}:::${chapter}`,
-          label: `${chapter} · ${novelName}`,
-        })),
-      ),
-    [novels],
-  );
-
-  const selectedChapterValue =
-    selectedNovel && selectedChapter ? `${selectedNovel}:::${selectedChapter}` : "";
   const chapterList = selectedNovel ? (novels[selectedNovel] ?? []) : [];
   const chapterIndex = chapterList.indexOf(selectedChapter);
   const previousChapter =
@@ -1330,7 +1315,7 @@ export default function AnnotatorPage() {
             <div>
               <h2 className="text-lg font-semibold text-slate-950">Chapter library</h2>
               <p className="text-sm text-slate-600">
-                Choose a chapter and jump straight back into the reader.
+                Choose a book, then a chapter, and jump straight back into the reader.
               </p>
             </div>
             <button
@@ -1343,30 +1328,41 @@ export default function AnnotatorPage() {
           </div>
           <div className="space-y-4 overflow-y-auto px-5 py-5">
             <label className="block space-y-2 text-sm text-slate-700">
-              <span className="font-medium">Chapter</span>
+              <span className="font-medium">Book</span>
               <select
-                value={selectedChapterValue}
+                value={selectedNovel}
                 onChange={(event) => {
-                  const [novelName, chapter] = event.target.value.split(":::");
-                  setSelectedNovel(novelName ?? "");
-                  setSelectedChapter(chapter ?? "");
+                  setSelectedNovel(event.target.value);
+                  setSelectedChapter("");
                 }}
                 disabled={loadingNovels}
                 className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-sky-400 focus:bg-white"
               >
-                <option value="">Select a chapter</option>
-                {chapterOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
+                <option value="">Select a book</option>
+                {Object.entries(novels).map(([novelName, chapters]) => (
+                  <option key={novelName} value={novelName}>
+                    {novelName} [{chapters.length}]
                   </option>
                 ))}
               </select>
             </label>
-            {selectedNovel ? (
-              <p className="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
-                Novel: <span className="font-medium text-slate-800">{selectedNovel}</span>
-              </p>
-            ) : null}
+
+            <label className="block space-y-2 text-sm text-slate-700">
+              <span className="font-medium">Chapter</span>
+              <select
+                value={selectedChapter}
+                onChange={(event) => setSelectedChapter(event.target.value)}
+                disabled={!selectedNovel || loadingNovels}
+                className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-sky-400 focus:bg-white"
+              >
+                <option value="">Select a chapter</option>
+                {(novels[selectedNovel] ?? []).map((chapter) => (
+                  <option key={chapter} value={chapter}>
+                    {chapter}
+                  </option>
+                ))}
+              </select>
+            </label>
 
             <button
               type="button"
