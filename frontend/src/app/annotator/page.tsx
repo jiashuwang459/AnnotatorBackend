@@ -209,18 +209,26 @@ function SideActionRail({
   onOpenLibrary,
   onOpenMemory,
   onSaveMemory,
+  onUndoMemory,
+  onRedoMemory,
   onOpenMenu,
   canSaveMemory,
   savingMemory,
+  canUndoMemory,
+  canRedoMemory,
   viewMode,
 }: {
   onToggleMode: () => void;
   onOpenLibrary: () => void;
   onOpenMemory: () => void;
   onSaveMemory: () => void;
+  onUndoMemory: () => void;
+  onRedoMemory: () => void;
   onOpenMenu: () => void;
   canSaveMemory: boolean;
   savingMemory: boolean;
+  canUndoMemory: boolean;
+  canRedoMemory: boolean;
   viewMode: ViewMode;
 }) {
   const actions = [
@@ -230,6 +238,8 @@ function SideActionRail({
       onClick: onToggleMode,
     },
     { label: "Library", icon: "📚", onClick: onOpenLibrary },
+    { label: "Undo", icon: "↶", onClick: onUndoMemory, disabled: !canUndoMemory },
+    { label: "Redo", icon: "↷", onClick: onRedoMemory, disabled: !canRedoMemory },
     {
       label: savingMemory ? "Saving…" : "Save memory",
       icon: "💾",
@@ -465,6 +475,8 @@ function Overlay({
 export default function AnnotatorPage() {
   const [annotations, setAnnotations] = useState<AnnotationItem[][]>([]);
   const [selectedFragments, setSelectedFragments] = useState<Fragment[]>([]);
+  const [selectionHistory, setSelectionHistory] = useState<Fragment[][]>([]);
+  const [selectionFuture, setSelectionFuture] = useState<Fragment[][]>([]);
   const [memoryCode, setMemoryCode] = useState(0);
   const [memoryCodeInput, setMemoryCodeInput] = useState("0");
   const [novels, setNovels] = useState<NovelMap>({});
@@ -622,6 +634,34 @@ export default function AnnotatorPage() {
   const selectedKeys = useMemo(
     () => new Set(selectedFragments.map(fragmentKey)),
     [selectedFragments],
+  );
+
+  const selectionsEqual = useCallback((left: Fragment[], right: Fragment[]) => {
+    if (left.length !== right.length) {
+      return false;
+    }
+
+    return left.every((fragment, index) => {
+      const candidate = right[index];
+      return (
+        candidate !== undefined &&
+        fragment.cchar === candidate.cchar &&
+        fragment.pinyin === candidate.pinyin
+      );
+    });
+  }, []);
+
+  const commitSelection = useCallback(
+    (nextSelection: Fragment[]) => {
+      if (selectionsEqual(selectedFragments, nextSelection)) {
+        return;
+      }
+
+      setSelectionHistory((current) => [...current, selectedFragments]);
+      setSelectionFuture([]);
+      setSelectedFragments(nextSelection);
+    },
+    [selectedFragments, selectionsEqual],
   );
 
   function clearLongPressTimeout() {
@@ -821,29 +861,54 @@ export default function AnnotatorPage() {
       return;
     }
 
-    setSelectedFragments((current) => {
-      const selected = new Set(current.map(fragmentKey));
-      const targetKeys = selectableFragments.map(fragmentKey);
-      const everySelected = targetKeys.every((key) => selected.has(key));
+    const selected = new Set(selectedFragments.map(fragmentKey));
+    const targetKeys = selectableFragments.map(fragmentKey);
+    const everySelected = targetKeys.every((key) => selected.has(key));
 
-      if (everySelected) {
-        const removalKeys = new Set(targetKeys);
-        return current.filter((fragment) => !removalKeys.has(fragmentKey(fragment)));
+    if (everySelected) {
+      const removalKeys = new Set(targetKeys);
+      commitSelection(
+        selectedFragments.filter((fragment) => !removalKeys.has(fragmentKey(fragment))),
+      );
+      return;
+    }
+
+    const next = [...selectedFragments];
+
+    selectableFragments.forEach((fragment) => {
+      const key = fragmentKey(fragment);
+
+      if (!selected.has(key)) {
+        selected.add(key);
+        next.push(fragment);
       }
-
-      const next = [...current];
-
-      selectableFragments.forEach((fragment) => {
-        const key = fragmentKey(fragment);
-
-        if (!selected.has(key)) {
-          selected.add(key);
-          next.push(fragment);
-        }
-      });
-
-      return next;
     });
+
+    commitSelection(next);
+  }
+
+  function undoSelection() {
+    const previousSelection = selectionHistory[selectionHistory.length - 1];
+
+    if (!previousSelection) {
+      return;
+    }
+
+    setSelectionHistory((current) => current.slice(0, -1));
+    setSelectionFuture((current) => [selectedFragments, ...current]);
+    setSelectedFragments(previousSelection);
+  }
+
+  function redoSelection() {
+    const [nextSelection, ...remainingFuture] = selectionFuture;
+
+    if (!nextSelection) {
+      return;
+    }
+
+    setSelectionHistory((current) => [...current, selectedFragments]);
+    setSelectionFuture(remainingFuture);
+    setSelectedFragments(nextSelection);
   }
 
   function handleFragmentPress(fragment: Fragment, phrase: PhraseContext | null) {
@@ -910,7 +975,7 @@ export default function AnnotatorPage() {
       );
       setMemoryCode(response.code);
       setMemoryCodeInput(String(response.code));
-      setSelectedFragments(response.fragments);
+      commitSelection(response.fragments);
       showToast(`Loaded memory ${response.code}.`, "success");
       setActivePanel(null);
     } catch (error) {
@@ -1223,9 +1288,13 @@ export default function AnnotatorPage() {
           onOpenLibrary={() => openPanel("library")}
           onOpenMemory={() => openPanel("review")}
           onSaveMemory={() => void handleMemorySave()}
+          onUndoMemory={undoSelection}
+          onRedoMemory={redoSelection}
           onOpenMenu={() => openPanel("menu")}
           canSaveMemory={selectedFragments.length > 0}
           savingMemory={savingMemory}
+          canUndoMemory={selectionHistory.length > 0}
+          canRedoMemory={selectionFuture.length > 0}
           viewMode={viewMode}
         />
       ) : null}
