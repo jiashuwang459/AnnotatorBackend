@@ -172,6 +172,39 @@ function VerticalProgressBar({
   );
 }
 
+function ActionRailButton({
+  label,
+  icon,
+  onClick,
+  disabled = false,
+  grouped = false,
+}: {
+  label: string;
+  icon: ReactNode;
+  onClick: () => void;
+  disabled?: boolean;
+  grouped?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      data-reader-interactive="true"
+      className={`flex items-center gap-3 px-3 py-2 text-sm font-semibold text-slate-800 backdrop-blur transition disabled:cursor-not-allowed disabled:opacity-45 ${
+        grouped
+          ? "rounded-[1.1rem] border border-transparent bg-transparent hover:bg-white/70"
+          : "rounded-full border border-white/70 bg-white/88 shadow-lg hover:bg-white"
+      }`}
+    >
+      <span className="text-base" aria-hidden="true">
+        {icon}
+      </span>
+      <span className="hidden sm:inline">{label}</span>
+    </button>
+  );
+}
+
 function SideActionRail({
   onToggleMode,
   onOpenLibrary,
@@ -199,77 +232,44 @@ function SideActionRail({
   canRedoMemory: boolean;
   viewMode: ViewMode;
 }) {
-  function ActionButton({
-    label,
-    icon,
-    onClick,
-    disabled = false,
-    grouped = false,
-  }: {
-    label: string;
-    icon: ReactNode;
-    onClick: () => void;
-    disabled?: boolean;
-    grouped?: boolean;
-  }) {
-    return (
-      <button
-        type="button"
-        onClick={onClick}
-        disabled={disabled}
-        data-reader-interactive="true"
-        className={`flex items-center gap-3 px-3 py-2 text-sm font-semibold text-slate-800 backdrop-blur transition disabled:cursor-not-allowed disabled:opacity-45 ${
-          grouped
-            ? "rounded-[1.1rem] border border-transparent bg-transparent hover:bg-white/70"
-            : "rounded-full border border-white/70 bg-white/88 shadow-lg hover:bg-white"
-        }`}
-      >
-        <span className="text-base" aria-hidden="true">
-          {icon}
-        </span>
-        <span className="hidden sm:inline">{label}</span>
-      </button>
-    );
-  }
-
   return (
     <div className="fixed right-3 top-1/2 z-40 flex -translate-y-1/2 flex-col items-end gap-2 sm:right-5">
-      <ActionButton
+      <ActionRailButton
         label={viewMode === "reader" ? "Dictionary mode" : "Reader mode"}
         icon={viewMode === "reader" ? <FiSearch /> : <FiBookOpen />}
         onClick={onToggleMode}
       />
-      <ActionButton label="Library" icon={<FiBook />} onClick={onOpenLibrary} />
+      <ActionRailButton label="Library" icon={<FiBook />} onClick={onOpenLibrary} />
       <div className="flex flex-col gap-1 rounded-[1.75rem] border border-white/70 bg-white/88 p-1.5 shadow-lg backdrop-blur">
-        <ActionButton
+        <ActionRailButton
           label="Undo"
           icon={<FiRotateCcw />}
           onClick={onUndoMemory}
           disabled={!canUndoMemory}
           grouped
         />
-        <ActionButton
+        <ActionRailButton
           label="Redo"
           icon={<FiRotateCw />}
           onClick={onRedoMemory}
           disabled={!canRedoMemory}
           grouped
         />
-        <ActionButton
+        <ActionRailButton
           label={savingMemory ? "Saving…" : "Save memory"}
           icon={<FiSave />}
           onClick={onSaveMemory}
           disabled={!canSaveMemory || savingMemory}
           grouped
         />
-        <ActionButton
+        <ActionRailButton
           label="Load memory"
           icon={<FiBookmark />}
           onClick={onOpenMemory}
           grouped
         />
       </div>
-      <ActionButton label="More" icon={<FiMenu />} onClick={onOpenMenu} />
+      <ActionRailButton label="More" icon={<FiMenu />} onClick={onOpenMenu} />
     </div>
   );
 }
