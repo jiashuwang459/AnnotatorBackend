@@ -10,6 +10,7 @@
   --color-foreground: var(--foreground);
   --font-sans: "Inter", "Segoe UI", Arial, sans-serif;
   --font-reading-cjk: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  --font-reading-punctuation: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   --font-mono: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
 }
 
@@ -53,4 +54,20 @@ textarea {
     "PingFang SC",
     "Hiragino Sans GB",
     serif;
+}
+
+.reader-character {
+  font-family:
+    var(--font-reading-cjk),
+    "PingFang SC",
+    "Hiragino Sans GB",
+    serif;
+}
+
+.reader-punctuation {
+  font-family:
+    var(--font-reading-punctuation),
+    "PingFang SC",
+    "Hiragino Sans GB",
+    sans-serif;
 }
