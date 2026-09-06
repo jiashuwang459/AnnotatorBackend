@@ -463,7 +463,6 @@ function Overlay({
 }
 
 export default function AnnotatorPage() {
-  const [, setText] = useState("");
   const [annotations, setAnnotations] = useState<AnnotationItem[][]>([]);
   const [selectedFragments, setSelectedFragments] = useState<Fragment[]>([]);
   const [memoryCode, setMemoryCode] = useState(0);
@@ -732,12 +731,19 @@ export default function AnnotatorPage() {
         return;
       }
 
-      setText(nextText);
-      setSelectedNovel("");
-      setSelectedChapter("");
-      void annotateSource(nextText, parsed.label?.trim() || "Manual text");
+      const timeoutId = window.setTimeout(() => {
+        setSelectedNovel("");
+        setSelectedChapter("");
+        void annotateSource(nextText, parsed.label?.trim() || "Manual text");
+      }, 0);
+
+      return () => window.clearTimeout(timeoutId);
     } catch {
-      setErrorMessage("Could not open the saved manual text draft.");
+      const timeoutId = window.setTimeout(() => {
+        setErrorMessage("Could not open the saved manual text draft.");
+      }, 0);
+
+      return () => window.clearTimeout(timeoutId);
     }
   }, [annotateSource]);
 
@@ -872,7 +878,6 @@ export default function AnnotatorPage() {
       const response = await api.get<{ text: string }>(
         `/novel?${params.toString()}`,
       );
-      setText(response.text);
       await annotateSource(response.text, `${novelName} · ${chapter}`);
       showToast("Chapter loaded and annotated.", "success");
     } catch (error) {
