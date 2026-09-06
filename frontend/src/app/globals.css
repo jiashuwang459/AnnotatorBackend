@@ -71,3 +71,33 @@ textarea {
     "Hiragino Sans GB",
     sans-serif;
 }
+
+@keyframes reader-popup-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes reader-backdrop-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.reader-popup-backdrop {
+  animation: reader-backdrop-in 180ms ease-out;
+}
+
+.reader-popup-panel {
+  animation: reader-popup-in 200ms ease-out;
+}
