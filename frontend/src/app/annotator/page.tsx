@@ -22,8 +22,9 @@ import {
 } from "@/lib/types";
 
 const NBSP = "\u00a0";
+const MANUAL_READER_DRAFT_KEY = "annotator.manualReaderDraft";
 
-type SecondaryPanel = "paste" | "library" | "review" | "menu" | null;
+type SecondaryPanel = "library" | "review" | "menu" | null;
 type ViewMode = "reader" | "dictionary";
 
 type PhraseContext = {
@@ -206,16 +207,20 @@ function VerticalProgressBar({
 function SideActionRail({
   onToggleMode,
   onOpenLibrary,
-  onOpenPaste,
-  onOpenReview,
+  onOpenMemory,
+  onSaveMemory,
   onOpenMenu,
+  canSaveMemory,
+  savingMemory,
   viewMode,
 }: {
   onToggleMode: () => void;
   onOpenLibrary: () => void;
-  onOpenPaste: () => void;
-  onOpenReview: () => void;
+  onOpenMemory: () => void;
+  onSaveMemory: () => void;
   onOpenMenu: () => void;
+  canSaveMemory: boolean;
+  savingMemory: boolean;
   viewMode: ViewMode;
 }) {
   const actions = [
@@ -224,9 +229,14 @@ function SideActionRail({
       icon: viewMode === "reader" ? "🔎" : "📖",
       onClick: onToggleMode,
     },
-    { label: "Paste text", icon: "✍️", onClick: onOpenPaste },
     { label: "Library", icon: "📚", onClick: onOpenLibrary },
-    { label: "Review", icon: "✅", onClick: onOpenReview },
+    {
+      label: savingMemory ? "Saving…" : "Save memory",
+      icon: "💾",
+      onClick: onSaveMemory,
+      disabled: !canSaveMemory || savingMemory,
+    },
+    { label: "Load memory", icon: "🧠", onClick: onOpenMemory },
     { label: "More", icon: "☰", onClick: onOpenMenu },
   ];
 
@@ -237,7 +247,9 @@ function SideActionRail({
           key={action.label}
           type="button"
           onClick={action.onClick}
-          className="flex items-center gap-3 rounded-full border border-white/70 bg-white/88 px-3 py-2 text-sm font-semibold text-slate-800 shadow-lg backdrop-blur transition hover:bg-white"
+          disabled={"disabled" in action ? action.disabled : false}
+          data-reader-interactive="true"
+          className="flex items-center gap-3 rounded-full border border-white/70 bg-white/88 px-3 py-2 text-sm font-semibold text-slate-800 shadow-lg backdrop-blur transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-45"
         >
           <span className="text-base" aria-hidden="true">
             {action.icon}
@@ -280,6 +292,7 @@ function ChapterNavigation({
           type="button"
           onClick={onPrevious}
           disabled={!hasPrevious || loading}
+          data-reader-interactive="true"
           className="rounded-full border border-slate-400/70 bg-white/50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-40"
         >
           Previous chapter
@@ -288,6 +301,7 @@ function ChapterNavigation({
           type="button"
           onClick={onNext}
           disabled={!hasNext || loading}
+          data-reader-interactive="true"
           className="rounded-full border border-slate-400/70 bg-white/50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-40"
         >
           Next chapter
@@ -344,12 +358,14 @@ function Overlay({
   onClose,
   fullHeight = false,
   layerClassName = "z-40",
+  variant = "sheet",
 }: {
   children: ReactNode;
   label: string;
   onClose: () => void;
   fullHeight?: boolean;
   layerClassName?: string;
+  variant?: "sheet" | "popup";
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const onCloseRef = useRef(onClose);
@@ -415,7 +431,11 @@ function Overlay({
   }, []);
 
   return (
-    <div className={`fixed inset-0 bg-slate-950/45 backdrop-blur-sm ${layerClassName}`}>
+    <div
+      className={`fixed inset-0 bg-slate-950/45 backdrop-blur-sm ${layerClassName} ${
+        variant === "popup" ? "flex items-center justify-center p-4" : ""
+      }`}
+    >
       <button
         type="button"
         aria-label="Close panel"
@@ -428,8 +448,12 @@ function Overlay({
         aria-modal="true"
         aria-label={label}
         tabIndex={-1}
-        className={`absolute inset-x-0 bottom-0 z-10 mx-auto w-full max-w-3xl overflow-hidden rounded-t-[2rem] border border-white/10 bg-white shadow-2xl ${
-          fullHeight ? "max-h-[92vh]" : "max-h-[80vh]"
+        className={`z-10 mx-auto w-full overflow-hidden border border-white/10 bg-white shadow-2xl ${
+          variant === "popup"
+            ? "relative max-w-2xl rounded-[2rem] max-h-[85vh]"
+            : `absolute inset-x-0 bottom-0 max-w-3xl rounded-t-[2rem] ${
+                fullHeight ? "max-h-[92vh]" : "max-h-[80vh]"
+              }`
         }`}
       >
         {children}
@@ -439,7 +463,7 @@ function Overlay({
 }
 
 export default function AnnotatorPage() {
-  const [text, setText] = useState("");
+  const [, setText] = useState("");
   const [annotations, setAnnotations] = useState<AnnotationItem[][]>([]);
   const [selectedFragments, setSelectedFragments] = useState<Fragment[]>([]);
   const [memoryCode, setMemoryCode] = useState(0);
@@ -465,11 +489,14 @@ export default function AnnotatorPage() {
   const [readerLabel, setReaderLabel] = useState("Open text to begin reading");
   const [headerHidden, setHeaderHidden] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [actionRailVisible, setActionRailVisible] = useState(true);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastTone, setToastTone] = useState<"neutral" | "success">("neutral");
   const lookupRequestId = useRef(0);
   const previousViewModeRef = useRef<ViewMode>("reader");
   const toastTimeoutRef = useRef<number | null>(null);
+  const longPressTimeoutRef = useRef<number | null>(null);
+  const longPressTriggeredRef = useRef(false);
   const updateProgress = useCallback(() => {
     const scrollTop = window.scrollY;
     const scrollHeight =
@@ -513,6 +540,10 @@ export default function AnnotatorPage() {
     function handleScroll() {
       const nextScrollY = window.scrollY;
       const scrollingDown = nextScrollY > lastScrollY;
+
+      if (Math.abs(nextScrollY - lastScrollY) > 2) {
+        setActionRailVisible(false);
+      }
 
       if (nextScrollY < 24) {
         setHeaderHidden(false);
@@ -577,13 +608,43 @@ export default function AnnotatorPage() {
     toastTimeoutRef.current = window.setTimeout(() => setToastMessage(null), 2200);
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (toastTimeoutRef.current) {
+        window.clearTimeout(toastTimeoutRef.current);
+      }
+
+      if (longPressTimeoutRef.current) {
+        window.clearTimeout(longPressTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const selectedKeys = useMemo(
     () => new Set(selectedFragments.map(fragmentKey)),
     [selectedFragments],
   );
 
+  function clearLongPressTimeout() {
+    if (longPressTimeoutRef.current) {
+      window.clearTimeout(longPressTimeoutRef.current);
+      longPressTimeoutRef.current = null;
+    }
+  }
+
+  function beginLongPress(fragment: Fragment, phrase: PhraseContext | null) {
+    clearLongPressTimeout();
+    longPressTriggeredRef.current = false;
+
+    longPressTimeoutRef.current = window.setTimeout(() => {
+      longPressTriggeredRef.current = true;
+      void inspectLookup(fragment, phrase);
+    }, 450);
+  }
+
   function openPanel(panel: Exclude<SecondaryPanel, null>) {
     resetLookupState();
+    setActionRailVisible(false);
     setActivePanel((current) => (current === panel ? null : panel));
   }
 
@@ -597,6 +658,18 @@ export default function AnnotatorPage() {
     switchViewMode(viewMode === "reader" ? "dictionary" : "reader");
   }
 
+  function toggleActionRailFromSurface(target: EventTarget | null) {
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+
+    if (target.closest("[data-reader-interactive='true']")) {
+      return;
+    }
+
+    setActionRailVisible((current) => !current);
+  }
+
   const chapterList = selectedNovel ? (novels[selectedNovel] ?? []) : [];
   const chapterIndex = chapterList.indexOf(selectedChapter);
   const previousChapter =
@@ -606,38 +679,67 @@ export default function AnnotatorPage() {
       ? chapterList[chapterIndex + 1]
       : null;
 
-  async function annotateSource(sourceText: string, nextReaderLabel = "Pasted text") {
-    if (!sourceText.trim()) {
-      setAnnotations([]);
-      setReaderLabel("Open text to begin reading");
-      setScrollProgress(0);
+  const annotateSource = useCallback(
+    async (sourceText: string, nextReaderLabel = "Pasted text") => {
+      if (!sourceText.trim()) {
+        setAnnotations([]);
+        setReaderLabel("Open text to begin reading");
+        setScrollProgress(0);
+        resetLookupState();
+        return;
+      }
+
+      setAnnotating(true);
+      setErrorMessage(null);
       resetLookupState();
+
+      try {
+        const results = await Promise.all(
+          segmentText(sourceText).map((segment) =>
+            segment.blank
+              ? Promise.resolve([])
+              : api.post<AnnotationItem[]>("/annotate", { text: segment.text }),
+          ),
+        );
+
+        setAnnotations(results);
+        setReaderLabel(nextReaderLabel);
+        showToast("Annotation complete.", "success");
+        setActivePanel(null);
+      } catch (error) {
+        setErrorMessage(getErrorMessage(error));
+      } finally {
+        setAnnotating(false);
+      }
+    },
+    [resetLookupState, showToast],
+  );
+
+  useEffect(() => {
+    const pendingDraft = window.sessionStorage.getItem(MANUAL_READER_DRAFT_KEY);
+
+    if (!pendingDraft) {
       return;
     }
 
-    setAnnotating(true);
-    setErrorMessage(null);
-    resetLookupState();
+    window.sessionStorage.removeItem(MANUAL_READER_DRAFT_KEY);
 
     try {
-      const results = await Promise.all(
-        segmentText(sourceText).map((segment) =>
-          segment.blank
-            ? Promise.resolve([])
-            : api.post<AnnotationItem[]>("/annotate", { text: segment.text }),
-        ),
-      );
+      const parsed = JSON.parse(pendingDraft) as { text?: string; label?: string };
+      const nextText = parsed.text?.trim() ?? "";
 
-      setAnnotations(results);
-      setReaderLabel(nextReaderLabel);
-      showToast("Annotation complete.", "success");
-      setActivePanel(null);
-    } catch (error) {
-      setErrorMessage(getErrorMessage(error));
-    } finally {
-      setAnnotating(false);
+      if (!nextText) {
+        return;
+      }
+
+      setText(nextText);
+      setSelectedNovel("");
+      setSelectedChapter("");
+      void annotateSource(nextText, parsed.label?.trim() || "Manual text");
+    } catch {
+      setErrorMessage("Could not open the saved manual text draft.");
     }
-  }
+  }, [annotateSource]);
 
   async function fetchDictionaryEntries(phrase: string) {
     try {
@@ -805,6 +907,7 @@ export default function AnnotatorPage() {
       setMemoryCodeInput(String(response.code));
       setSelectedFragments(response.fragments);
       showToast(`Loaded memory ${response.code}.`, "success");
+      setActivePanel(null);
     } catch (error) {
       setErrorMessage(getErrorMessage(error));
     } finally {
@@ -827,21 +930,15 @@ export default function AnnotatorPage() {
       setMemoryCode(response.code);
       setMemoryCodeInput(String(response.code));
       showToast(`Saved ${selectedFragments.length} fragment(s).`, "success");
+
+      if (activePanel === "review") {
+        setActivePanel(null);
+      }
     } catch (error) {
       setErrorMessage(getErrorMessage(error));
     } finally {
       setSavingMemory(false);
     }
-  }
-
-  function clearWorkspace() {
-    setScrollProgress(0);
-    setText("");
-    setAnnotations([]);
-    setSelectedFragments([]);
-    setReaderLabel("Open text to begin reading");
-    setErrorMessage(null);
-    resetLookupState();
   }
 
   function renderFragment(
@@ -862,7 +959,8 @@ export default function AnnotatorPage() {
       return (
         <span
           key={key}
-          className="px-0 py-0 text-[1.4rem] leading-[3.2rem] text-slate-700"
+          data-reader-interactive="true"
+          className="reader-punctuation px-0 py-0 text-[1.4rem] leading-[3.2rem] text-slate-700"
         >
           {fragment.cchar}
         </span>
@@ -870,19 +968,27 @@ export default function AnnotatorPage() {
     }
 
     const hidePinyin = viewMode === "reader" && selected;
-    const fragmentToneClass = selected
-      ? "text-emerald-700"
-      : viewMode === "reader"
-        ? "text-slate-800"
-        : "text-slate-900";
+    const fragmentToneClass = viewMode === "reader" ? "text-slate-800" : "text-slate-900";
 
     return (
       <button
         key={key}
         type="button"
+        data-reader-interactive="true"
+        onPointerDown={() => beginLongPress(fragment, phrase)}
+        onPointerUp={clearLongPressTimeout}
+        onPointerMove={clearLongPressTimeout}
+        onPointerLeave={clearLongPressTimeout}
+        onPointerCancel={clearLongPressTimeout}
+        onContextMenu={(event) => event.preventDefault()}
         onClick={(event) => {
           if (inPhrase) {
             event.stopPropagation();
+          }
+
+          if (longPressTriggeredRef.current) {
+            longPressTriggeredRef.current = false;
+            return;
           }
 
           handleFragmentPress(fragment, phrase);
@@ -892,13 +998,13 @@ export default function AnnotatorPage() {
         }`}
       >
         <span
-          className={`min-h-4 text-[0.72rem] leading-4 ${
-            hidePinyin ? "invisible" : selected ? "text-emerald-600" : "text-sky-700"
-          }`}
+          className={`min-h-4 text-[0.72rem] leading-4 ${hidePinyin ? "invisible" : "text-sky-700"}`}
         >
           {formatPinyin(fragment.pinyin)}
         </span>
-        <span className="text-[1.4rem] font-medium leading-7">{fragment.cchar}</span>
+        <span className="reader-character text-[1.4rem] font-medium leading-7">
+          {fragment.cchar}
+        </span>
       </button>
     );
   }
@@ -910,15 +1016,13 @@ export default function AnnotatorPage() {
 
     const phrase = buildPhraseContext(item);
     const selectableFragments = item.cchars.filter(isSelectableFragment);
-    const phraseRecognized =
-      selectableFragments.length > 0 &&
-      selectableFragments.every((fragment) => selectedKeys.has(fragmentKey(fragment)));
     const phraseSelected = activeLookup?.phrase?.key === phrase?.key;
 
     if (viewMode === "reader") {
       return (
         <div
           key={`phrase-${index}`}
+          data-reader-interactive="true"
           role={selectableFragments.length > 0 ? "button" : undefined}
           tabIndex={selectableFragments.length > 0 ? 0 : undefined}
           onClick={
@@ -936,9 +1040,7 @@ export default function AnnotatorPage() {
             }
           }}
           title={item.english}
-          className={`inline-flex flex-wrap items-end gap-0 rounded-md transition ${
-            phraseRecognized ? "text-emerald-700" : ""
-          }`}
+          className="inline-flex flex-wrap items-end gap-0 rounded-md transition"
         >
           {item.cchars.map((fragment, fragmentIndex) =>
             renderFragment(fragment, `phrase-${index}-${fragmentIndex}`, {
@@ -953,6 +1055,7 @@ export default function AnnotatorPage() {
     return (
       <div
         key={`phrase-${index}`}
+        data-reader-interactive="true"
         role={selectableFragments.length > 0 ? "button" : undefined}
         tabIndex={selectableFragments.length > 0 ? 0 : undefined}
         onClick={() => {
@@ -1052,32 +1155,37 @@ export default function AnnotatorPage() {
                 Reader ready
               </p>
               <h2 className="mt-3 text-2xl font-semibold text-slate-950">
-                Open a chapter or paste text to start reading.
+                Open a chapter from the library to start reading.
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600">
-                The reading surface stays clear until you need support tools. Use
-                the action buttons on the right edge to load text, browse the novel library,
-                review recognition memory, or switch modes.
+                The reading surface stays clear until you need support tools. Use the
+                action buttons on the right edge to open the library, manage memory,
+                or switch modes.
               </p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
                 <button
                   type="button"
                   onClick={() => openPanel("library")}
-                  className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
+                 data-reader-interactive="true"
+                 className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
                 >
-                  Browse library
+                 Browse library
                 </button>
                 <button
-                  type="button"
-                  onClick={() => openPanel("paste")}
-                  className="rounded-full border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                 type="button"
+                 onClick={() => openPanel("menu")}
+                 data-reader-interactive="true"
+                 className="rounded-full border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
                 >
-                  Paste text
+                 Open menu
                 </button>
               </div>
             </section>
           ) : (
-            <article className="reader-text space-y-5">
+            <article
+              className="reader-text space-y-5"
+              onClick={(event) => toggleActionRailFromSurface(event.target)}
+            >
               <ChapterNavigation {...chapterNavigationProps} />
               {annotations.map((paragraph, paragraphIndex) => (
                 <div
@@ -1104,62 +1212,25 @@ export default function AnnotatorPage() {
         </main>
       </div>
 
-      <SideActionRail
-        onToggleMode={toggleViewMode}
-        onOpenPaste={() => openPanel("paste")}
-        onOpenLibrary={() => openPanel("library")}
-        onOpenReview={() => openPanel("review")}
-        onOpenMenu={() => openPanel("menu")}
-        viewMode={viewMode}
-      />
-
-      {activePanel === "paste" ? (
-        <Overlay label="Paste text" onClose={() => setActivePanel(null)} fullHeight>
-          <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-950">Paste text</h2>
-              <p className="text-sm text-slate-600">
-                Manual text entry stays close at hand without taking over the reader.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setActivePanel(null)}
-              className="rounded-full border border-slate-200 px-3 py-1 text-sm font-semibold text-slate-700"
-            >
-              Close
-            </button>
-          </div>
-          <div className="space-y-4 overflow-y-auto px-5 py-5">
-            <textarea
-              value={text}
-              onChange={(event) => setText(event.target.value)}
-              placeholder="Paste Chinese text here…"
-              className="min-h-72 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-900 shadow-sm outline-none transition focus:border-sky-400 focus:bg-white"
-            />
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <button
-                type="button"
-                onClick={() => void annotateSource(text)}
-                disabled={annotating || loadingChapter || text.trim().length === 0}
-                className="w-full rounded-full bg-sky-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-slate-300 sm:w-auto"
-              >
-                {annotating ? "Annotating…" : "Annotate text"}
-              </button>
-              <button
-                type="button"
-                onClick={clearWorkspace}
-                className="w-full rounded-full border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 sm:w-auto"
-              >
-                Clear reader
-              </button>
-            </div>
-          </div>
-        </Overlay>
+      {actionRailVisible ? (
+        <SideActionRail
+          onToggleMode={toggleViewMode}
+          onOpenLibrary={() => openPanel("library")}
+          onOpenMemory={() => openPanel("review")}
+          onSaveMemory={() => void handleMemorySave()}
+          onOpenMenu={() => openPanel("menu")}
+          canSaveMemory={selectedFragments.length > 0}
+          savingMemory={savingMemory}
+          viewMode={viewMode}
+        />
       ) : null}
 
       {activePanel === "library" ? (
-        <Overlay label="Novel library" onClose={() => setActivePanel(null)}>
+        <Overlay
+          label="Novel library"
+          onClose={() => setActivePanel(null)}
+          variant="popup"
+        >
           <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
             <div>
               <h2 className="text-lg font-semibold text-slate-950">Novel library</h2>
@@ -1228,10 +1299,10 @@ export default function AnnotatorPage() {
       ) : null}
 
       {activePanel === "review" ? (
-        <Overlay label="Review selections" onClose={() => setActivePanel(null)}>
+        <Overlay label="Memory" onClose={() => setActivePanel(null)} variant="popup">
           <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
             <div>
-              <h2 className="text-lg font-semibold text-slate-950">Review selections</h2>
+              <h2 className="text-lg font-semibold text-slate-950">Memory</h2>
               <p className="text-sm text-slate-600">
                 Inspect recognized characters and sync them with the memory endpoints.
               </p>
@@ -1304,7 +1375,7 @@ export default function AnnotatorPage() {
       ) : null}
 
       {activePanel === "menu" ? (
-        <Overlay label="Reader menu" onClose={() => setActivePanel(null)}>
+        <Overlay label="Reader menu" onClose={() => setActivePanel(null)} variant="popup">
           <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
             <div>
               <h2 className="text-lg font-semibold text-slate-950">Reader menu</h2>
@@ -1335,14 +1406,13 @@ export default function AnnotatorPage() {
               Edit dictionary entries
               <span className="text-slate-400">→</span>
             </Link>
-            <button
-              type="button"
-              onClick={() => openPanel("paste")}
-              className="flex w-full items-center justify-between rounded-3xl border border-slate-200 px-4 py-4 text-left text-sm font-semibold text-slate-800 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
+            <Link
+              href="/manual-text"
+              className="flex items-center justify-between rounded-3xl border border-slate-200 px-4 py-4 text-sm font-semibold text-slate-800 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
             >
-              Replace current text
+              Manual text reader
               <span className="text-slate-400">→</span>
-            </button>
+            </Link>
           </div>
         </Overlay>
       ) : null}
