@@ -9,6 +9,16 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import {
+  FiBook,
+  FiBookOpen,
+  FiBookmark,
+  FiMenu,
+  FiRotateCcw,
+  FiRotateCw,
+  FiSave,
+  FiSearch,
+} from "react-icons/fi";
 import { ApiError, api, getErrorMessage } from "@/lib/api";
 import { parsePinyin } from "@/lib/pinyin";
 import {
@@ -98,41 +108,7 @@ function buildPhraseContext(item: PhraseAnnotation): PhraseContext | null {
   };
 }
 
-function buildEditEntryHref({
-  simplified,
-  traditional,
-  pinyin,
-  english,
-}: {
-  simplified: string;
-  traditional?: string;
-  pinyin?: string;
-  english?: string;
-}) {
-  const params = new URLSearchParams({ type: "custom", simplified });
-
-  if (traditional) {
-    params.set("traditional", traditional);
-  }
-
-  if (pinyin) {
-    params.set("pinyin", pinyin);
-  }
-
-  if (english) {
-    params.set("english", english);
-  }
-
-  return `/edit-entry?${params.toString()}`;
-}
-
-function LookupEntryCard({
-  entry,
-  actionHref,
-}: {
-  entry: DictionaryEntry;
-  actionHref: string;
-}) {
+function LookupEntryCard({ entry }: { entry: DictionaryEntry }) {
   return (
     <article className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
       <div className="flex flex-wrap items-center gap-3">
@@ -147,14 +123,6 @@ function LookupEntryCard({
         </span>
       </div>
       <p className="mt-3 text-sm leading-6 text-slate-700">{entry.english}</p>
-      <div className="mt-4">
-        <Link
-          href={actionHref}
-          className="inline-flex rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
-        >
-          Edit entry
-        </Link>
-      </div>
     </article>
   );
 }
@@ -231,42 +199,77 @@ function SideActionRail({
   canRedoMemory: boolean;
   viewMode: ViewMode;
 }) {
-  const actions = [
-    {
-      label: viewMode === "reader" ? "Dictionary mode" : "Reader mode",
-      icon: viewMode === "reader" ? "🔎" : "📖",
-      onClick: onToggleMode,
-    },
-    { label: "Library", icon: "📚", onClick: onOpenLibrary },
-    { label: "Undo", icon: "↶", onClick: onUndoMemory, disabled: !canUndoMemory },
-    { label: "Redo", icon: "↷", onClick: onRedoMemory, disabled: !canRedoMemory },
-    {
-      label: savingMemory ? "Saving…" : "Save memory",
-      icon: "💾",
-      onClick: onSaveMemory,
-      disabled: !canSaveMemory || savingMemory,
-    },
-    { label: "Load memory", icon: "🧠", onClick: onOpenMemory },
-    { label: "More", icon: "☰", onClick: onOpenMenu },
-  ];
+  function ActionButton({
+    label,
+    icon,
+    onClick,
+    disabled = false,
+    grouped = false,
+  }: {
+    label: string;
+    icon: ReactNode;
+    onClick: () => void;
+    disabled?: boolean;
+    grouped?: boolean;
+  }) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={disabled}
+        data-reader-interactive="true"
+        className={`flex items-center gap-3 px-3 py-2 text-sm font-semibold text-slate-800 backdrop-blur transition disabled:cursor-not-allowed disabled:opacity-45 ${
+          grouped
+            ? "rounded-[1.1rem] border border-transparent bg-transparent hover:bg-white/70"
+            : "rounded-full border border-white/70 bg-white/88 shadow-lg hover:bg-white"
+        }`}
+      >
+        <span className="text-base" aria-hidden="true">
+          {icon}
+        </span>
+        <span className="hidden sm:inline">{label}</span>
+      </button>
+    );
+  }
 
   return (
     <div className="fixed right-3 top-1/2 z-40 flex -translate-y-1/2 flex-col items-end gap-2 sm:right-5">
-      {actions.map((action) => (
-        <button
-          key={action.label}
-          type="button"
-          onClick={action.onClick}
-          disabled={"disabled" in action ? action.disabled : false}
-          data-reader-interactive="true"
-          className="flex items-center gap-3 rounded-full border border-white/70 bg-white/88 px-3 py-2 text-sm font-semibold text-slate-800 shadow-lg backdrop-blur transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-45"
-        >
-          <span className="text-base" aria-hidden="true">
-            {action.icon}
-          </span>
-          <span className="hidden sm:inline">{action.label}</span>
-        </button>
-      ))}
+      <ActionButton
+        label={viewMode === "reader" ? "Dictionary mode" : "Reader mode"}
+        icon={viewMode === "reader" ? <FiSearch /> : <FiBookOpen />}
+        onClick={onToggleMode}
+      />
+      <ActionButton label="Library" icon={<FiBook />} onClick={onOpenLibrary} />
+      <div className="flex flex-col gap-1 rounded-[1.75rem] border border-white/70 bg-white/88 p-1.5 shadow-lg backdrop-blur">
+        <ActionButton
+          label="Undo"
+          icon={<FiRotateCcw />}
+          onClick={onUndoMemory}
+          disabled={!canUndoMemory}
+          grouped
+        />
+        <ActionButton
+          label="Redo"
+          icon={<FiRotateCw />}
+          onClick={onRedoMemory}
+          disabled={!canRedoMemory}
+          grouped
+        />
+        <ActionButton
+          label={savingMemory ? "Saving…" : "Save memory"}
+          icon={<FiSave />}
+          onClick={onSaveMemory}
+          disabled={!canSaveMemory || savingMemory}
+          grouped
+        />
+        <ActionButton
+          label="Load memory"
+          icon={<FiBookmark />}
+          onClick={onOpenMemory}
+          grouped
+        />
+      </div>
+      <ActionButton label="More" icon={<FiMenu />} onClick={onOpenMenu} />
     </div>
   );
 }
@@ -443,7 +446,7 @@ function Overlay({
   return (
     <div
       className={`fixed inset-0 bg-slate-950/45 backdrop-blur-sm ${layerClassName} ${
-        variant === "popup" ? "flex items-center justify-center p-4" : ""
+        variant === "popup" ? "reader-popup-backdrop flex items-center justify-center p-4" : ""
       }`}
     >
       <button
@@ -460,7 +463,7 @@ function Overlay({
         tabIndex={-1}
         className={`z-10 mx-auto w-full overflow-hidden border border-white/10 bg-white shadow-2xl ${
           variant === "popup"
-            ? "relative max-w-2xl rounded-[2rem] max-h-[85vh]"
+            ? "reader-popup-panel relative max-h-[85vh] max-w-2xl rounded-[2rem]"
             : `absolute inset-x-0 bottom-0 max-w-3xl rounded-t-[2rem] ${
                 fullHeight ? "max-h-[92vh]" : "max-h-[80vh]"
               }`
@@ -709,6 +712,21 @@ export default function AnnotatorPage() {
     setActionRailVisible((current) => !current);
   }
 
+  const chapterOptions = useMemo(
+    () =>
+      Object.entries(novels).flatMap(([novelName, chapters]) =>
+        chapters.map((chapter) => ({
+          novelName,
+          chapter,
+          value: `${novelName}:::${chapter}`,
+          label: `${chapter} · ${novelName}`,
+        })),
+      ),
+    [novels],
+  );
+
+  const selectedChapterValue =
+    selectedNovel && selectedChapter ? `${selectedNovel}:::${selectedChapter}` : "";
   const chapterList = selectedNovel ? (novels[selectedNovel] ?? []) : [];
   const chapterIndex = chapterList.indexOf(selectedChapter);
   const previousChapter =
@@ -1030,9 +1048,12 @@ export default function AnnotatorPage() {
         <span
           key={key}
           data-reader-interactive="true"
-          className="reader-punctuation px-0 py-0 text-[1.4rem] leading-[3.2rem] text-slate-700"
+          className="inline-flex min-w-[1.35em] flex-col items-center px-0 py-0"
         >
-          {fragment.cchar}
+          <span className="min-h-4 text-[0.72rem] leading-4 opacity-0">.</span>
+          <span className="reader-punctuation text-[1.4rem] leading-7 text-slate-700">
+            {fragment.cchar}
+          </span>
         </span>
       );
     }
@@ -1307,9 +1328,9 @@ export default function AnnotatorPage() {
         >
           <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
             <div>
-              <h2 className="text-lg font-semibold text-slate-950">Novel library</h2>
+              <h2 className="text-lg font-semibold text-slate-950">Chapter library</h2>
               <p className="text-sm text-slate-600">
-                Choose a novel and chapter, then return straight to the reader.
+                Choose a chapter and jump straight back into the reader.
               </p>
             </div>
             <button
@@ -1322,48 +1343,35 @@ export default function AnnotatorPage() {
           </div>
           <div className="space-y-4 overflow-y-auto px-5 py-5">
             <label className="block space-y-2 text-sm text-slate-700">
-              <span className="font-medium">Novel</span>
+              <span className="font-medium">Chapter</span>
               <select
-                value={selectedNovel}
+                value={selectedChapterValue}
                 onChange={(event) => {
-                  setSelectedNovel(event.target.value);
-                  setSelectedChapter("");
+                  const [novelName, chapter] = event.target.value.split(":::");
+                  setSelectedNovel(novelName ?? "");
+                  setSelectedChapter(chapter ?? "");
                 }}
                 disabled={loadingNovels}
                 className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-sky-400 focus:bg-white"
               >
-                <option value="">Select a novel</option>
-                {Object.entries(novels).map(([novelName, chapters]) => (
-                  <option key={novelName} value={novelName}>
-                    {novelName} [{chapters.length}]
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="block space-y-2 text-sm text-slate-700">
-              <span className="font-medium">Chapter</span>
-              <select
-                value={selectedChapter}
-                onChange={(event) => setSelectedChapter(event.target.value)}
-                disabled={!selectedNovel || loadingNovels}
-                className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-sky-400 focus:bg-white"
-              >
                 <option value="">Select a chapter</option>
-                {(novels[selectedNovel] ?? []).map((chapter) => (
-                  <option key={chapter} value={chapter}>
-                    {chapter}
+                {chapterOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
                   </option>
                 ))}
               </select>
             </label>
+            {selectedNovel ? (
+              <p className="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                Novel: <span className="font-medium text-slate-800">{selectedNovel}</span>
+              </p>
+            ) : null}
 
             <button
               type="button"
               onClick={() => void handleChapterLoad()}
-              disabled={
-                loadingChapter || annotating || !selectedNovel || !selectedChapter
-              }
+              disabled={loadingChapter || annotating || !selectedNovel || !selectedChapter}
               className="w-full rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300 sm:w-auto"
             >
               {loadingChapter ? "Loading chapter…" : "Load and annotate"}
@@ -1496,6 +1504,7 @@ export default function AnnotatorPage() {
           label="Dictionary lookup"
           onClose={resetLookupState}
           layerClassName="z-50"
+          variant="popup"
         >
           <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
             <div>
@@ -1527,26 +1536,15 @@ export default function AnnotatorPage() {
             ) : null}
 
             <section className="space-y-3">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-                    Character entries
-                  </h3>
-                  <p className="text-sm text-slate-600">
-                    {fragmentLookupEntries.length > 1
-                      ? "Multiple pronunciations found for this character."
-                      : "Saved dictionary entries for the tapped character."}
-                  </p>
-                </div>
-                <Link
-                  href={buildEditEntryHref({
-                    simplified: activeLookup.fragment.cchar,
-                    pinyin: activeLookup.fragment.pinyin,
-                  })}
-                  className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
-                >
-                  Edit entry
-                </Link>
+              <div>
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                  Character entries
+                </h3>
+                <p className="text-sm text-slate-600">
+                  {fragmentLookupEntries.length > 1
+                    ? "Multiple pronunciations found for this character."
+                    : "Saved dictionary entries for the tapped character."}
+                </p>
               </div>
 
               {loadingLookup ? (
@@ -1563,12 +1561,6 @@ export default function AnnotatorPage() {
                     <LookupEntryCard
                       key={`${fragmentKey(activeLookup.fragment)}-${index}`}
                       entry={entry}
-                      actionHref={buildEditEntryHref({
-                        simplified: entry.simplified,
-                        traditional: entry.traditional,
-                        pinyin: entry.pinyin,
-                        english: entry.english,
-                      })}
                     />
                   ))}
                 </div>
@@ -1577,32 +1569,20 @@ export default function AnnotatorPage() {
 
             {activeLookup.phrase ? (
               <section className="space-y-3">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-                      Parent phrase
-                    </h3>
-                    <div className="mt-1 flex flex-wrap items-center gap-2">
-                      <span className="text-lg font-semibold text-slate-950">
-                        {activeLookup.phrase.text}
+                <div>
+                  <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                    Parent phrase
+                  </h3>
+                  <div className="mt-1 flex flex-wrap items-center gap-2">
+                    <span className="text-lg font-semibold text-slate-950">
+                      {activeLookup.phrase.text}
+                    </span>
+                    {activeLookup.phrase.pinyin ? (
+                      <span className="rounded-full bg-sky-100 px-3 py-1 text-sm font-medium text-sky-800">
+                        {formatPinyin(activeLookup.phrase.pinyin)}
                       </span>
-                      {activeLookup.phrase.pinyin ? (
-                        <span className="rounded-full bg-sky-100 px-3 py-1 text-sm font-medium text-sky-800">
-                          {formatPinyin(activeLookup.phrase.pinyin)}
-                        </span>
-                      ) : null}
-                    </div>
+                    ) : null}
                   </div>
-                  <Link
-                    href={buildEditEntryHref({
-                      simplified: activeLookup.phrase.text,
-                      pinyin: activeLookup.phrase.pinyin,
-                      english: activeLookup.phrase.english,
-                    })}
-                    className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
-                  >
-                    Edit entry
-                  </Link>
                 </div>
 
                 {activeLookup.phrase.english ? (
@@ -1625,12 +1605,6 @@ export default function AnnotatorPage() {
                       <LookupEntryCard
                         key={`${activeLookup.phrase?.key ?? "phrase"}-${index}`}
                         entry={entry}
-                        actionHref={buildEditEntryHref({
-                          simplified: entry.simplified,
-                          traditional: entry.traditional,
-                          pinyin: entry.pinyin,
-                          english: entry.english,
-                        })}
                       />
                     ))}
                   </div>
