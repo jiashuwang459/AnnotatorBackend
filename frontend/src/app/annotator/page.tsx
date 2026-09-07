@@ -909,30 +909,35 @@ export default function AnnotatorPage() {
       return;
     }
 
-    // Capture current drag fragments before clearing state.
+    // Snapshot the current drag selection synchronously via the ref-backed
+    // state, then call all setters outside of any updater function so React
+    // Strict Mode / concurrent rendering cannot trigger duplicate side-effects.
+    dragSelectActiveRef.current = false;
+    longPressOriginRef.current = null;
+
     setDragSelectFragments((current) => {
       const fragments = current.length === 0 ? [fragment] : current;
 
       if (fragments.length >= 2) {
-        // Build pre-filled pinyin from the collected fragments.
         const joinedPinyin = fragments
           .map((f) => f.pinyin.trim())
           .filter((p) => p.length > 0 && p !== '\u00a0')
           .join(' ');
-        setAddPhrasePinyin(joinedPinyin);
-        setAddPhraseDefinition('');
-        setAddPhraseNotes('');
-        setAddPhraseModalOpen(true);
+        // Schedule modal-open outside this updater to avoid side-effects in
+        // a potentially double-invoked updater (React Strict Mode).
+        setTimeout(() => {
+          setAddPhrasePinyin(joinedPinyin);
+          setAddPhraseDefinition('');
+          setAddPhraseNotes('');
+          setAddPhraseModalOpen(true);
+        }, 0);
       } else {
         // Single fragment — fall through to normal long-press lookup.
-        void inspectLookup(fragment, phrase);
+        setTimeout(() => void inspectLookup(fragment, phrase), 0);
       }
 
       return fragments;
     });
-
-    dragSelectActiveRef.current = false;
-    longPressOriginRef.current = null;
   }
 
   function handleFragmentPointerCancel() {
