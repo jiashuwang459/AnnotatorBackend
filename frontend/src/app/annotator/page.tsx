@@ -236,6 +236,95 @@ function ActionRailButton({
   );
 }
 
+function AddPhraseModal({
+  fragments,
+  pinyin,
+  definition,
+  notes,
+  submitting,
+  onPinyinChange,
+  onDefinitionChange,
+  onNotesChange,
+  onSubmit,
+  onCancel,
+}: {
+  fragments: import("@/lib/types").Fragment[];
+  pinyin: string;
+  definition: string;
+  notes: string;
+  submitting: boolean;
+  onPinyinChange: (v: string) => void;
+  onDefinitionChange: (v: string) => void;
+  onNotesChange: (v: string) => void;
+  onSubmit: () => void;
+  onCancel: () => void;
+}) {
+  const phraseText = fragments.map((f) => f.cchar).join('');
+
+  return (
+    <div className="flex flex-col gap-5 overflow-y-auto p-6">
+      <div>
+        <p className="mb-1 text-xs font-medium uppercase tracking-wide text-slate-400">Phrase</p>
+        <p className="text-3xl font-medium tracking-wide text-slate-900">{phraseText}</p>
+      </div>
+
+      <label className="block">
+        <span className="text-sm font-medium text-slate-700">Pinyin</span>
+        <input
+          type="text"
+          value={pinyin}
+          onChange={(e) => onPinyinChange(e.target.value)}
+          className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-900 shadow-sm outline-none transition focus:border-sky-400 focus:bg-white"
+          placeholder="e.g. ni3 hao3"
+        />
+      </label>
+
+      <label className="block">
+        <span className="text-sm font-medium text-slate-700">
+          Definition <span className="text-rose-500">*</span>
+        </span>
+        <textarea
+          value={definition}
+          onChange={(e) => onDefinitionChange(e.target.value)}
+          rows={3}
+          className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-900 shadow-sm outline-none transition focus:border-sky-400 focus:bg-white"
+          placeholder="English meaning…"
+        />
+      </label>
+
+      <label className="block">
+        <span className="text-sm font-medium text-slate-700">Notes <span className="text-slate-400">(optional)</span></span>
+        <textarea
+          value={notes}
+          onChange={(e) => onNotesChange(e.target.value)}
+          rows={2}
+          className="mt-1.5 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-900 shadow-sm outline-none transition focus:border-sky-400 focus:bg-white"
+          placeholder="Context, usage notes…"
+        />
+      </label>
+
+      <div className="flex items-center justify-end gap-3 pt-1">
+        <button
+          type="button"
+          onClick={onCancel}
+          disabled={submitting}
+          className="rounded-2xl border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          onClick={onSubmit}
+          disabled={submitting || definition.trim().length === 0}
+          className="rounded-2xl bg-sky-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-700 disabled:opacity-50"
+        >
+          {submitting ? 'Submitting…' : 'Add phrase'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function SideActionRail({
   onOpenLibrary,
   onOpenMemory,
@@ -538,6 +627,14 @@ export default function AnnotatorPage() {
   const toastTimeoutRef = useRef<number | null>(null);
   const longPressTimeoutRef = useRef<number | null>(null);
   const longPressTriggeredRef = useRef(false);
+  const dragSelectActiveRef = useRef(false);
+  const longPressOriginRef = useRef<{ fragment: Fragment; phrase: PhraseContext | null } | null>(null);
+  const [dragSelectFragments, setDragSelectFragments] = useState<Fragment[]>([]);
+  const [addPhraseModalOpen, setAddPhraseModalOpen] = useState(false);
+  const [addPhrasePinyin, setAddPhrasePinyin] = useState("");
+  const [addPhraseDefinition, setAddPhraseDefinition] = useState("");
+  const [addPhraseNotes, setAddPhraseNotes] = useState("");
+  const [addPhraseSubmitting, setAddPhraseSubmitting] = useState(false);
   const [splitBottomPct, setSplitBottomPct] = useState(40);
   const [isDividerDragging, setIsDividerDragging] = useState(false);
   const [splitTapMode, setSplitTapMode] = useState<'lookup' | 'memory'>('lookup');
@@ -763,11 +860,103 @@ export default function AnnotatorPage() {
   function beginLongPress(fragment: Fragment, phrase: PhraseContext | null) {
     clearLongPressTimeout();
     longPressTriggeredRef.current = false;
+    dragSelectActiveRef.current = false;
+    longPressOriginRef.current = { fragment, phrase };
 
     longPressTimeoutRef.current = window.setTimeout(() => {
       longPressTriggeredRef.current = true;
-      void inspectLookup(fragment, phrase);
+      dragSelectActiveRef.current = true;
+      setDragSelectFragments([fragment]);
     }, 450);
+  }
+
+  function clearDragSelect() {
+    dragSelectActiveRef.current = false;
+    longPressOriginRef.current = null;
+    setDragSelectFragments([]);
+  }
+
+  function handleFragmentPointerMove(event: React.PointerEvent<HTMLButtonElement>) {
+    if (!dragSelectActiveRef.current) {
+      // Not in drag-select mode: any movement cancels the long-press timer
+      clearLongPressTimeout();
+      return;
+    }
+
+    // Drag-select mode: find the character button under the pointer and
+    // accumulate it if it has fragment data attributes.
+    const el = document.elementFromPoint(event.clientX, event.clientY);
+    const btn = el instanceof HTMLElement ? el.closest('button[data-fragment-cchar]') : null;
+    if (!btn) return;
+
+    const cchar = btn.getAttribute('data-fragment-cchar');
+    const pinyin = btn.getAttribute('data-fragment-pinyin');
+    if (!cchar || pinyin === null) return;
+
+    setDragSelectFragments((current) => {
+      if (current.some((f) => f.cchar === cchar && f.pinyin === pinyin)) {
+        return current;
+      }
+      return [...current, { cchar, pinyin }];
+    });
+  }
+
+  function handleFragmentPointerUp(fragment: Fragment, phrase: PhraseContext | null) {
+    clearLongPressTimeout();
+
+    if (!dragSelectActiveRef.current) {
+      // Normal tap — onClick handles it.
+      return;
+    }
+
+    // Capture current drag fragments before clearing state.
+    setDragSelectFragments((current) => {
+      const fragments = current.length === 0 ? [fragment] : current;
+
+      if (fragments.length >= 2) {
+        // Build pre-filled pinyin from the collected fragments.
+        const joinedPinyin = fragments
+          .map((f) => f.pinyin.trim())
+          .filter((p) => p.length > 0 && p !== '\u00a0')
+          .join(' ');
+        setAddPhrasePinyin(joinedPinyin);
+        setAddPhraseDefinition('');
+        setAddPhraseNotes('');
+        setAddPhraseModalOpen(true);
+      } else {
+        // Single fragment — fall through to normal long-press lookup.
+        void inspectLookup(fragment, phrase);
+      }
+
+      return fragments;
+    });
+
+    dragSelectActiveRef.current = false;
+    longPressOriginRef.current = null;
+  }
+
+  function handleFragmentPointerCancel() {
+    clearLongPressTimeout();
+    clearDragSelect();
+  }
+
+  async function handleAddPhraseSubmit(
+    simplified: string,
+    pinyin: string,
+    english: string,
+    notes: string,
+  ) {
+    setAddPhraseSubmitting(true);
+    try {
+      await api.post('/entry/edit', { type: 'custom', simplified, traditional: simplified, pinyin, english, ...(notes.trim() ? { notes } : {}) });
+      showToast('Phrase entry submitted.', 'success');
+      setAddPhraseModalOpen(false);
+      clearDragSelect();
+    } catch (error) {
+      showToast(getErrorMessage(error), 'neutral');
+    } finally {
+      setAddPhraseSubmitting(false);
+    }
   }
 
   function openPanel(panel: Exclude<SecondaryPanel, null>) {
@@ -1123,6 +1312,9 @@ export default function AnnotatorPage() {
       activeLookup !== null &&
       activeLookup.fragment.cchar === fragment.cchar &&
       activeLookup.fragment.pinyin === fragment.pinyin;
+    const dragSelected = dragSelectFragments.some(
+      (f) => f.cchar === fragment.cchar && f.pinyin === fragment.pinyin,
+    );
 
     if (!isSelectableFragment(fragment)) {
       return (
@@ -1141,6 +1333,7 @@ export default function AnnotatorPage() {
 
     const hidePinyin = viewMode === "reader" && selected;
     const fragmentToneClass = viewMode === "reader" ? "text-slate-800" : "text-slate-900";
+    const highlighted = lookupSelected || dragSelected;
 
     return (
       <button
@@ -1148,11 +1341,13 @@ export default function AnnotatorPage() {
         type="button"
         data-reader-interactive="true"
         data-lookup-selected={lookupSelected ? 'true' : 'false'}
+        data-fragment-cchar={fragment.cchar}
+        data-fragment-pinyin={fragment.pinyin}
         onPointerDown={() => beginLongPress(fragment, phrase)}
-        onPointerUp={clearLongPressTimeout}
-        onPointerMove={clearLongPressTimeout}
-        onPointerLeave={clearLongPressTimeout}
-        onPointerCancel={clearLongPressTimeout}
+        onPointerUp={() => handleFragmentPointerUp(fragment, phrase)}
+        onPointerMove={handleFragmentPointerMove}
+        onPointerLeave={handleFragmentPointerCancel}
+        onPointerCancel={handleFragmentPointerCancel}
         onContextMenu={(event) => event.preventDefault()}
         onClick={(event) => {
           if (inPhrase) {
@@ -1167,7 +1362,7 @@ export default function AnnotatorPage() {
           handleFragmentPress(fragment, phrase);
         }}
         className={`flex min-w-[1.35em] flex-col items-center bg-transparent px-0 py-0 text-center transition ${fragmentToneClass} ${
-          lookupSelected ? "rounded-md bg-sky-100/70 text-sky-900" : ""
+          highlighted ? "rounded-md bg-sky-100/70 text-sky-900" : ""
         }`}
       >
         <span
@@ -1749,6 +1944,30 @@ export default function AnnotatorPage() {
             </section>
           </div>
         </div>
+      ) : null}
+
+      {addPhraseModalOpen ? (
+        <Overlay
+          label="Add custom phrase"
+          onClose={() => { setAddPhraseModalOpen(false); clearDragSelect(); }}
+          variant="popup"
+        >
+          <AddPhraseModal
+            fragments={dragSelectFragments}
+            pinyin={addPhrasePinyin}
+            definition={addPhraseDefinition}
+            notes={addPhraseNotes}
+            submitting={addPhraseSubmitting}
+            onPinyinChange={setAddPhrasePinyin}
+            onDefinitionChange={setAddPhraseDefinition}
+            onNotesChange={setAddPhraseNotes}
+            onSubmit={() => {
+              const phraseText = dragSelectFragments.map((f) => f.cchar).join('');
+              void handleAddPhraseSubmit(phraseText, addPhrasePinyin, addPhraseDefinition, addPhraseNotes);
+            }}
+            onCancel={() => { setAddPhraseModalOpen(false); clearDragSelect(); }}
+          />
+        </Overlay>
       ) : null}
     </div>
   );
