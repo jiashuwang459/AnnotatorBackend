@@ -542,6 +542,8 @@ export default function AnnotatorPage() {
   const toastTimeoutRef = useRef<number | null>(null);
   const longPressTimeoutRef = useRef<number | null>(null);
   const longPressTriggeredRef = useRef(false);
+  const savedScrollYRef = useRef(0);
+  const splitScreenOpenRef = useRef(false);
   const [splitTopHeight, setSplitTopHeight] = useState(55);
   const [isDividerDragging, setIsDividerDragging] = useState(false);
   const splitTopScrollRef = useRef<HTMLDivElement>(null);
@@ -676,16 +678,18 @@ export default function AnnotatorPage() {
   }, []);
 
   useEffect(() => {
-    if (!activeLookup || !splitTopScrollRef.current) {
+    if (!activeLookup) {
+      splitScreenOpenRef.current = false;
       return;
     }
 
-    const container = splitTopScrollRef.current;
-    const selected = container.querySelector('[data-lookup-selected="true"]');
-
-    if (selected) {
-      selected.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    if (!splitTopScrollRef.current || splitScreenOpenRef.current) {
+      return;
     }
+
+    // First open: restore the user's reading position.
+    splitScreenOpenRef.current = true;
+    splitTopScrollRef.current.scrollTop = savedScrollYRef.current;
   }, [activeLookup]);
 
   const selectedKeys = useMemo(
@@ -896,6 +900,11 @@ export default function AnnotatorPage() {
   }
 
   async function inspectLookup(fragment: Fragment, phrase: PhraseContext | null) {
+    // Save the current scroll position so the split-screen top panel can restore it on open.
+    if (!splitScreenOpenRef.current) {
+      savedScrollYRef.current = window.scrollY;
+    }
+
     setActivePanel(null);
     setActiveLookup({ fragment, phrase });
     setFragmentLookupEntries([]);
@@ -1007,6 +1016,12 @@ export default function AnnotatorPage() {
   }
 
   function handleFragmentPress(fragment: Fragment, phrase: PhraseContext | null) {
+    // When the split-screen is open, tapping any character updates the lookup.
+    if (activeLookup !== null) {
+      void inspectLookup(fragment, phrase);
+      return;
+    }
+
     if (viewMode === "reader") {
       toggleFragments([fragment]);
       return;
@@ -1622,7 +1637,7 @@ export default function AnnotatorPage() {
           <div
             role="separator"
             aria-label="Drag to resize panels"
-            className={`relative z-10 flex h-8 shrink-0 cursor-ns-resize touch-none select-none items-center justify-center border-y border-slate-200 transition-colors ${
+            className={`relative z-10 flex h-4 shrink-0 cursor-ns-resize touch-none select-none items-center justify-center border-y border-slate-200 transition-colors ${
               isDividerDragging ? 'bg-sky-50' : 'bg-slate-100 hover:bg-slate-200'
             }`}
             onPointerDown={handleDividerPointerDown}
