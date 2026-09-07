@@ -942,7 +942,18 @@ export default function AnnotatorPage() {
 
   function handleFragmentPointerCancel() {
     clearLongPressTimeout();
+    // Only cancel drag-select on a hard cancel (pointercancel), not on
+    // pointerleave, which fires for every character the pointer crosses.
     clearDragSelect();
+  }
+
+  function handleFragmentPointerLeave() {
+    if (!dragSelectActiveRef.current) {
+      // Not in drag-select mode: treat same as cancel (stop the long-press timer).
+      clearLongPressTimeout();
+    }
+    // In drag-select mode: intentionally do nothing — we keep accumulating
+    // fragments until pointerup or pointercancel.
   }
 
   async function handleAddPhraseSubmit(
@@ -1351,7 +1362,7 @@ export default function AnnotatorPage() {
         onPointerDown={() => beginLongPress(fragment, phrase)}
         onPointerUp={() => handleFragmentPointerUp(fragment, phrase)}
         onPointerMove={handleFragmentPointerMove}
-        onPointerLeave={handleFragmentPointerCancel}
+        onPointerLeave={handleFragmentPointerLeave}
         onPointerCancel={handleFragmentPointerCancel}
         onContextMenu={(event) => event.preventDefault()}
         onClick={(event) => {
@@ -1499,7 +1510,7 @@ export default function AnnotatorPage() {
 
       <div
         className="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-5 pt-4 sm:px-7 sm:pt-6"
-        style={{ paddingBottom: activeLookup ? `calc(${splitBottomPct}vh + 4rem)` : '6rem' }}
+        style={{ paddingBottom: (activeLookup !== null || addPhraseModalOpen) ? `calc(${splitBottomPct}vh + 4rem)` : '6rem' }}
       >
         <ReaderHeader
           hidden={headerHidden}
@@ -1602,7 +1613,7 @@ export default function AnnotatorPage() {
           savingMemory={savingMemory}
           canUndoMemory={selectionHistory.length > 0}
           canRedoMemory={selectionFuture.length > 0}
-          bottomOffset={activeLookup !== null ? splitBottomPct : 0}
+          bottomOffset={(activeLookup !== null || addPhraseModalOpen) ? splitBottomPct : 0}
         />
       ) : null}
 
@@ -1796,11 +1807,10 @@ export default function AnnotatorPage() {
         </Overlay>
       ) : null}
 
-      {activeLookup ? (
+      {(activeLookup !== null || addPhraseModalOpen) ? (
         <div
-          role="dialog"
-          aria-modal="false"
-          aria-label="Dictionary lookup"
+          role="region"
+          aria-label={addPhraseModalOpen ? "Add custom phrase" : "Dictionary lookup"}
           className="fixed inset-x-0 bottom-0 z-50 flex flex-col border-t border-slate-200 bg-white shadow-[0_-4px_24px_rgba(0,0,0,0.08)]"
           style={{ height: `${splitBottomPct}vh` }}
         >
@@ -1823,157 +1833,167 @@ export default function AnnotatorPage() {
             />
           </div>
 
-          {/* Panel header */}
-          <div className="flex shrink-0 items-center gap-3 border-b border-slate-200 px-4 py-2.5">
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-base font-semibold text-slate-950">
-                  {activeLookup.fragment.cchar}
-                </h2>
-                <span className="text-sm text-slate-500">
-                  {formatPinyin(activeLookup.fragment.pinyin)}
-                </span>
+          {addPhraseModalOpen ? (
+            <>
+              {/* Add phrase panel header */}
+              <div className="flex shrink-0 items-center gap-3 border-b border-slate-200 px-4 py-2.5">
+                <h2 className="min-w-0 flex-1 text-base font-semibold text-slate-950">Add custom phrase</h2>
+                <button
+                  type="button"
+                  onClick={() => { setAddPhraseModalOpen(false); clearDragSelect(); }}
+                  className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
               </div>
-            </div>
-            {/* Tap mode toggle */}
-            <button
-              type="button"
-              onClick={() => setSplitTapMode((m) => m === 'lookup' ? 'memory' : 'lookup')}
-              className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
-                splitTapMode === 'lookup'
-                  ? 'border-sky-300 bg-sky-50 text-sky-700'
-                  : 'border-emerald-300 bg-emerald-50 text-emerald-700'
-              }`}
-            >
-              {splitTapMode === 'lookup' ? 'Tap: lookup' : 'Tap: memory'}
-            </button>
-            <button
-              type="button"
-              onClick={resetLookupState}
-              className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
-            >
-              Hide
-            </button>
-          </div>
-
-          {/* Scrollable definitions */}
-          <div className="flex-1 space-y-5 overflow-y-auto px-5 py-4">
-            {lookupError ? (
-              <div className="rounded-3xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-                {lookupError}
+              {/* Add phrase form body */}
+              <div className="flex-1 overflow-y-auto">
+                <AddPhraseModal
+                  fragments={dragSelectFragments}
+                  pinyin={addPhrasePinyin}
+                  definition={addPhraseDefinition}
+                  notes={addPhraseNotes}
+                  submitting={addPhraseSubmitting}
+                  onPinyinChange={setAddPhrasePinyin}
+                  onDefinitionChange={setAddPhraseDefinition}
+                  onNotesChange={setAddPhraseNotes}
+                  onSubmit={() => {
+                    const phraseText = dragSelectFragments.map((f) => f.cchar).join('');
+                    void handleAddPhraseSubmit(phraseText, addPhrasePinyin, addPhraseDefinition, addPhraseNotes);
+                  }}
+                  onCancel={() => { setAddPhraseModalOpen(false); clearDragSelect(); }}
+                />
               </div>
-            ) : null}
-
-            {/* Parent phrase section: shown only when a parent phrase exists */}
-            {activeLookup.phrase ? (
-              <section className="space-y-3">
-                <div>
-                  <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-                    Parent phrase
-                  </h3>
-                  <div className="mt-1 flex flex-wrap items-center gap-2">
-                    <span className="text-lg font-semibold text-slate-950">
-                      {activeLookup.phrase.text}
+            </>
+          ) : activeLookup !== null ? (
+            <>
+              {/* Panel header */}
+              <div className="flex shrink-0 items-center gap-3 border-b border-slate-200 px-4 py-2.5">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="text-base font-semibold text-slate-950">
+                      {activeLookup.fragment.cchar}
+                    </h2>
+                    <span className="text-sm text-slate-500">
+                      {formatPinyin(activeLookup.fragment.pinyin)}
                     </span>
-                    {activeLookup.phrase.pinyin ? (
-                      <span className="rounded-full bg-sky-100 px-3 py-1 text-sm font-medium text-sky-800">
-                        {formatPinyin(activeLookup.phrase.pinyin)}
-                      </span>
-                    ) : null}
                   </div>
                 </div>
-
-                {activeLookup.phrase.english ? (
-                  <p className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-600">
-                    Annotation gloss: {activeLookup.phrase.english}
-                  </p>
-                ) : null}
-
-                {loadingLookup ? (
-                  <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-sm text-slate-500">
-                    Loading phrase matches…
-                  </div>
-                ) : phraseLookupEntries.length > 0 ? (
-                  <div className="space-y-3">
-                    {phraseLookupEntries.map((entry, index) => (
-                      <LookupEntryCard
-                        key={`${activeLookup.phrase?.key ?? 'phrase'}-${index}`}
-                        entry={entry}
-                      />
-                    ))}
-                  </div>
-                ) : null}
-              </section>
-            ) : null}
-
-            <section className="space-y-3">
-              <div>
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-                  Character entries
-                </h3>
-                <p className="text-sm text-slate-600">
-                  {fragmentLookupEntries.length > 1
-                    ? 'Multiple pronunciations found for this character.'
-                    : 'Saved dictionary entries for the tapped character.'}
-                </p>
+                {/* Tap mode toggle */}
+                <button
+                  type="button"
+                  onClick={() => setSplitTapMode((m) => m === 'lookup' ? 'memory' : 'lookup')}
+                  className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
+                    splitTapMode === 'lookup'
+                      ? 'border-sky-300 bg-sky-50 text-sky-700'
+                      : 'border-emerald-300 bg-emerald-50 text-emerald-700'
+                  }`}
+                >
+                  {splitTapMode === 'lookup' ? 'Tap: lookup' : 'Tap: memory'}
+                </button>
+                <button
+                  type="button"
+                  onClick={resetLookupState}
+                  className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
+                >
+                  Hide
+                </button>
               </div>
 
-              {loadingLookup ? (
-                <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500">
-                  Loading dictionary matches…
-                </div>
-              ) : fragmentLookupEntries.length === 0 ? (
-                <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-sm text-slate-500">
-                  No saved dictionary entry was returned for this character yet.
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {fragmentLookupEntries.map((entry, index) => {
-                    // Use activeLookup.fragment as the toggle target — it already has
-                    // the exact pinyin key that selectedFragments uses, so the
-                    // in-memory state stays in sync.
-                    const toggleTarget = activeLookup.fragment;
-                    return (
-                      <LookupEntryCard
-                        key={`${entry.simplified}::${entry.pinyin}-${index}`}
-                        entry={entry}
-                        memoryToggle={{
-                          isInMemory: selectedKeys.has(fragmentKey(toggleTarget)),
-                          onToggle: () => toggleFragments([toggleTarget]),
-                        }}
-                      />
-                    );
-                  })}
-                </div>
-              )}
-            </section>
-          </div>
+              {/* Scrollable definitions */}
+              <div className="flex-1 space-y-5 overflow-y-auto px-5 py-4">
+                {lookupError ? (
+                  <div className="rounded-3xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                    {lookupError}
+                  </div>
+                ) : null}
+
+                {/* Parent phrase section: shown only when a parent phrase exists */}
+                {activeLookup.phrase ? (
+                  <section className="space-y-3">
+                    <div>
+                      <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                        Parent phrase
+                      </h3>
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
+                        <span className="text-lg font-semibold text-slate-950">
+                          {activeLookup.phrase.text}
+                        </span>
+                        {activeLookup.phrase.pinyin ? (
+                          <span className="rounded-full bg-sky-100 px-3 py-1 text-sm font-medium text-sky-800">
+                            {formatPinyin(activeLookup.phrase.pinyin)}
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
+
+                    {activeLookup.phrase.english ? (
+                      <p className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-600">
+                        Annotation gloss: {activeLookup.phrase.english}
+                      </p>
+                    ) : null}
+
+                    {loadingLookup ? (
+                      <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-sm text-slate-500">
+                        Loading phrase matches…
+                      </div>
+                    ) : phraseLookupEntries.length > 0 ? (
+                      <div className="space-y-3">
+                        {phraseLookupEntries.map((entry, index) => (
+                          <LookupEntryCard
+                            key={`${activeLookup.phrase?.key ?? 'phrase'}-${index}`}
+                            entry={entry}
+                          />
+                        ))}
+                      </div>
+                    ) : null}
+                  </section>
+                ) : null}
+
+                <section className="space-y-3">
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                      Character entries
+                    </h3>
+                    <p className="text-sm text-slate-600">
+                      {fragmentLookupEntries.length > 1
+                        ? 'Multiple pronunciations found for this character.'
+                        : 'Saved dictionary entries for the tapped character.'}
+                    </p>
+                  </div>
+
+                  {loadingLookup ? (
+                    <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500">
+                      Loading dictionary matches…
+                    </div>
+                  ) : fragmentLookupEntries.length === 0 ? (
+                    <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-sm text-slate-500">
+                      No saved dictionary entry was returned for this character yet.
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {fragmentLookupEntries.map((entry, index) => {
+                        const toggleTarget = activeLookup.fragment;
+                        return (
+                          <LookupEntryCard
+                            key={`${entry.simplified}::${entry.pinyin}-${index}`}
+                            entry={entry}
+                            memoryToggle={{
+                              isInMemory: selectedKeys.has(fragmentKey(toggleTarget)),
+                              onToggle: () => toggleFragments([toggleTarget]),
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
+                </section>
+              </div>
+            </>
+          ) : null}
         </div>
       ) : null}
 
-      {addPhraseModalOpen ? (
-        <Overlay
-          label="Add custom phrase"
-          onClose={() => { setAddPhraseModalOpen(false); clearDragSelect(); }}
-          variant="popup"
-        >
-          <AddPhraseModal
-            fragments={dragSelectFragments}
-            pinyin={addPhrasePinyin}
-            definition={addPhraseDefinition}
-            notes={addPhraseNotes}
-            submitting={addPhraseSubmitting}
-            onPinyinChange={setAddPhrasePinyin}
-            onDefinitionChange={setAddPhraseDefinition}
-            onNotesChange={setAddPhraseNotes}
-            onSubmit={() => {
-              const phraseText = dragSelectFragments.map((f) => f.cchar).join('');
-              void handleAddPhraseSubmit(phraseText, addPhrasePinyin, addPhraseDefinition, addPhraseNotes);
-            }}
-            onCancel={() => { setAddPhraseModalOpen(false); clearDragSelect(); }}
-          />
-        </Overlay>
-      ) : null}
     </div>
   );
 }
