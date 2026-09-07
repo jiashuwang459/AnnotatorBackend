@@ -1143,7 +1143,7 @@ export default function AnnotatorPage() {
         key={key}
         type="button"
         data-reader-interactive="true"
-        data-lookup-selected={lookupSelected ? 'true' : undefined}
+        data-lookup-selected={lookupSelected ? 'true' : 'false'}
         onPointerDown={() => beginLongPress(fragment, phrase)}
         onPointerUp={clearLongPressTimeout}
         onPointerMove={clearLongPressTimeout}
@@ -1733,16 +1733,19 @@ export default function AnnotatorPage() {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {fragmentLookupEntries.map((entry, index) => (
-                      <LookupEntryCard
-                        key={`${fragmentKey(activeLookup.fragment)}-${index}`}
-                        entry={entry}
-                        memoryToggle={{
-                          isInMemory: selectedKeys.has(fragmentKey(activeLookup.fragment)),
-                          onToggle: () => toggleFragments([activeLookup.fragment]),
-                        }}
-                      />
-                    ))}
+                    {fragmentLookupEntries.map((entry, index) => {
+                      const entryFragment = { cchar: entry.simplified, pinyin: entry.pinyin };
+                      return (
+                        <LookupEntryCard
+                          key={`${entry.simplified}::${entry.pinyin}-${index}`}
+                          entry={entry}
+                          memoryToggle={{
+                            isInMemory: selectedKeys.has(fragmentKey(entryFragment)),
+                            onToggle: () => toggleFragments([entryFragment]),
+                          }}
+                        />
+                      );
+                    })}
                   </div>
                 )}
               </section>
