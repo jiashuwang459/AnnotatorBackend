@@ -1732,7 +1732,7 @@ export default function AnnotatorPage() {
                     // Use activeLookup.fragment as the toggle target — it already has
                     // the exact pinyin key that selectedFragments uses, so the
                     // in-memory state stays in sync.
-                    const toggleTarget = activeLookup?.fragment ?? { cchar: entry.simplified, pinyin: entry.pinyin };
+                    const toggleTarget = activeLookup.fragment;
                     return (
                       <LookupEntryCard
                         key={`${entry.simplified}::${entry.pinyin}-${index}`}
