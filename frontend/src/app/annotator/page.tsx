@@ -237,7 +237,6 @@ function ActionRailButton({
 }
 
 function SideActionRail({
-  onToggleMode,
   onOpenLibrary,
   onOpenMemory,
   onSaveMemory,
@@ -248,9 +247,8 @@ function SideActionRail({
   savingMemory,
   canUndoMemory,
   canRedoMemory,
-  viewMode,
+  bottomOffset,
 }: {
-  onToggleMode: () => void;
   onOpenLibrary: () => void;
   onOpenMemory: () => void;
   onSaveMemory: () => void;
@@ -261,15 +259,13 @@ function SideActionRail({
   savingMemory: boolean;
   canUndoMemory: boolean;
   canRedoMemory: boolean;
-  viewMode: ViewMode;
+  bottomOffset: number;
 }) {
   return (
-    <div className="fixed right-3 top-1/2 z-40 flex -translate-y-1/2 flex-col items-end gap-2 sm:right-5">
-      <ActionRailButton
-        label={viewMode === "reader" ? "Dictionary mode" : "Reader mode"}
-        icon={viewMode === "reader" ? <FiSearch /> : <FiBookOpen />}
-        onClick={onToggleMode}
-      />
+    <div
+      className="fixed right-3 z-40 flex flex-col items-end gap-2 sm:right-5"
+      style={{ bottom: `calc(${bottomOffset}vh + 1rem)` }}
+    >
       <ActionRailButton label="Library" icon={<FiBook />} onClick={onOpenLibrary} />
       <div className="flex flex-col gap-1 rounded-[1.75rem] border border-white/70 bg-white/88 p-1.5 shadow-lg backdrop-blur">
         <ActionRailButton
@@ -739,8 +735,18 @@ export default function AnnotatorPage() {
     // Dragging up (negative deltaY) makes the bottom panel taller.
     const deltaY = event.clientY - dividerDragStartRef.current.y;
     const deltaPercent = (deltaY / window.innerHeight) * 100;
-    const nextHeight = Math.max(20, Math.min(75, dividerDragStartRef.current.height - deltaPercent));
-    setSplitBottomPct(nextHeight);
+    const nextHeight = dividerDragStartRef.current.height - deltaPercent;
+
+    // Hide the panel if dragged below the dismiss threshold.
+    if (nextHeight < 12) {
+      dividerDragActiveRef.current = false;
+      dividerDragStartRef.current = null;
+      setIsDividerDragging(false);
+      resetLookupState();
+      return;
+    }
+
+    setSplitBottomPct(Math.min(75, nextHeight));
   }
 
   function handleDividerPointerUp() {
@@ -1114,9 +1120,9 @@ export default function AnnotatorPage() {
   ) {
     const selected = selectedKeys.has(fragmentKey(fragment));
     const lookupSelected =
-      activeLookup?.fragment.cchar === fragment.cchar &&
-      activeLookup.fragment.pinyin === fragment.pinyin &&
-      viewMode === "dictionary";
+      activeLookup !== null &&
+      activeLookup.fragment.cchar === fragment.cchar &&
+      activeLookup.fragment.pinyin === fragment.pinyin;
 
     if (!isSelectableFragment(fragment)) {
       return (
@@ -1207,7 +1213,9 @@ export default function AnnotatorPage() {
             }
           }}
           title={item.english}
-          className="inline-flex flex-wrap items-end gap-0 rounded-md transition"
+          className={`inline-flex flex-wrap items-end gap-0 rounded-md transition ${
+            phraseSelected ? 'bg-sky-100/65' : ''
+          }`}
         >
           {item.cchars.map((fragment, fragmentIndex) =>
             renderFragment(fragment, `phrase-${index}-${fragmentIndex}`, {
@@ -1384,7 +1392,6 @@ export default function AnnotatorPage() {
 
       {actionRailVisible ? (
         <SideActionRail
-          onToggleMode={toggleViewMode}
           onOpenLibrary={() => openPanel("library")}
           onOpenMemory={() => openPanel("review")}
           onSaveMemory={() => void handleMemorySave()}
@@ -1395,7 +1402,7 @@ export default function AnnotatorPage() {
           savingMemory={savingMemory}
           canUndoMemory={selectionHistory.length > 0}
           canRedoMemory={selectionFuture.length > 0}
-          viewMode={viewMode}
+          bottomOffset={activeLookup !== null ? splitBottomPct : 0}
         />
       ) : null}
 
@@ -1722,14 +1729,17 @@ export default function AnnotatorPage() {
               ) : (
                 <div className="space-y-3">
                   {fragmentLookupEntries.map((entry, index) => {
-                    const entryFragment = { cchar: entry.simplified, pinyin: entry.pinyin };
+                    // Use activeLookup.fragment as the toggle target — it already has
+                    // the exact pinyin key that selectedFragments uses, so the
+                    // in-memory state stays in sync.
+                    const toggleTarget = activeLookup?.fragment ?? { cchar: entry.simplified, pinyin: entry.pinyin };
                     return (
                       <LookupEntryCard
                         key={`${entry.simplified}::${entry.pinyin}-${index}`}
                         entry={entry}
                         memoryToggle={{
-                          isInMemory: selectedKeys.has(fragmentKey(entryFragment)),
-                          onToggle: () => toggleFragments([entryFragment]),
+                          isInMemory: selectedKeys.has(fragmentKey(toggleTarget)),
+                          onToggle: () => toggleFragments([toggleTarget]),
                         }}
                       />
                     );
