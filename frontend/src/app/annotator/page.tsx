@@ -542,11 +542,9 @@ export default function AnnotatorPage() {
   const toastTimeoutRef = useRef<number | null>(null);
   const longPressTimeoutRef = useRef<number | null>(null);
   const longPressTriggeredRef = useRef(false);
-  const savedScrollYRef = useRef(0);
-  const splitScreenOpenRef = useRef(false);
-  const [splitTopHeight, setSplitTopHeight] = useState(55);
+  const [splitBottomPct, setSplitBottomPct] = useState(40);
   const [isDividerDragging, setIsDividerDragging] = useState(false);
-  const splitTopScrollRef = useRef<HTMLDivElement>(null);
+  const [splitTapMode, setSplitTapMode] = useState<'lookup' | 'memory'>('lookup');
   const dividerLongPressRef = useRef<number | null>(null);
   const dividerDragActiveRef = useRef(false);
   const dividerDragStartRef = useRef<{ y: number; height: number } | null>(null);
@@ -677,21 +675,6 @@ export default function AnnotatorPage() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!activeLookup) {
-      splitScreenOpenRef.current = false;
-      return;
-    }
-
-    if (!splitTopScrollRef.current || splitScreenOpenRef.current) {
-      return;
-    }
-
-    // First open: restore the user's reading position.
-    splitScreenOpenRef.current = true;
-    splitTopScrollRef.current.scrollTop = savedScrollYRef.current;
-  }, [activeLookup]);
-
   const selectedKeys = useMemo(
     () => new Set(selectedFragments.map(fragmentKey)),
     [selectedFragments],
@@ -735,7 +718,7 @@ export default function AnnotatorPage() {
   function handleDividerPointerDown(event: React.PointerEvent<HTMLDivElement>) {
     event.currentTarget.setPointerCapture(event.pointerId);
     const startY = event.clientY;
-    const startHeight = splitTopHeight;
+    const startHeight = splitBottomPct;
 
     if (dividerLongPressRef.current) {
       window.clearTimeout(dividerLongPressRef.current);
@@ -753,10 +736,11 @@ export default function AnnotatorPage() {
       return;
     }
 
+    // Dragging up (negative deltaY) makes the bottom panel taller.
     const deltaY = event.clientY - dividerDragStartRef.current.y;
     const deltaPercent = (deltaY / window.innerHeight) * 100;
-    const nextHeight = Math.max(20, Math.min(80, dividerDragStartRef.current.height + deltaPercent));
-    setSplitTopHeight(nextHeight);
+    const nextHeight = Math.max(20, Math.min(75, dividerDragStartRef.current.height - deltaPercent));
+    setSplitBottomPct(nextHeight);
   }
 
   function handleDividerPointerUp() {
@@ -900,11 +884,6 @@ export default function AnnotatorPage() {
   }
 
   async function inspectLookup(fragment: Fragment, phrase: PhraseContext | null) {
-    // Save the current scroll position so the split-screen top panel can restore it on open.
-    if (!splitScreenOpenRef.current) {
-      savedScrollYRef.current = window.scrollY;
-    }
-
     setActivePanel(null);
     setActiveLookup({ fragment, phrase });
     setFragmentLookupEntries([]);
@@ -1016,9 +995,13 @@ export default function AnnotatorPage() {
   }
 
   function handleFragmentPress(fragment: Fragment, phrase: PhraseContext | null) {
-    // When the split-screen is open, tapping any character updates the lookup.
+    // When the split-screen is open, use splitTapMode to decide behaviour.
     if (activeLookup !== null) {
-      void inspectLookup(fragment, phrase);
+      if (splitTapMode === 'lookup') {
+        void inspectLookup(fragment, phrase);
+      } else {
+        toggleFragments([fragment]);
+      }
       return;
     }
 
@@ -1306,7 +1289,10 @@ export default function AnnotatorPage() {
       <VerticalProgressBar progress={scrollProgress} viewMode={viewMode} />
       <TopToast message={toastMessage} tone={toastTone} />
 
-      <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-5 pb-24 pt-4 sm:px-7 sm:pt-6">
+      <div
+        className="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-5 pt-4 sm:px-7 sm:pt-6"
+        style={{ paddingBottom: activeLookup ? `calc(${splitBottomPct}vh + 4rem)` : '6rem' }}
+      >
         <ReaderHeader
           hidden={headerHidden}
           onMenuOpen={() => openPanel("menu")}
@@ -1606,39 +1592,17 @@ export default function AnnotatorPage() {
       {activeLookup ? (
         <div
           role="dialog"
-          aria-modal="true"
+          aria-modal="false"
           aria-label="Dictionary lookup"
-          className="fixed inset-0 z-50 flex flex-col bg-[#fdf6e3]"
+          className="fixed inset-x-0 bottom-0 z-50 flex flex-col border-t border-slate-200 bg-white shadow-[0_-4px_24px_rgba(0,0,0,0.08)]"
+          style={{ height: `${splitBottomPct}vh` }}
         >
-          {/* Top section: reader text */}
-          <div
-            ref={splitTopScrollRef}
-            style={{ height: `${splitTopHeight}%` }}
-            className="shrink-0 overflow-y-auto"
-          >
-            <div className="mx-auto w-full max-w-5xl px-5 py-4 sm:px-7">
-              <article className="reader-text space-y-5">
-                {annotations.map((paragraph, paragraphIndex) => (
-                  <div key={`paragraph-${paragraphIndex}`} className="py-1">
-                    {paragraph.length === 0 ? (
-                      <div className="h-6" />
-                    ) : (
-                      <div className="flex flex-wrap items-end gap-x-0 gap-y-2 leading-[3.4rem]">
-                        {paragraph.map((item, index) => renderAnnotationItem(item, index))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </article>
-            </div>
-          </div>
-
-          {/* Resizable divider — long-press (300 ms hold) then drag to resize */}
+          {/* Drag handle — long-press then drag to resize */}
           <div
             role="separator"
-            aria-label="Drag to resize panels"
-            className={`relative z-10 flex h-4 shrink-0 cursor-ns-resize touch-none select-none items-center justify-center border-y border-slate-200 transition-colors ${
-              isDividerDragging ? 'bg-sky-50' : 'bg-slate-100 hover:bg-slate-200'
+            aria-label="Drag to resize panel"
+            className={`flex h-3 w-full shrink-0 cursor-ns-resize touch-none select-none items-center justify-center transition-colors ${
+              isDividerDragging ? 'bg-sky-50' : 'bg-transparent hover:bg-slate-50'
             }`}
             onPointerDown={handleDividerPointerDown}
             onPointerMove={handleDividerPointerMove}
@@ -1646,125 +1610,133 @@ export default function AnnotatorPage() {
             onPointerCancel={handleDividerPointerUp}
           >
             <div
-              className={`h-1 w-14 rounded-full transition-colors ${
-                isDividerDragging ? 'bg-sky-400' : 'bg-slate-400'
+              className={`h-0.5 w-10 rounded-full transition-colors ${
+                isDividerDragging ? 'bg-sky-400' : 'bg-slate-300'
               }`}
             />
           </div>
 
-          {/* Bottom section: definitions */}
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-white">
-            <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-5 py-4">
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
-                    Character
-                  </span>
-                  <h2 className="text-lg font-semibold text-slate-950">
-                    {activeLookup.fragment.cchar}
-                  </h2>
-                </div>
-                <p className="mt-1 text-sm text-slate-600">
+          {/* Panel header */}
+          <div className="flex shrink-0 items-center gap-3 border-b border-slate-200 px-4 py-2.5">
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-base font-semibold text-slate-950">
+                  {activeLookup.fragment.cchar}
+                </h2>
+                <span className="text-sm text-slate-500">
                   {formatPinyin(activeLookup.fragment.pinyin)}
-                </p>
+                </span>
               </div>
-              <button
-                type="button"
-                onClick={resetLookupState}
-                className="rounded-full border border-slate-200 px-3 py-1 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
-              >
-                Close
-              </button>
             </div>
+            {/* Tap mode toggle */}
+            <button
+              type="button"
+              onClick={() => setSplitTapMode((m) => m === 'lookup' ? 'memory' : 'lookup')}
+              className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
+                splitTapMode === 'lookup'
+                  ? 'border-sky-300 bg-sky-50 text-sky-700'
+                  : 'border-emerald-300 bg-emerald-50 text-emerald-700'
+              }`}
+            >
+              {splitTapMode === 'lookup' ? 'Tap: lookup' : 'Tap: memory'}
+            </button>
+            <button
+              type="button"
+              onClick={resetLookupState}
+              className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
+            >
+              Hide
+            </button>
+          </div>
 
-            <div className="flex-1 space-y-5 overflow-y-auto px-5 py-5">
-              {lookupError ? (
-                <div className="rounded-3xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-                  {lookupError}
-                </div>
-              ) : null}
+          {/* Scrollable definitions */}
+          <div className="flex-1 space-y-5 overflow-y-auto px-5 py-4">
+            {lookupError ? (
+              <div className="rounded-3xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                {lookupError}
+              </div>
+            ) : null}
 
-              {/* Parent phrase section: shown only when a parent phrase exists */}
-              {activeLookup.phrase ? (
-                <section className="space-y-3">
-                  <div>
-                    <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-                      Parent phrase
-                    </h3>
-                    <div className="mt-1 flex flex-wrap items-center gap-2">
-                      <span className="text-lg font-semibold text-slate-950">
-                        {activeLookup.phrase.text}
-                      </span>
-                      {activeLookup.phrase.pinyin ? (
-                        <span className="rounded-full bg-sky-100 px-3 py-1 text-sm font-medium text-sky-800">
-                          {formatPinyin(activeLookup.phrase.pinyin)}
-                        </span>
-                      ) : null}
-                    </div>
-                  </div>
-
-                  {activeLookup.phrase.english ? (
-                    <p className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-600">
-                      Annotation gloss: {activeLookup.phrase.english}
-                    </p>
-                  ) : null}
-
-                  {loadingLookup ? (
-                    <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-sm text-slate-500">
-                      Loading phrase matches…
-                    </div>
-                  ) : phraseLookupEntries.length > 0 ? (
-                    <div className="space-y-3">
-                      {phraseLookupEntries.map((entry, index) => (
-                        <LookupEntryCard
-                          key={`${activeLookup.phrase?.key ?? 'phrase'}-${index}`}
-                          entry={entry}
-                        />
-                      ))}
-                    </div>
-                  ) : null}
-                </section>
-              ) : null}
-
+            {/* Parent phrase section: shown only when a parent phrase exists */}
+            {activeLookup.phrase ? (
               <section className="space-y-3">
                 <div>
                   <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-                    Character entries
+                    Parent phrase
                   </h3>
-                  <p className="text-sm text-slate-600">
-                    {fragmentLookupEntries.length > 1
-                      ? 'Multiple pronunciations found for this character.'
-                      : 'Saved dictionary entries for the tapped character.'}
-                  </p>
+                  <div className="mt-1 flex flex-wrap items-center gap-2">
+                    <span className="text-lg font-semibold text-slate-950">
+                      {activeLookup.phrase.text}
+                    </span>
+                    {activeLookup.phrase.pinyin ? (
+                      <span className="rounded-full bg-sky-100 px-3 py-1 text-sm font-medium text-sky-800">
+                        {formatPinyin(activeLookup.phrase.pinyin)}
+                      </span>
+                    ) : null}
+                  </div>
                 </div>
 
+                {activeLookup.phrase.english ? (
+                  <p className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-600">
+                    Annotation gloss: {activeLookup.phrase.english}
+                  </p>
+                ) : null}
+
                 {loadingLookup ? (
-                  <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500">
-                    Loading dictionary matches…
-                  </div>
-                ) : fragmentLookupEntries.length === 0 ? (
                   <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-sm text-slate-500">
-                    No saved dictionary entry was returned for this character yet.
+                    Loading phrase matches…
                   </div>
-                ) : (
+                ) : phraseLookupEntries.length > 0 ? (
                   <div className="space-y-3">
-                    {fragmentLookupEntries.map((entry, index) => {
-                      const entryFragment = { cchar: entry.simplified, pinyin: entry.pinyin };
-                      return (
-                        <LookupEntryCard
-                          key={`${entry.simplified}::${entry.pinyin}-${index}`}
-                          entry={entry}
-                          memoryToggle={{
-                            isInMemory: selectedKeys.has(fragmentKey(entryFragment)),
-                            onToggle: () => toggleFragments([entryFragment]),
-                          }}
-                        />
-                      );
-                    })}
+                    {phraseLookupEntries.map((entry, index) => (
+                      <LookupEntryCard
+                        key={`${activeLookup.phrase?.key ?? 'phrase'}-${index}`}
+                        entry={entry}
+                      />
+                    ))}
                   </div>
-                )}
+                ) : null}
               </section>
-            </div>
+            ) : null}
+
+            <section className="space-y-3">
+              <div>
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                  Character entries
+                </h3>
+                <p className="text-sm text-slate-600">
+                  {fragmentLookupEntries.length > 1
+                    ? 'Multiple pronunciations found for this character.'
+                    : 'Saved dictionary entries for the tapped character.'}
+                </p>
+              </div>
+
+              {loadingLookup ? (
+                <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500">
+                  Loading dictionary matches…
+                </div>
+              ) : fragmentLookupEntries.length === 0 ? (
+                <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-sm text-slate-500">
+                  No saved dictionary entry was returned for this character yet.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {fragmentLookupEntries.map((entry, index) => {
+                    const entryFragment = { cchar: entry.simplified, pinyin: entry.pinyin };
+                    return (
+                      <LookupEntryCard
+                        key={`${entry.simplified}::${entry.pinyin}-${index}`}
+                        entry={entry}
+                        memoryToggle={{
+                          isInMemory: selectedKeys.has(fragmentKey(entryFragment)),
+                          onToggle: () => toggleFragments([entryFragment]),
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+              )}
+            </section>
           </div>
         </div>
       ) : null}
